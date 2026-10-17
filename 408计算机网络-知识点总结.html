@@ -9,120 +9,167 @@
 <meta name="twitter:card" content="summary">
 <title>408 计算机网络 · 知识点总结</title><style>
 :root{
-  --bg:#f7f7f5; --panel:#ffffff; --ink:#1d1f21; --ink-2:#52565c; --ink-3:#8b9098;
-  --line:#e4e4e0; --accent:#b23a2f; --accent-soft:#fdf1ef; --code:#f4f4f1;
-  --mark:#fff2c2;
+  --bg:#ffffff; --bg-soft:#fafaf8; --bg-hover:#f2f2ee;
+  --ink:#1a1c1e; --ink2:#4a4f55; --ink3:#8a9098;
+  --line:#e8e8e4; --line-soft:#f1f1ee;
+  --accent:#b23a2f; --accent-soft:#fdf1ef;
+  --code-bg:#f7f6f3; --mark:#fff2c2;
+  --size:16.5px; --bar:56px; --left:264px; --right:232px;
+}
+html[data-theme="dark"]{
+  --bg:#16181a; --bg-soft:#1b1e20; --bg-hover:#262a2d;
+  --ink:#e9e7e3; --ink2:#b8b5b0; --ink3:#8b8984;
+  --line:#2c3033; --line-soft:#24282b;
+  --accent:#e07a6d; --accent-soft:#2b1f1d;
+  --code-bg:#1f2225; --mark:#4a3f16;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--bar) + 16px)}
 body{margin:0;background:var(--bg);color:var(--ink);
   font-family:"PingFang SC","Microsoft YaHei","Segoe UI",-apple-system,sans-serif;
-  font-size:16px;line-height:1.85;-webkit-font-smoothing:antialiased}
-#side{position:fixed;top:0;left:0;bottom:0;width:296px;background:var(--panel);
-  border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:20}
-#side .head{padding:18px 18px 12px;border-bottom:1px solid var(--line)}
-#side .head h1{font-size:15px;margin:0 0 10px;line-height:1.5;font-weight:700}
-#side .head .sub{font-size:12px;color:var(--ink-3);margin-top:6px}
-#q{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;
-  font-size:13px;outline:none;background:var(--bg);color:var(--ink)}
-#q:focus{border-color:var(--accent);background:#fff}
-#toc{flex:1;overflow-y:auto;padding:10px 8px 40px}
-#toc a{display:block;color:var(--ink-2);text-decoration:none;font-size:13.5px;
-  padding:4px 10px;border-radius:6px;line-height:1.5;border-left:2px solid transparent}
-#toc a:hover{background:var(--bg);color:var(--ink)}
-#toc a.lv1{font-weight:700;color:var(--ink);font-size:14px;margin-top:2px}
-#toc .grp{padding-bottom:6px;margin-bottom:4px;border-bottom:1px solid #f2f2ee}
-#toc .grp:last-child{border-bottom:0}
-#toc a.lv2{padding-left:22px}
-#toc a.lv3{padding-left:34px;font-size:13px;color:var(--ink-3)}
-#toc a.active{background:var(--accent-soft);color:var(--accent);border-left-color:var(--accent)}
-#toc a.hide{display:none}
-#bar{position:fixed;top:0;left:296px;right:0;height:3px;background:transparent;z-index:30}
-#bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .12s linear}
-main{margin-left:296px;padding:52px 56px 140px;max-width:1000px}
-article{background:var(--panel);padding:56px 64px 80px;border:1px solid var(--line);border-radius:14px}
-h1,h2,h3,h4{line-height:1.4;font-weight:700}
-article>h1:first-child{font-size:27px;margin:0 0 6px}
-h1{font-size:25px;margin:0 0 14px;padding-bottom:12px;border-bottom:2px solid var(--ink)}
-h1+h1{margin-top:48px}
-h2{font-size:20px;margin:34px 0 12px;padding-left:11px;border-left:4px solid var(--accent)}
-h3{font-size:17px;margin:26px 0 10px;color:#111}
-h4{font-size:15.5px;margin:20px 0 8px;color:var(--ink-2)}
-p{margin:12px 0}
-blockquote{margin:16px 0;padding:12px 18px;background:var(--accent-soft);
-  border-left:3px solid var(--accent);border-radius:0 8px 8px 0;color:var(--ink-2);font-size:14.5px}
+  font-size:var(--size);line-height:1.85;-webkit-font-smoothing:antialiased;
+  transition:background .18s,color .18s}
+a{color:var(--accent);text-decoration:none}
+
+#bar{position:fixed;top:0;left:0;right:0;height:var(--bar);z-index:60;
+  display:flex;align-items:center;gap:14px;padding:0 18px;
+  background:var(--bg);border-bottom:1px solid var(--line)}
+#prog{position:absolute;left:0;bottom:-1px;height:2px;width:0;background:var(--accent);transition:width .1s linear}
+#burger{display:none;border:1px solid var(--line);background:none;border-radius:7px;
+  width:34px;height:34px;cursor:pointer;color:var(--ink2);font-size:15px;line-height:1}
+.crumb{display:flex;align-items:center;gap:8px;font-size:13px;min-width:0}
+.crumb .sub{color:var(--ink3);white-space:nowrap}
+.crumb .sep{color:var(--ink3)}
+.crumb .cur{color:var(--ink);font-weight:700;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;max-width:44vw}
+.tools{margin-left:auto;display:flex;align-items:center;gap:8px}
+#q{width:180px;padding:7px 11px;border:1px solid var(--line);border-radius:8px;
+  background:var(--bg-soft);color:var(--ink);font-size:13px;outline:none}
+#q:focus{border-color:var(--accent);background:var(--bg)}
+.tbtn{border:1px solid var(--line);background:var(--bg-soft);color:var(--ink2);
+  border-radius:7px;height:32px;min-width:32px;padding:0 8px;cursor:pointer;font-size:13px;line-height:1}
+.tbtn:hover{background:var(--bg-hover);color:var(--ink)}
+
+#side{position:fixed;top:var(--bar);left:0;bottom:0;width:var(--left);z-index:50;
+  background:var(--bg-soft);border-right:1px solid var(--line);
+  overflow-y:auto;padding:22px 12px 60px}
+#side .cap{font-size:11.5px;letter-spacing:.08em;color:var(--ink3);margin:0 10px 10px;font-weight:700}
+#side a{display:block;font-size:13.5px;color:var(--ink2);padding:7px 10px;border-radius:7px;
+  line-height:1.5;margin-bottom:2px;border-left:2px solid transparent}
+#side a:hover{background:var(--bg-hover);color:var(--ink)}
+#side a.on{background:var(--accent-soft);color:var(--accent);font-weight:700;border-left-color:var(--accent)}
+#side a.hide{display:none}
+#side .note{margin:22px 10px 0;padding-top:14px;border-top:1px solid var(--line);
+  font-size:11.5px;color:var(--ink3);line-height:1.7}
+
+main{margin-left:var(--left);margin-right:var(--right);padding-top:var(--bar)}
+#doc{max-width:760px;margin:0 auto;padding:38px 44px 120px}
+#out{position:fixed;top:var(--bar);right:0;width:var(--right);bottom:0;z-index:40;
+  overflow-y:auto;padding:26px 18px 60px 10px}
+#out .cap{font-size:11.5px;letter-spacing:.08em;color:var(--ink3);margin:0 0 10px 12px;font-weight:700}
+#out a{display:block;font-size:12.5px;color:var(--ink3);padding:4px 12px;line-height:1.5;
+  border-left:2px solid var(--line-soft)}
+#out a.lv3{padding-left:24px;font-size:12px}
+#out a:hover{color:var(--ink)}
+#out a.on{color:var(--accent);border-left-color:var(--accent);font-weight:700}
+#out .grp{display:none}
+#out .grp.on{display:block}
+#out a.hide{display:none}
+
+h1,h2,h3,h4{line-height:1.45;font-weight:700;scroll-margin-top:calc(var(--bar) + 20px)}
+h1{font-size:1.62em;margin:0 0 8px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+h1+h1{margin-top:64px}
+h2{font-size:1.28em;margin:44px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line-soft)}
+h3{font-size:1.09em;margin:30px 0 10px;color:var(--ink)}
+h4{font-size:1em;margin:22px 0 8px;color:var(--ink2)}
+h2 .ah,h3 .ah{opacity:0;margin-left:8px;font-weight:400;color:var(--ink3);font-size:.8em;transition:opacity .15s}
+h2:hover .ah,h3:hover .ah{opacity:1}
+p{margin:13px 0}
+ul,ol{padding-left:24px;margin:12px 0}
+li{margin:6px 0}
+li>ul,li>ol{margin:6px 0}
+strong{font-weight:700;color:var(--ink)}
+code{background:var(--code-bg);padding:2px 5px;border-radius:4px;font-size:.88em;
+  font-family:"Cascadia Mono",Consolas,Menlo,monospace;color:var(--accent)}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;
+  padding:16px 18px;overflow-x:auto;margin:18px 0;line-height:1.7}
+pre code{background:none;padding:0;color:var(--ink);font-size:.82em;line-height:1.75}
+blockquote{margin:18px 0;padding:12px 18px;background:var(--accent-soft);
+  border-left:3px solid var(--accent);border-radius:0 8px 8px 0;color:var(--ink2);font-size:.94em}
 blockquote p{margin:6px 0}
-ul,ol{padding-left:26px;margin:10px 0}
-li{margin:5px 0}
-strong{color:#000;font-weight:700}
-code{background:var(--code);padding:1.5px 5px;border-radius:4px;font-size:13.5px;
-  font-family:"Cascadia Mono",Consolas,Menlo,monospace;color:#a03a2d}
-pre{background:#fbfbf9;border:1px solid var(--line);border-radius:10px;padding:16px 18px;
-  overflow-x:auto;margin:16px 0}
-pre code{background:none;padding:0;color:var(--ink);font-size:13px;line-height:1.75}
-table{border-collapse:collapse;width:100%;margin:16px 0;font-size:14px;display:block;overflow-x:auto}
-th,td{border:1px solid var(--line);padding:8px 12px;text-align:left;vertical-align:top}
-th{background:#f2f2ee;font-weight:700;white-space:nowrap}
-tr:nth-child(even) td{background:#fbfbf9}
-hr{border:0;border-top:1px dashed var(--line);margin:44px 0}
-a{color:var(--accent)}
-mark{background:var(--mark);padding:0 2px}
-#toTop{position:fixed;right:26px;bottom:26px;width:42px;height:42px;border-radius:50%;
-  border:1px solid var(--line);background:#fff;color:var(--ink-2);cursor:pointer;font-size:16px;
-  box-shadow:0 4px 14px rgba(0,0,0,.08);display:none}
-@media (max-width:1080px){
-  #side{transform:translateX(-100%);transition:transform .2s}
-  #side.open{transform:none;box-shadow:0 0 40px rgba(0,0,0,.15)}
-  main{margin-left:0;padding:40px 20px 100px}
-  article{padding:32px 22px 50px}
-  #bar{left:0}
-  #menu{display:block !important}
+table{border-collapse:collapse;width:100%;font-size:.9em}
+.tbl{overflow-x:auto;margin:18px 0}
+th,td{border:1px solid var(--line);padding:9px 13px;text-align:left;vertical-align:top}
+th{background:var(--bg-hover);font-weight:700;white-space:nowrap}
+tbody tr:nth-child(even) td{background:var(--bg-soft)}
+hr{border:0;border-top:1px solid var(--line-soft);margin:34px 0}
+mark{background:var(--mark);color:inherit;padding:0 2px}
+#top{position:fixed;right:calc(var(--right) + 18px);bottom:26px;width:38px;height:38px;
+  border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--ink2);
+  cursor:pointer;font-size:14px;display:none;z-index:45}
+#top:hover{background:var(--bg-hover)}
+
+@media (max-width:1180px){
+  main{margin-right:0}
+  #out{display:none}
+  #top{right:18px}
 }
-#menu{display:none;position:fixed;left:14px;top:12px;z-index:40;background:#fff;border:1px solid var(--line);
-  border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer}
+@media (max-width:900px){
+  :root{--bar:52px}
+  main{margin-left:0}
+  #doc{padding:26px 18px 100px;overflow-wrap:break-word}
+  #burger{display:block}
+  #side{transform:translateX(-100%);transition:transform .22s;box-shadow:0 0 40px rgba(0,0,0,.12)}
+  #side.open{transform:none}
+  #bar{gap:8px;padding:0 10px}
+  #q{width:74px;padding:6px 8px;font-size:12px}
+  .tbtn{min-width:27px;height:27px;padding:0 4px;font-size:12px}
+  .crumb{flex:1;min-width:0}
+  .crumb .sub{display:none}
+  .crumb .cur{max-width:30vw;font-size:12.5px}
+  .tools{gap:6px}
+  h1{font-size:1.38em}
+  h1+h1{margin-top:44px}
+  table{font-size:.82em}
+}
 @media print{
-  #side,#bar,#toTop,#menu{display:none}
-  main{margin:0;padding:0;max-width:none}
-  article{border:0;padding:0}
+  #bar,#side,#out,#top,#burger{display:none}
+  main{margin:0;padding:0}
+  #doc{max-width:none;padding:0}
   h1{page-break-before:always}
-  article>h1:first-child{page-break-before:avoid}
+  #doc>h1:first-child{page-break-before:avoid}
   pre,table,blockquote{page-break-inside:avoid}
+  body{font-size:11.5pt}
 }
 </style></head>
 <body>
-<button id="menu">目录</button>
-<div id="bar"><i></i></div>
-<aside id="side">
-  <div class="head">
-    <h1>408 计算机网络 · 知识点总结</h1>
-    <input id="q" placeholder="搜索章节标题…（回车跳转）" autocomplete="off">
-    <div class="sub">基于 22 个分P 字幕整理 · 2026-10-17</div>
+<header id="bar">
+  <button id="burger" aria-label="目录">☰</button>
+  <div class="crumb"><span class="sub">计算机网络</span><span class="sep">/</span><span class="cur" id="crumbCur">计算机网络</span></div>
+  <div class="tools">
+    <input id="q" placeholder="搜索标题…" autocomplete="off" aria-label="搜索标题">
+    <button class="tbtn" id="tSmall" title="缩小字号">A−</button>
+    <button class="tbtn" id="tBig" title="放大字号">A+</button>
+    <button class="tbtn" id="tTheme" title="切换夜间模式">夜</button>
   </div>
-  <nav id="toc"><div class="grp"><a class="lv1" href="#总纲">总纲</a><a class="lv2" href="#一计算机网络在408里的位置">一、计算机网络在 408 里的位置</a><a class="lv2" href="#二六章知识地图">二、六章知识地图</a><a class="lv2" href="#三跨章高频考点top12">三、跨章高频考点 Top 12</a><a class="lv2" href="#四本课程缺失的部分必须自己补">四、本课程缺失的部分（必须自己补）</a><a class="lv2" href="#五三阶段复习与刷题顺序">五、三阶段复习与刷题顺序</a><a class="lv2" href="#六笔记怎么用">六、笔记怎么用</a></div>
-<div class="grp"><a class="lv1" href="#第1章计算机网络体系结构11交换方式与性能指标12分层模型与协议服务接口">第1章 计算机网络体系结构（1.1 交换方式与性能指标、1.2 分层模型与协议/服务/接口）</a><a class="lv2" href="#知识框架">知识框架</a><a class="lv2" href="#知识点详解">知识点详解</a><a class="lv3" href="#一111三种交换方式">一、1.1.1 三种交换方式</a><a class="lv3" href="#二112性能指标">二、1.1.2 性能指标</a><a class="lv3" href="#三121分层协议服务接口">三、1.2.1 分层、协议、服务、接口</a><a class="lv3" href="#四122osi七层模型">四、1.2.2 OSI 七层模型</a><a class="lv3" href="#五123tcpip四层与五层模型">五、1.2.3 TCP/IP 四层与五层模型</a><a class="lv3" href="#六连接方式与交付方式后续章节反复用">六、连接方式与交付方式（后续章节反复用）</a><a class="lv2" href="#老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题">本章例题</a><a class="lv3" href="#例1题13分组交换基础型">例 1（题 13，分组交换基础型）</a><a class="lv3" href="#例2题14报文交换vs分组交换">例 2（题 14，报文交换 vs 分组交换）</a><a class="lv3" href="#例3题15含传播时延">例 3（题 15，含传播时延）</a><a class="lv3" href="#例4题11非真题易错题含处理与排队时延">例 4（题 11，非真题·易错题，含处理与排队时延）</a><a class="lv3" href="#例5题172025年真题三种方式硬算">例 5（题 17，2025 年真题，三种方式硬算）</a><a class="lv2" href="#对应分p">对应分P</a><a class="lv2" href="#待补充">待补充</a></div>
-<div class="grp"><a class="lv1" href="#第2章物理层21通信基础编码与调制传输介质接口特性物理层设备">第2章 物理层（2.1 通信基础、编码与调制、传输介质、接口特性、物理层设备）</a><a class="lv2" href="#知识框架_1">知识框架</a><a class="lv2" href="#知识点详解_1">知识点详解</a><a class="lv3" href="#一信号码元与两个速率21书30页">一、信号、码元与两个速率（2.1，书 30 页）</a><a class="lv3" href="#二奈奎斯特定理奈氏准则无噪声">二、奈奎斯特定理（奈氏准则）—— 无噪声</a><a class="lv3" href="#三香农定理有噪声">三、香农定理 —— 有噪声</a><a class="lv3" href="#四两定理的对比与取小原则书32页必背表">四、两定理的对比与&quot;取小&quot;原则（书 32 页，必背表）</a><a class="lv3" href="#五编码数字数据数字信号212书34页图22">五、编码：数字数据 → 数字信号（2.1.2，书 34 页图 2.2）</a><a class="lv3" href="#六调制数字数据模拟信号">六、调制：数字数据 → 模拟信号</a><a class="lv3" href="#七信道复用教材补充课程未展开">七、信道复用（教材补充，课程未展开）</a><a class="lv3" href="#八物理层接口的四个特性书4243页纯记忆">八、物理层接口的四个特性（书 42~43 页，纯记忆）</a><a class="lv3" href="#九物理层设备书4647页">九、物理层设备（书 46~47 页）</a><a class="lv2" href="#老师强调的考点_1">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_1">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_1">易错点与坑</a><a class="lv2" href="#本章例题_1">本章例题</a><a class="lv2" href="#对应分p_1">对应分P</a></div>
-<div class="grp"><a class="lv1" href="#第3章数据链路层上31功能概述341滑动窗口与arq协议">第3章 数据链路层（上）（3.1 功能概述、3.4.1 滑动窗口与 ARQ 协议）</a><a class="lv2" href="#知识框架_2">知识框架</a><a class="lv2" href="#知识点详解_2">知识点详解</a><a class="lv3" href="#一31数据链路层做什么书54页本小节无真题">一、3.1 数据链路层做什么（书 54 页，本小节无真题）</a><a class="lv3" href="#二滑动窗口机制书61页图39">二、滑动窗口机制（书 61 页 图 3.9）</a><a class="lv3" href="#三编号与窗口的硬约束本节总纲">三、编号与窗口的硬约束（本节总纲）</a><a class="lv3" href="#四停止等待协议书62页">四、停止等待协议（书 62 页）</a><a class="lv3" href="#五可靠传输arq与三类协议">五、可靠传输、ARQ 与三类协议</a><a class="lv3" href="#六后退n帧协议gbn书63页图311">六、后退 N 帧协议 GBN（书 63 页 图 3.11）</a><a class="lv3" href="#七选择重传协议sr书65页图312">七、选择重传协议 SR（书 65 页 图 3.12）</a><a class="lv3" href="#八342信道利用率书66页高频计算与本节合并出题">八、3.4.2 信道利用率（书 66 页，高频计算，与本节合并出题）</a><a class="lv2" href="#老师强调的考点_2">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_2">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_2">易错点与坑</a><a class="lv2" href="#本章例题_2">本章例题</a><a class="lv2" href="#对应分p_2">对应分P</a><a class="lv2" href="#待补充_1">待补充</a></div>
-<div class="grp"><a class="lv1" href="#第3章数据链路层下35介质访问控制36局域网38链路层设备">第3章 数据链路层（下）：3.5 介质访问控制、3.6 局域网、3.8 链路层设备</a><a class="lv2" href="#知识框架_3">知识框架</a><a class="lv2" href="#知识点详解_3">知识点详解</a><a class="lv3" href="#一介质访问控制的由来与三大类35书77页">一、介质访问控制的由来与三大类（3.5，书 77 页）</a><a class="lv3" href="#二351信道划分fdmatdmacdma">二、3.5.1 信道划分：FDMA / TDMA / CDMA</a><a class="lv3" href="#三352随机访问一aloha">三、3.5.2 随机访问（一）：ALOHA</a><a class="lv3" href="#四352随机访问二csma的三种坚持策略">四、3.5.2 随机访问（二）：CSMA 的三种坚持策略</a><a class="lv3" href="#五352csmacd争用期最小帧长二进制指数退避本节最核心">五、3.5.2 CSMA/CD：争用期、最小帧长、二进制指数退避（本节最核心）</a><a class="lv3" href="#六353轮询访问令牌传递">六、3.5.3 轮询访问：令牌传递</a><a class="lv3" href="#七361局域网与以太网概述书87页">七、3.6.1 局域网与以太网概述（书 87 页）</a><a class="lv3" href="#八362mac地址与以太网帧格式">八、3.6.2 MAC 地址与以太网帧格式</a><a class="lv3" href="#九363csmaca与80211无线局域网">九、3.6.3 CSMA/CA 与 802.11 无线局域网</a><a class="lv3" href="#十80211帧的地址123真题考过两次纯规则">十、802.11 帧的地址 1 / 2 / 3（真题考过两次，纯规则）</a><a class="lv3" href="#十一38链路层设备网桥与交换机书117页">十一、3.8 链路层设备：网桥与交换机（书 117 页）</a><a class="lv2" href="#老师强调的考点_3">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_3">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_3">易错点与坑</a><a class="lv2" href="#本章例题_3">本章例题</a><a class="lv3" href="#例1课后44题最小帧长反求传播时延">例 1（课后 44 题）最小帧长反求传播时延</a><a class="lv3" href="#例2课后37题帧长减小距离缩短">例 2（课后 37 题）帧长减小 → 距离缩短</a><a class="lv3" href="#例3课后41题含集线器延迟的距离计算">例 3（课后 41 题）含集线器延迟的距离计算</a><a class="lv3" href="#例4课后47题4次冲突后的最长等待">例 4（课后 47 题）4 次冲突后的最长等待</a><a class="lv3" href="#例5课后49题11次冲突自算2τ">例 5（课后 49 题）11 次冲突 + 自算 2τ</a><a class="lv3" href="#例6课后48题csmaca的nav计算">例 6（课后 48 题）CSMA/CA 的 NAV 计算</a><a class="lv3" href="#例7课后42题80211三地址">例 7（课后 42 题）802.11 三地址</a><a class="lv3" href="#例8课后20题直通式vs存储转发时延">例 8（课后 20 题）直通式 vs 存储转发时延</a><a class="lv3" href="#例9课后21题自学习泛洪">例 9（课后 21 题）自学习 + 泛洪</a><a class="lv2" href="#待补充_2">待补充</a><a class="lv2" href="#对应分p_3">对应分P</a></div>
-<div class="grp"><a class="lv1" href="#第4章网络层41网络层功能与转发42ipv4全节附43ipv644路由协议47网络层设备">第4章 网络层（4.1 网络层功能与转发、4.2 IPv4 全节；附 4.3 IPv6 / 4.4 路由协议 / 4.7 网络层设备）</a><a class="lv2" href="#知识框架_4">知识框架</a><a class="lv2" href="#知识点详解_4">知识点详解</a><a class="lv3" href="#一41网络层做什么两个视角的差别41书127页">一、4.1 网络层做什么：两个视角的差别（4.1，书 127 页）</a><a class="lv3" href="#二412路由选择vs分组转发虚电路vs数据报">二、4.1.2 路由选择 vs 分组转发；虚电路 vs 数据报</a><a class="lv3" href="#三421ip数据报首部每个字段都要看一眼就知道干什么">三、4.2.1 IP 数据报首部：每个字段都要&quot;看一眼就知道干什么&quot;</a><a class="lv3" href="#四ip分片完整算例422书139页必考计算">四、IP 分片：完整算例（4.2.2，书 139 页，必考计算）</a><a class="lv3" href="#五ip地址基础分类特殊地址私有地址423">五、IP 地址基础：分类、特殊地址、私有地址（4.2.3）</a><a class="lv3" href="#六子网划分与子网掩码424本章第一命门">六、子网划分与子网掩码（4.2.4，本章第一命门）</a><a class="lv3" href="#七cidr无分类编址速查表425">七、CIDR 无分类编址 + 速查表（4.2.5）</a><a class="lv3" href="#八路由聚合426本章第二命门">八、路由聚合（4.2.6，本章第二命门）</a><a class="lv3" href="#九默认网关与是否同网段的判定424真题高频">九、默认网关与&quot;是否同网段&quot;的判定（4.2.4，真题高频）</a><a class="lv3" href="#十路由表默认路由与最长前缀匹配427">十、路由表、默认路由与最长前缀匹配（4.2.7）</a><a class="lv3" href="#十一nat网络地址转换428真题频率高">十一、NAT 网络地址转换（4.2.8，真题频率高）</a><a class="lv3" href="#十二arp地址解析协议429大题小问常考">十二、ARP 地址解析协议（4.2.9，大题小问常考）</a><a class="lv3" href="#十三dhcp动态主机配置协议4210">十三、DHCP 动态主机配置协议（4.2.10）</a><a class="lv3" href="#十四icmp网际控制报文协议4211">十四、ICMP 网际控制报文协议（4.2.11）</a><a class="lv3" href="#十五ipv6变化点43教材补充课程明确第一轮跳过">十五、IPv6：变化点（4.3，教材补充；课程明确第一轮跳过）</a><a class="lv3" href="#十六路由算法与ripospfbgp44教材补充课程留到强化">十六、路由算法与 RIP / OSPF / BGP（4.4，教材补充；课程留到强化）</a><a class="lv3" href="#十七47网络层设备冲突域与广播域书214页">十七、4.7 网络层设备：冲突域与广播域（书 214 页）</a><a class="lv2" href="#老师强调的考点_4">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_4">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_4">易错点与坑</a><a class="lv2" href="#本章例题_4">本章例题</a><a class="lv3" href="#例1老师原题分片4000bmtu1500">例 1（老师原题）分片：4000 B / MTU 1500</a><a class="lv3" href="#例2老师反例mtu800的分片">例 2（老师反例）MTU=800 的分片</a><a class="lv3" href="#例3课后50题掩码反推子网数与主机数">例 3（课后 50 题）掩码反推子网数与主机数</a><a class="lv3" href="#例4课后60题按子网数反求主机数">例 4（课后 60 题）按子网数反求主机数</a><a class="lv3" href="#例5课后53题两个25聚合">例 5（课后 53 题）两个 /25 聚合</a><a class="lv3" href="#例6课后62题四个21聚合">例 6（课后 62 题）四个 /21 聚合</a><a class="lv3" href="#例7课后57题最长前缀匹配含三种变式">例 7（课后 57 题）最长前缀匹配（含三种变式）</a><a class="lv3" href="#例8课后58题默认网关配置错误">例 8（课后 58 题）默认网关配置错误</a><a class="lv3" href="#例9课后69题30链路求对端地址">例 9（课后 69 题）/30 链路求对端地址</a><a class="lv3" href="#例10课后5254题广播地址与收到的主机数">例 10（课后 52、54 题）广播地址与收到的主机数</a><a class="lv3" href="#例11课后大题16题nat四阶段地址变化">例 11（课后大题 16 题）NAT 四阶段地址变化</a><a class="lv3" href="#例12课后63题ip不变mac逐跳变">例 12（课后 63 题）IP 不变、MAC 逐跳变</a><a class="lv3" href="#例13课后72题dhcp请求报文的源目的地址">例 13（课后 72 题）DHCP 请求报文的源/目的地址</a><a class="lv2" href="#待补充_3">待补充</a><a class="lv2" href="#对应分p_4">对应分P</a></div>
-<div class="grp"><a class="lv1" href="#第5章传输层51传输层提供的服务52udp53tcp">第5章 传输层（5.1 传输层提供的服务、5.2 UDP、5.3 TCP）</a><a class="lv2" href="#知识框架_5">知识框架</a><a class="lv2" href="#知识点详解_5">知识点详解</a><a class="lv3" href="#一传输层解决什么问题51书224页">一、传输层解决什么问题（5.1，书 224 页）</a><a class="lv3" href="#二复用与分用512">二、复用与分用（5.1.2）</a><a class="lv3" href="#三端口号与套接字512">三、端口号与套接字（5.1.2）</a><a class="lv3" href="#四udp的特点与首部52书226227页">四、UDP 的特点与首部（5.2，书 226~227 页）</a><a class="lv3" href="#五udp校验和的计算522">五、UDP 校验和的计算（5.2.2）</a><a class="lv3" href="#六tcp的特点与首部531书233235页">六、TCP 的特点与首部（5.3.1，书 233~235 页）</a><a class="lv3" href="#七序号与确认号全章地基">七、序号与确认号（全章地基）</a><a class="lv3" href="#八三次握手532书235236页">八、三次握手（5.3.2，书 235~236 页）</a><a class="lv3" href="#九四次挥手与状态532书236237页">九、四次挥手与状态（5.3.2，书 236~237 页）</a><a class="lv3" href="#十可靠传输超时重传与快重传533书237页">十、可靠传输：超时重传与快重传（5.3.3，书 237 页）</a><a class="lv3" href="#十一流量控制与滑动窗口534书238239页">十一、流量控制与滑动窗口（5.3.4，书 238~239 页）</a><a class="lv3" href="#十二拥塞控制535书240241页必考大题">十二、拥塞控制（5.3.5，书 240~241 页，必考大题）</a><a class="lv3" href="#十三udp与tcp对比总表">十三、UDP 与 TCP 对比总表</a><a class="lv2" href="#老师强调的考点_5">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_5">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_5">易错点与坑</a><a class="lv2" href="#本章例题_5">本章例题</a><a class="lv2" href="#对应分p_5">对应分P</a></div>
-<div class="grp"><a class="lv1" href="#第6章应用层61网络应用模型62dns63ftp64电子邮件65www与http">第6章 应用层（6.1 网络应用模型、6.2 DNS、6.3 FTP、6.4 电子邮件、6.5 WWW 与 HTTP）</a><a class="lv2" href="#知识框架_6">知识框架</a><a class="lv2" href="#知识点详解_6">知识点详解</a><a class="lv3" href="#一cs与p2p模型61">一、C/S 与 P2P 模型（6.1）</a><a class="lv3" href="#二dns的层次与查询62书266269页">二、DNS 的层次与查询（6.2，书 266~269 页）</a><a class="lv3" href="#三ftp63书270页">三、FTP（6.3，书 270 页）</a><a class="lv3" href="#四电子邮件系统64书272275页">四、电子邮件系统（6.4，书 272~275 页）</a><a class="lv3" href="#五www与http的基本性质65书285287页">五、WWW 与 HTTP 的基本性质（6.5，书 285~287 页）</a><a class="lv3" href="#六持续连接非持续连接与rtt计算652">六、持续连接、非持续连接与 RTT 计算（6.5.2）</a><a class="lv2" href="#老师强调的考点_6">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_6">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_6">易错点与坑</a><a class="lv2" href="#本章例题_6">本章例题</a><a class="lv2" href="#对应分p_6">对应分P</a><a class="lv2" href="#待补充_4">待补充</a></div></nav>
-</aside>
-<main><article><h1 id="408计算机网络知识点总结基于复旦发哥带学40822p课程">408 计算机网络 · 知识点总结（基于「复旦发哥带学 408」22P 课程）</h1>
+  <div id="prog"></div>
+</header>
+<aside id="side"><div class="cap">章节目录</div><a class="ch" href="#总纲" title="总纲">总纲</a>
+<a class="ch" href="#第1章计算机网络体系结构11交换方式与性能指标12分层模型与协议服务接口" title="第1章 计算机网络体系结构（1.1 交换方式与性能指标、1.2 分层模型与协议/服务/接口）">第1章 计算机网络体系结构</a>
+<a class="ch" href="#第2章物理层21通信基础编码与调制传输介质接口特性物理层设备" title="第2章 物理层（2.1 通信基础、编码与调制、传输介质、接口特性、物理层设备）">第2章 物理层</a>
+<a class="ch" href="#第3章数据链路层上31功能概述341滑动窗口与arq协议" title="第3章 数据链路层（上）（3.1 功能概述、3.4.1 滑动窗口与 ARQ 协议）">第3章 数据链路层</a>
+<a class="ch" href="#第3章数据链路层下35介质访问控制36局域网38链路层设备" title="第3章 数据链路层（下）：3.5 介质访问控制、3.6 局域网、3.8 链路层设备">第3章 数据链路层</a>
+<a class="ch" href="#第4章网络层41网络层功能与转发42ipv4全节附43ipv644路由协议47网络层设备" title="第4章 网络层（4.1 网络层功能与转发、4.2 IPv4 全节；附 4.3 IPv6 / 4.4 路由协议 / 4.7 网络层设备）">第4章 网络层</a>
+<a class="ch" href="#第5章传输层51传输层提供的服务52udp53tcp" title="第5章 传输层（5.1 传输层提供的服务、5.2 UDP、5.3 TCP）">第5章 传输层</a>
+<a class="ch" href="#第6章应用层61网络应用模型62dns63ftp64电子邮件65www与http" title="第6章 应用层（6.1 网络应用模型、6.2 DNS、6.3 FTP、6.4 电子邮件、6.5 WWW 与 HTTP）">第6章 应用层</a><div class="note">5 章 · 12.5 万字</div></aside>
+<main><article id="doc"><h1 id="408计算机网络知识点总结基于复旦发哥带学40822p课程">408 计算机网络 · 知识点总结（基于「复旦发哥带学 408」22P 课程）</h1>
 <blockquote>
 <p><strong>来源</strong>：B 站 BV12mjT63EsS《2027考研408WD课本计算机网络带学》
 <strong>素材</strong>：22 个分P 的 AI 字幕（P1 为群公告、字幕内容与本课无关，已移入 <code>_异常/</code>），已落盘到同级目录
 <strong>说明</strong>：字幕由 AI 生成，存在同音误识，笔记按上下文还原。结论以教材与官方大纲为准。
 <strong>特别注意</strong>：本课程<strong>老师第一轮明确跳过路由协议（RIP/OSPF/BGP）与 IPv6</strong>（原话大意："IPv6 不要看了，只考过一个选择题""路由算法整本书最难，留到强化"）。第 4 章笔记里已按<strong>教材补齐并标注「教材补充」</strong>，方便二轮直接用。</p>
 </blockquote>
-<h2 id="目录">目录</h2>
-<ul>
-<li><a href="#总纲">总纲：科目定位 · 知识地图 · 高频考点 · 复习顺序</a></li>
-<li><a href="#第1章计算机网络体系结构11交换方式与性能指标12分层模型与协议服务接口">第1章 计算机网络体系结构（1.1 交换方式与性能指标、1.2 分层模型与协议/服务/接口）</a></li>
-<li><a href="#第2章物理层21通信基础编码与调制传输介质接口特性物理层设备">第2章 物理层（2.1 通信基础、编码与调制、传输介质、接口特性、物理层设备）</a></li>
-<li><a href="#第3章数据链路层下35介质访问控制36局域网38链路层设备">第3章 数据链路层（下）：3.5 介质访问控制、3.6 局域网、3.8 链路层设备</a></li>
-<li><a href="#第4章网络层41网络层功能与转发42IPv4全节附43IPv644路由协议47网络层设备">第4章 网络层（4.1 网络层功能与转发、4.2 IPv4 全节；附 4.3 IPv6 / 4.4 路由协议 / 4.7 网络层设备）</a></li>
-<li><a href="#第5章传输层51传输层提供的服务52UDP53TCP">第5章 传输层（5.1 传输层提供的服务、5.2 UDP、5.3 TCP）</a></li>
-</ul>
+
 <hr />
 <h1 id="总纲">总纲</h1>
 <hr />
@@ -6220,50 +6267,111 @@ DNS → TCP 三次握手 → HTTP 请求 → HTTP 响应
 <li>分P 23 只讲了 <strong>SMTP/POP3</strong>，未提 <strong>IMAP</strong>；只列了 HTTP 报文样例，未系统讲首部字段与状态码分类。以上均按"（教材补充）"标注，408 真题对这些点的考查也很浅。</li>
 <li>分P 22 结尾的例 60 口播数字含糊（"RTT 是 40 加 60"），本笔记按"4 RTT + 2MSL = 60.04 s"反推 RTT=10 ms、MSL=30 s，与课堂给出的答案一致。</li>
 </ul></article></main>
-<button id="toTop">↑</button>
+<aside id="out"><div class="cap">本页大纲</div><div class="grp" data-for="总纲" data-name="总纲"><a class="lv2" href="#一计算机网络在408里的位置" title="一、计算机网络在 408 里的位置">一、计算机网络在 408 里的位置</a><a class="lv2" href="#二六章知识地图" title="二、六章知识地图">二、六章知识地图</a><a class="lv2" href="#三跨章高频考点top12" title="三、跨章高频考点 Top 12">三、跨章高频考点 Top 12</a><a class="lv2" href="#四本课程缺失的部分必须自己补" title="四、本课程缺失的部分（必须自己补）">四、本课程缺失的部分</a><a class="lv2" href="#五三阶段复习与刷题顺序" title="五、三阶段复习与刷题顺序">五、三阶段复习与刷题顺序</a><a class="lv2" href="#六笔记怎么用" title="六、笔记怎么用">六、笔记怎么用</a></div>
+<div class="grp" data-for="第1章计算机网络体系结构11交换方式与性能指标12分层模型与协议服务接口" data-name="第1章 计算机网络体系结构"><a class="lv2" href="#知识框架" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解" title="知识点详解">知识点详解</a><a class="lv3" href="#一111三种交换方式" title="一、1.1.1 三种交换方式">一、1.1.1 三种交换方式</a><a class="lv3" href="#二112性能指标" title="二、1.1.2 性能指标">二、1.1.2 性能指标</a><a class="lv3" href="#三121分层协议服务接口" title="三、1.2.1 分层、协议、服务、接口">三、1.2.1 分层、协议、服务、接口</a><a class="lv3" href="#四122osi七层模型" title="四、1.2.2 OSI 七层模型">四、1.2.2 OSI 七层模型</a><a class="lv3" href="#五123tcpip四层与五层模型" title="五、1.2.3 TCP/IP 四层与五层模型">五、1.2.3 TCP/IP 四层与五层模型</a><a class="lv3" href="#六连接方式与交付方式后续章节反复用" title="六、连接方式与交付方式（后续章节反复用）">六、连接方式与交付方式</a><a class="lv2" href="#老师强调的考点" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题" title="本章例题">本章例题</a><a class="lv3" href="#例1题13分组交换基础型" title="例 1（题 13，分组交换基础型）">例 1</a><a class="lv3" href="#例2题14报文交换vs分组交换" title="例 2（题 14，报文交换 vs 分组交换）">例 2</a><a class="lv3" href="#例3题15含传播时延" title="例 3（题 15，含传播时延）">例 3</a><a class="lv3" href="#例4题11非真题易错题含处理与排队时延" title="例 4（题 11，非真题·易错题，含处理与排队时延）">例 4</a><a class="lv3" href="#例5题172025年真题三种方式硬算" title="例 5（题 17，2025 年真题，三种方式硬算）">例 5</a><a class="lv2" href="#对应分p" title="对应分P">对应分P</a><a class="lv2" href="#待补充" title="待补充">待补充</a></div>
+<div class="grp" data-for="第2章物理层21通信基础编码与调制传输介质接口特性物理层设备" data-name="第2章 物理层"><a class="lv2" href="#知识框架_1" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_1" title="知识点详解">知识点详解</a><a class="lv3" href="#一信号码元与两个速率21书30页" title="一、信号、码元与两个速率（2.1，书 30 页）">一、信号、码元与两个速率</a><a class="lv3" href="#二奈奎斯特定理奈氏准则无噪声" title="二、奈奎斯特定理（奈氏准则）—— 无噪声">二、奈奎斯特定理</a><a class="lv3" href="#三香农定理有噪声" title="三、香农定理 —— 有噪声">三、香农定理</a><a class="lv3" href="#四两定理的对比与取小原则书32页必背表" title="四、两定理的对比与&quot;取小&quot;原则（书 32 页，必背表）">四、两定理的对比与&quot;取小&quot;原则</a><a class="lv3" href="#五编码数字数据数字信号212书34页图22" title="五、编码：数字数据 → 数字信号（2.1.2，书 34 页图 2.2）">五、编码：数字数据 → 数字信号</a><a class="lv3" href="#六调制数字数据模拟信号" title="六、调制：数字数据 → 模拟信号">六、调制：数字数据 → 模拟信号</a><a class="lv3" href="#七信道复用教材补充课程未展开" title="七、信道复用（教材补充，课程未展开）">七、信道复用</a><a class="lv3" href="#八物理层接口的四个特性书4243页纯记忆" title="八、物理层接口的四个特性（书 42~43 页，纯记忆）">八、物理层接口的四个特性</a><a class="lv3" href="#九物理层设备书4647页" title="九、物理层设备（书 46~47 页）">九、物理层设备</a><a class="lv2" href="#老师强调的考点_1" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_1" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_1" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_1" title="本章例题">本章例题</a><a class="lv2" href="#对应分p_1" title="对应分P">对应分P</a></div>
+<div class="grp" data-for="第3章数据链路层上31功能概述341滑动窗口与arq协议" data-name="第3章 数据链路层"><a class="lv2" href="#知识框架_2" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_2" title="知识点详解">知识点详解</a><a class="lv3" href="#一31数据链路层做什么书54页本小节无真题" title="一、3.1 数据链路层做什么（书 54 页，本小节无真题）">一、3.1 数据链路层做什么</a><a class="lv3" href="#二滑动窗口机制书61页图39" title="二、滑动窗口机制（书 61 页 图 3.9）">二、滑动窗口机制</a><a class="lv3" href="#三编号与窗口的硬约束本节总纲" title="三、编号与窗口的硬约束（本节总纲）">三、编号与窗口的硬约束</a><a class="lv3" href="#四停止等待协议书62页" title="四、停止等待协议（书 62 页）">四、停止等待协议</a><a class="lv3" href="#五可靠传输arq与三类协议" title="五、可靠传输、ARQ 与三类协议">五、可靠传输、ARQ 与三类协议</a><a class="lv3" href="#六后退n帧协议gbn书63页图311" title="六、后退 N 帧协议 GBN（书 63 页 图 3.11）">六、后退 N 帧协议 GBN</a><a class="lv3" href="#七选择重传协议sr书65页图312" title="七、选择重传协议 SR（书 65 页 图 3.12）">七、选择重传协议 SR</a><a class="lv3" href="#八342信道利用率书66页高频计算与本节合并出题" title="八、3.4.2 信道利用率（书 66 页，高频计算，与本节合并出题）">八、3.4.2 信道利用率</a><a class="lv2" href="#老师强调的考点_2" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_2" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_2" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_2" title="本章例题">本章例题</a><a class="lv2" href="#对应分p_2" title="对应分P">对应分P</a><a class="lv2" href="#待补充_1" title="待补充">待补充</a></div>
+<div class="grp" data-for="第3章数据链路层下35介质访问控制36局域网38链路层设备" data-name="第3章 数据链路层"><a class="lv2" href="#知识框架_3" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_3" title="知识点详解">知识点详解</a><a class="lv3" href="#一介质访问控制的由来与三大类35书77页" title="一、介质访问控制的由来与三大类（3.5，书 77 页）">一、介质访问控制的由来与三大类</a><a class="lv3" href="#二351信道划分fdmatdmacdma" title="二、3.5.1 信道划分：FDMA / TDMA / CDMA">二、3.5.1 信道划分：FDMA / TDMA /…</a><a class="lv3" href="#三352随机访问一aloha" title="三、3.5.2 随机访问（一）：ALOHA">三、3.5.2 随机访问</a><a class="lv3" href="#四352随机访问二csma的三种坚持策略" title="四、3.5.2 随机访问（二）：CSMA 的三种坚持策略">四、3.5.2 随机访问</a><a class="lv3" href="#五352csmacd争用期最小帧长二进制指数退避本节最核心" title="五、3.5.2 CSMA/CD：争用期、最小帧长、二进制指数退避（本节最核心）">五、3.5.2 CSMA/CD：争用期、最小帧长、二…</a><a class="lv3" href="#六353轮询访问令牌传递" title="六、3.5.3 轮询访问：令牌传递">六、3.5.3 轮询访问：令牌传递</a><a class="lv3" href="#七361局域网与以太网概述书87页" title="七、3.6.1 局域网与以太网概述（书 87 页）">七、3.6.1 局域网与以太网概述</a><a class="lv3" href="#八362mac地址与以太网帧格式" title="八、3.6.2 MAC 地址与以太网帧格式">八、3.6.2 MAC 地址与以太网帧格式</a><a class="lv3" href="#九363csmaca与80211无线局域网" title="九、3.6.3 CSMA/CA 与 802.11 无线局域网">九、3.6.3 CSMA/CA 与 802.11 无…</a><a class="lv3" href="#十80211帧的地址123真题考过两次纯规则" title="十、802.11 帧的地址 1 / 2 / 3（真题考过两次，纯规则）">十、802.11 帧的地址 1 / 2 / 3</a><a class="lv3" href="#十一38链路层设备网桥与交换机书117页" title="十一、3.8 链路层设备：网桥与交换机（书 117 页）">十一、3.8 链路层设备：网桥与交换机</a><a class="lv2" href="#老师强调的考点_3" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_3" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_3" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_3" title="本章例题">本章例题</a><a class="lv3" href="#例1课后44题最小帧长反求传播时延" title="例 1（课后 44 题）最小帧长反求传播时延">例 1</a><a class="lv3" href="#例2课后37题帧长减小距离缩短" title="例 2（课后 37 题）帧长减小 → 距离缩短">例 2</a><a class="lv3" href="#例3课后41题含集线器延迟的距离计算" title="例 3（课后 41 题）含集线器延迟的距离计算">例 3</a><a class="lv3" href="#例4课后47题4次冲突后的最长等待" title="例 4（课后 47 题）4 次冲突后的最长等待">例 4</a><a class="lv3" href="#例5课后49题11次冲突自算2τ" title="例 5（课后 49 题）11 次冲突 + 自算 2τ">例 5</a><a class="lv3" href="#例6课后48题csmaca的nav计算" title="例 6（课后 48 题）CSMA/CA 的 NAV 计算">例 6</a><a class="lv3" href="#例7课后42题80211三地址" title="例 7（课后 42 题）802.11 三地址">例 7</a><a class="lv3" href="#例8课后20题直通式vs存储转发时延" title="例 8（课后 20 题）直通式 vs 存储转发时延">例 8</a><a class="lv3" href="#例9课后21题自学习泛洪" title="例 9（课后 21 题）自学习 + 泛洪">例 9</a><a class="lv2" href="#待补充_2" title="待补充">待补充</a><a class="lv2" href="#对应分p_3" title="对应分P">对应分P</a></div>
+<div class="grp" data-for="第4章网络层41网络层功能与转发42ipv4全节附43ipv644路由协议47网络层设备" data-name="第4章 网络层"><a class="lv2" href="#知识框架_4" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_4" title="知识点详解">知识点详解</a><a class="lv3" href="#一41网络层做什么两个视角的差别41书127页" title="一、4.1 网络层做什么：两个视角的差别（4.1，书 127 页）">一、4.1 网络层做什么：两个视角的差别</a><a class="lv3" href="#二412路由选择vs分组转发虚电路vs数据报" title="二、4.1.2 路由选择 vs 分组转发；虚电路 vs 数据报">二、4.1.2 路由选择 vs 分组转发；虚电路 v…</a><a class="lv3" href="#三421ip数据报首部每个字段都要看一眼就知道干什么" title="三、4.2.1 IP 数据报首部：每个字段都要&quot;看一眼就知道干什么&quot;">三、4.2.1 IP 数据报首部：每个字段都要&quot;看一…</a><a class="lv3" href="#四ip分片完整算例422书139页必考计算" title="四、IP 分片：完整算例（4.2.2，书 139 页，必考计算）">四、IP 分片：完整算例</a><a class="lv3" href="#五ip地址基础分类特殊地址私有地址423" title="五、IP 地址基础：分类、特殊地址、私有地址（4.2.3）">五、IP 地址基础：分类、特殊地址、私有地址</a><a class="lv3" href="#六子网划分与子网掩码424本章第一命门" title="六、子网划分与子网掩码（4.2.4，本章第一命门）">六、子网划分与子网掩码</a><a class="lv3" href="#七cidr无分类编址速查表425" title="七、CIDR 无分类编址 + 速查表（4.2.5）">七、CIDR 无分类编址 + 速查表</a><a class="lv3" href="#八路由聚合426本章第二命门" title="八、路由聚合（4.2.6，本章第二命门）">八、路由聚合</a><a class="lv3" href="#九默认网关与是否同网段的判定424真题高频" title="九、默认网关与&quot;是否同网段&quot;的判定（4.2.4，真题高频）">九、默认网关与&quot;是否同网段&quot;的判定</a><a class="lv3" href="#十路由表默认路由与最长前缀匹配427" title="十、路由表、默认路由与最长前缀匹配（4.2.7）">十、路由表、默认路由与最长前缀匹配</a><a class="lv3" href="#十一nat网络地址转换428真题频率高" title="十一、NAT 网络地址转换（4.2.8，真题频率高）">十一、NAT 网络地址转换</a><a class="lv3" href="#十二arp地址解析协议429大题小问常考" title="十二、ARP 地址解析协议（4.2.9，大题小问常考）">十二、ARP 地址解析协议</a><a class="lv3" href="#十三dhcp动态主机配置协议4210" title="十三、DHCP 动态主机配置协议（4.2.10）">十三、DHCP 动态主机配置协议</a><a class="lv3" href="#十四icmp网际控制报文协议4211" title="十四、ICMP 网际控制报文协议（4.2.11）">十四、ICMP 网际控制报文协议</a><a class="lv3" href="#十五ipv6变化点43教材补充课程明确第一轮跳过" title="十五、IPv6：变化点（4.3，教材补充；课程明确第一轮跳过）">十五、IPv6：变化点</a><a class="lv3" href="#十六路由算法与ripospfbgp44教材补充课程留到强化" title="十六、路由算法与 RIP / OSPF / BGP（4.4，教材补充；课程留到强化）">十六、路由算法与 RIP / OSPF / BGP</a><a class="lv3" href="#十七47网络层设备冲突域与广播域书214页" title="十七、4.7 网络层设备：冲突域与广播域（书 214 页）">十七、4.7 网络层设备：冲突域与广播域</a><a class="lv2" href="#老师强调的考点_4" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_4" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_4" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_4" title="本章例题">本章例题</a><a class="lv3" href="#例1老师原题分片4000bmtu1500" title="例 1（老师原题）分片：4000 B / MTU 1500">例 1</a><a class="lv3" href="#例2老师反例mtu800的分片" title="例 2（老师反例）MTU=800 的分片">例 2</a><a class="lv3" href="#例3课后50题掩码反推子网数与主机数" title="例 3（课后 50 题）掩码反推子网数与主机数">例 3</a><a class="lv3" href="#例4课后60题按子网数反求主机数" title="例 4（课后 60 题）按子网数反求主机数">例 4</a><a class="lv3" href="#例5课后53题两个25聚合" title="例 5（课后 53 题）两个 /25 聚合">例 5</a><a class="lv3" href="#例6课后62题四个21聚合" title="例 6（课后 62 题）四个 /21 聚合">例 6</a><a class="lv3" href="#例7课后57题最长前缀匹配含三种变式" title="例 7（课后 57 题）最长前缀匹配（含三种变式）">例 7</a><a class="lv3" href="#例8课后58题默认网关配置错误" title="例 8（课后 58 题）默认网关配置错误">例 8</a><a class="lv3" href="#例9课后69题30链路求对端地址" title="例 9（课后 69 题）/30 链路求对端地址">例 9</a><a class="lv3" href="#例10课后5254题广播地址与收到的主机数" title="例 10（课后 52、54 题）广播地址与收到的主机数">例 10</a><a class="lv3" href="#例11课后大题16题nat四阶段地址变化" title="例 11（课后大题 16 题）NAT 四阶段地址变化">例 11</a><a class="lv3" href="#例12课后63题ip不变mac逐跳变" title="例 12（课后 63 题）IP 不变、MAC 逐跳变">例 12</a><a class="lv3" href="#例13课后72题dhcp请求报文的源目的地址" title="例 13（课后 72 题）DHCP 请求报文的源/目的地址">例 13</a><a class="lv2" href="#待补充_3" title="待补充">待补充</a><a class="lv2" href="#对应分p_4" title="对应分P">对应分P</a></div>
+<div class="grp" data-for="第5章传输层51传输层提供的服务52udp53tcp" data-name="第5章 传输层"><a class="lv2" href="#知识框架_5" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_5" title="知识点详解">知识点详解</a><a class="lv3" href="#一传输层解决什么问题51书224页" title="一、传输层解决什么问题（5.1，书 224 页）">一、传输层解决什么问题</a><a class="lv3" href="#二复用与分用512" title="二、复用与分用（5.1.2）">二、复用与分用</a><a class="lv3" href="#三端口号与套接字512" title="三、端口号与套接字（5.1.2）">三、端口号与套接字</a><a class="lv3" href="#四udp的特点与首部52书226227页" title="四、UDP 的特点与首部（5.2，书 226~227 页）">四、UDP 的特点与首部</a><a class="lv3" href="#五udp校验和的计算522" title="五、UDP 校验和的计算（5.2.2）">五、UDP 校验和的计算</a><a class="lv3" href="#六tcp的特点与首部531书233235页" title="六、TCP 的特点与首部（5.3.1，书 233~235 页）">六、TCP 的特点与首部</a><a class="lv3" href="#七序号与确认号全章地基" title="七、序号与确认号（全章地基）">七、序号与确认号</a><a class="lv3" href="#八三次握手532书235236页" title="八、三次握手（5.3.2，书 235~236 页）">八、三次握手</a><a class="lv3" href="#九四次挥手与状态532书236237页" title="九、四次挥手与状态（5.3.2，书 236~237 页）">九、四次挥手与状态</a><a class="lv3" href="#十可靠传输超时重传与快重传533书237页" title="十、可靠传输：超时重传与快重传（5.3.3，书 237 页）">十、可靠传输：超时重传与快重传</a><a class="lv3" href="#十一流量控制与滑动窗口534书238239页" title="十一、流量控制与滑动窗口（5.3.4，书 238~239 页）">十一、流量控制与滑动窗口</a><a class="lv3" href="#十二拥塞控制535书240241页必考大题" title="十二、拥塞控制（5.3.5，书 240~241 页，必考大题）">十二、拥塞控制</a><a class="lv3" href="#十三udp与tcp对比总表" title="十三、UDP 与 TCP 对比总表">十三、UDP 与 TCP 对比总表</a><a class="lv2" href="#老师强调的考点_5" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_5" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_5" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_5" title="本章例题">本章例题</a><a class="lv2" href="#对应分p_5" title="对应分P">对应分P</a></div>
+<div class="grp" data-for="第6章应用层61网络应用模型62dns63ftp64电子邮件65www与http" data-name="第6章 应用层"><a class="lv2" href="#知识框架_6" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_6" title="知识点详解">知识点详解</a><a class="lv3" href="#一cs与p2p模型61" title="一、C/S 与 P2P 模型（6.1）">一、C/S 与 P2P 模型</a><a class="lv3" href="#二dns的层次与查询62书266269页" title="二、DNS 的层次与查询（6.2，书 266~269 页）">二、DNS 的层次与查询</a><a class="lv3" href="#三ftp63书270页" title="三、FTP（6.3，书 270 页）">三、FTP</a><a class="lv3" href="#四电子邮件系统64书272275页" title="四、电子邮件系统（6.4，书 272~275 页）">四、电子邮件系统</a><a class="lv3" href="#五www与http的基本性质65书285287页" title="五、WWW 与 HTTP 的基本性质（6.5，书 285~287 页）">五、WWW 与 HTTP 的基本性质</a><a class="lv3" href="#六持续连接非持续连接与rtt计算652" title="六、持续连接、非持续连接与 RTT 计算（6.5.2）">六、持续连接、非持续连接与 RTT 计算</a><a class="lv2" href="#老师强调的考点_6" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_6" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_6" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_6" title="本章例题">本章例题</a><a class="lv2" href="#对应分p_6" title="对应分P">对应分P</a><a class="lv2" href="#待补充_4" title="待补充">待补充</a></div></aside>
+<button id="top" aria-label="回到顶部">↑</button>
 <script>
-const q = document.getElementById('q');
-const links = [...document.querySelectorAll('#toc a')];
-q.addEventListener('input', () => {
-  const v = q.value.trim().toLowerCase();
-  links.forEach(a => {
-    const hit = !v || a.textContent.toLowerCase().includes(v);
-    a.classList.toggle('hide', !hit);
-  });
-  if (v) {
-    links.forEach(a => { if (!a.classList.contains('hide')) a.style.display='block'; });
-  }
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const root=document.documentElement;
+const store={
+  get(k,d){try{return localStorage.getItem(k)??d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+};
+
+const qp=new URLSearchParams(location.search);
+if(qp.get('theme')==='dark'||store.get('theme','light')==='dark'){
+  root.setAttribute('data-theme','dark');$('#tTheme').textContent='日';
+}
+$('#tTheme').onclick=()=>{
+  const dark=root.getAttribute('data-theme')==='dark';
+  if(dark){root.removeAttribute('data-theme');store.set('theme','light');$('#tTheme').textContent='夜';}
+  else{root.setAttribute('data-theme','dark');store.set('theme','dark');$('#tTheme').textContent='日';}
+};
+
+let fs=parseFloat(store.get('size','16.5'));
+const applySize=()=>{root.style.setProperty('--size',fs+'px');store.set('size',fs)};
+applySize();
+$('#tBig').onclick=()=>{fs=Math.min(20,fs+0.5);applySize()};
+$('#tSmall').onclick=()=>{fs=Math.max(14,fs-0.5);applySize()};
+
+$('#burger').onclick=()=>$('#side').classList.toggle('open');
+$$('#side a').forEach(a=>a.addEventListener('click',()=>$('#side').classList.remove('open')));
+
+const chapters=$$('#side a');
+const q=$('#q');
+q.addEventListener('input',()=>{
+  const v=q.value.trim().toLowerCase();
+  chapters.forEach(a=>a.classList.toggle('hide', !!v && !a.textContent.toLowerCase().includes(v)));
+  $$('#out a').forEach(a=>a.classList.toggle('hide', !!v && !a.textContent.toLowerCase().includes(v)));
+  if(v) $$('#out .grp').forEach(g=>g.classList.add('on'));
 });
-q.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    const first = links.find(a => !a.classList.contains('hide'));
-    if (first) { first.click(); }
-  }
+q.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){const hit=chapters.find(a=>!a.classList.contains('hide'));if(hit)hit.click();}
+  if(e.key==='Escape'){q.value='';q.dispatchEvent(new Event('input'));q.blur();}
 });
 
-const subs = links.map(a => ({a, id: decodeURIComponent(a.getAttribute('href').slice(1))}));
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(en => {
-    if (en.isIntersecting) {
-      subs.forEach(s => s.a.classList.remove('active'));
-      const cur = subs.find(s => s.id === en.target.id);
-      if (cur) {
-        cur.a.classList.add('active');
-        const r = cur.a.getBoundingClientRect(), box = document.getElementById('toc').getBoundingClientRect();
-        if (r.top < box.top + 40 || r.bottom > box.bottom - 40) cur.a.scrollIntoView({block:'center'});
+const chIds=new Set(chapters.map(a=>a.getAttribute('href').slice(1)));
+const chs=$$('#doc h1[id]').filter(h=>chIds.has(h.id));
+const crumb=$('#crumbCur');
+const groups=$$('#out .grp');
+function setChapter(id){
+  chapters.forEach(a=>a.classList.toggle('on', a.getAttribute('href')==='#'+id));
+  let name='';
+  groups.forEach(g=>{
+    const on=g.dataset.for===id;
+    g.classList.toggle('on',on);
+    if(on) name=g.dataset.name;
+  });
+  if(name&&crumb) crumb.textContent=name;
+}
+if(chs.length){
+  setChapter(chapters.length ? chapters[0].getAttribute('href').slice(1) : chs[0].id);
+  const ob1=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting) setChapter(e.target.id)});
+  },{rootMargin:'-12% 0px -78% 0px'});
+  chs.forEach(h=>ob1.observe(h));
+}
+
+const links=$$('#out a[href^="#"]');
+const heads=$$('#doc h2[id],#doc h3[id]');
+if(heads.length&&links.length){
+  const ob2=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        links.forEach(a=>a.classList.toggle('on', a.getAttribute('href')==='#'+e.target.id));
       }
-    }
-  });
-}, {rootMargin: '-10% 0px -80% 0px'});
-subs.forEach(s => { const el = document.getElementById(s.id); if (el) obs.observe(el); });
+    });
+  },{rootMargin:'-10% 0px -72% 0px'});
+  heads.forEach(h=>ob2.observe(h));
+}
 
-const bar = document.querySelector('#bar i');
-window.addEventListener('scroll', () => {
-  const h = document.documentElement.scrollHeight - innerHeight;
-  bar.style.width = (h > 0 ? (scrollY / h * 100) : 0) + '%';
-  document.getElementById('toTop').style.display = scrollY > 600 ? 'block' : 'none';
+heads.forEach(h=>{
+  const a=document.createElement('a');
+  a.className='ah'; a.href='#'+h.id; a.textContent='#';
+  a.onclick=e=>{e.preventDefault();history.replaceState(null,'','#'+h.id);
+    if(navigator.clipboard) navigator.clipboard.writeText(location.href)};
+  h.appendChild(a);
 });
-document.getElementById('toTop').onclick = () => scrollTo({top:0, behavior:'smooth'});
-document.getElementById('menu').onclick = () => document.getElementById('side').classList.toggle('open');
+
+$$('#doc table').forEach(t=>{
+  const w=document.createElement('div');
+  w.className='tbl';
+  t.parentNode.insertBefore(w,t);
+  w.appendChild(t);
+});
+
+const prog=$('#prog'), topBtn=$('#top');
+addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-innerHeight;
+  prog.style.width=(h>0?scrollY/h*100:0)+'%';
+  topBtn.style.display=scrollY>560?'block':'none';
+},{passive:true});
+topBtn.onclick=()=>scrollTo({top:0,behavior:'smooth'});
 </script>
 </body></html>

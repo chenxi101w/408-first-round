@@ -6,10 +6,16 @@
 <meta property="og:description" content="数据结构 / 计算机组成原理 / 操作系统 / 计算机网络，195 个分P 课程整理成的考点笔记，约 54 万字。">
 <meta property="og:site_name" content="408 第一轮知识点库">
 <title>408 四科知识点库</title><style>
-:root{--bg:#f7f7f5;--panel:#fff;--ink:#1d1f21;--ink2:#52565c;--ink3:#8b9098;--line:#e4e4e0;--accent:#b23a2f;--soft:#fdf1ef}
+:root{--bg:#f7f7f5;--panel:#fff;--ink:#1d1f21;--ink2:#52565c;--ink3:#8b9098;--line:#e4e4e0;--accent:#b23a2f;--soft:#fdf1ef
+  ;--hover:#f2f2ee}
+html[data-theme="dark"]{--bg:#16181a;--panel:#1b1e20;--ink:#e9e7e3;--ink2:#b8b5b0;--ink3:#8b8984;
+  --line:#2c3033;--accent:#e07a6d;--soft:#2b1f1d;--hover:#262a2d}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;line-height:1.75}
 .wrap{max-width:1080px;margin:0 auto;padding:64px 28px 100px}
+#th{position:fixed;right:20px;top:18px;z-index:9;border:1px solid var(--line);background:var(--panel);
+  color:var(--ink2);border-radius:8px;height:32px;padding:0 12px;cursor:pointer;font-size:13px}
+#th:hover{background:var(--hover)}
 h1{font-size:32px;margin:0 0 10px;letter-spacing:.5px}
 .sub{color:var(--ink2);font-size:15px;margin-bottom:6px}
 .meta{color:var(--ink3);font-size:13px;margin-bottom:40px}
@@ -20,20 +26,24 @@ h1{font-size:32px;margin:0 0 10px;letter-spacing:.5px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:52px}
 .card{display:block;text-decoration:none;color:inherit;background:var(--panel);border:1px solid var(--line);
   border-radius:14px;padding:24px 24px 20px;transition:.18s;position:relative;overflow:hidden}
-.card:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.07);border-color:#d6d6d0}
+.card:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.07);border-color:var(--line)}
 .card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
 .card h2{font-size:19px;margin:0 0 6px}
 .score{font-size:12px;color:var(--accent);background:var(--soft);display:inline-block;padding:2px 9px;border-radius:20px;margin-bottom:14px}
 .card p{margin:6px 0;font-size:13.5px;color:var(--ink2)}
 .card .gap{font-size:12.5px;color:#a06a2c;background:#fdf7ec;border-radius:8px;padding:8px 10px;margin-top:14px}
+html[data-theme="dark"] .card .gap{background:#2b2418;color:#d8a860}
 .card .go{margin-top:16px;font-size:13px;color:var(--accent);font-weight:600}
 h3{font-size:17px;margin:44px 0 14px;padding-left:11px;border-left:4px solid var(--accent)}
 table{border-collapse:collapse;width:100%;background:var(--panel);font-size:14px}
 th,td{border:1px solid var(--line);padding:9px 13px;text-align:left}
-th{background:#f2f2ee}
+th{background:var(--hover)}
 .note{font-size:13px;color:var(--ink3);margin-top:14px}
 .footer{margin-top:60px;padding-top:22px;border-top:1px dashed var(--line);font-size:12.5px;color:var(--ink3)}
-</style></head><body><div class="wrap">
+code{background:var(--hover);padding:1px 5px;border-radius:4px;font-size:.9em}
+</style></head><body>
+<button id="th" title="切换夜间模式">夜</button>
+<div class="wrap">
 <h1>408 四科知识点库</h1>
 <div class="sub">全部内容由「复旦发哥带学 408」系列课程的字幕逐字整理而成</div>
 <div class="meta">2027 考研 · 生成于 2026-10-17</div>
@@ -96,4 +106,15 @@ th{background:#f2f2ee}
     <span style="color:#52565c">chenxi101w.github.io/408-first-round</span>
   </div>
 </div>
-</div></body></html>
+</div>
+
+<script>
+const r=document.documentElement,b=document.getElementById('th');
+const get=()=>{try{return localStorage.getItem('theme')}catch(e){return null}};
+const set=v=>{try{localStorage.setItem('theme',v)}catch(e){}};
+if(get()==='dark'||new URLSearchParams(location.search).get('theme')==='dark'){r.setAttribute('data-theme','dark');b.textContent='日'}
+b.onclick=()=>{const d=r.getAttribute('data-theme')==='dark';
+  if(d){r.removeAttribute('data-theme');set('light');b.textContent='夜'}
+  else{r.setAttribute('data-theme','dark');set('dark');b.textContent='日'}};
+</script>
+</body></html>

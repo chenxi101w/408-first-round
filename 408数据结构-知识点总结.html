@@ -9,121 +9,167 @@
 <meta name="twitter:card" content="summary">
 <title>408 数据结构 · 知识点总结</title><style>
 :root{
-  --bg:#f7f7f5; --panel:#ffffff; --ink:#1d1f21; --ink-2:#52565c; --ink-3:#8b9098;
-  --line:#e4e4e0; --accent:#b23a2f; --accent-soft:#fdf1ef; --code:#f4f4f1;
-  --mark:#fff2c2;
+  --bg:#ffffff; --bg-soft:#fafaf8; --bg-hover:#f2f2ee;
+  --ink:#1a1c1e; --ink2:#4a4f55; --ink3:#8a9098;
+  --line:#e8e8e4; --line-soft:#f1f1ee;
+  --accent:#b23a2f; --accent-soft:#fdf1ef;
+  --code-bg:#f7f6f3; --mark:#fff2c2;
+  --size:16.5px; --bar:56px; --left:264px; --right:232px;
+}
+html[data-theme="dark"]{
+  --bg:#16181a; --bg-soft:#1b1e20; --bg-hover:#262a2d;
+  --ink:#e9e7e3; --ink2:#b8b5b0; --ink3:#8b8984;
+  --line:#2c3033; --line-soft:#24282b;
+  --accent:#e07a6d; --accent-soft:#2b1f1d;
+  --code-bg:#1f2225; --mark:#4a3f16;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--bar) + 16px)}
 body{margin:0;background:var(--bg);color:var(--ink);
   font-family:"PingFang SC","Microsoft YaHei","Segoe UI",-apple-system,sans-serif;
-  font-size:16px;line-height:1.85;-webkit-font-smoothing:antialiased}
-#side{position:fixed;top:0;left:0;bottom:0;width:296px;background:var(--panel);
-  border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:20}
-#side .head{padding:18px 18px 12px;border-bottom:1px solid var(--line)}
-#side .head h1{font-size:15px;margin:0 0 10px;line-height:1.5;font-weight:700}
-#side .head .sub{font-size:12px;color:var(--ink-3);margin-top:6px}
-#q{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;
-  font-size:13px;outline:none;background:var(--bg);color:var(--ink)}
-#q:focus{border-color:var(--accent);background:#fff}
-#toc{flex:1;overflow-y:auto;padding:10px 8px 40px}
-#toc a{display:block;color:var(--ink-2);text-decoration:none;font-size:13.5px;
-  padding:4px 10px;border-radius:6px;line-height:1.5;border-left:2px solid transparent}
-#toc a:hover{background:var(--bg);color:var(--ink)}
-#toc a.lv1{font-weight:700;color:var(--ink);font-size:14px;margin-top:2px}
-#toc .grp{padding-bottom:6px;margin-bottom:4px;border-bottom:1px solid #f2f2ee}
-#toc .grp:last-child{border-bottom:0}
-#toc a.lv2{padding-left:22px}
-#toc a.lv3{padding-left:34px;font-size:13px;color:var(--ink-3)}
-#toc a.active{background:var(--accent-soft);color:var(--accent);border-left-color:var(--accent)}
-#toc a.hide{display:none}
-#bar{position:fixed;top:0;left:296px;right:0;height:3px;background:transparent;z-index:30}
-#bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .12s linear}
-main{margin-left:296px;padding:52px 56px 140px;max-width:1000px}
-article{background:var(--panel);padding:56px 64px 80px;border:1px solid var(--line);border-radius:14px}
-h1,h2,h3,h4{line-height:1.4;font-weight:700}
-article>h1:first-child{font-size:27px;margin:0 0 6px}
-h1{font-size:25px;margin:0 0 14px;padding-bottom:12px;border-bottom:2px solid var(--ink)}
-h1+h1{margin-top:48px}
-h2{font-size:20px;margin:34px 0 12px;padding-left:11px;border-left:4px solid var(--accent)}
-h3{font-size:17px;margin:26px 0 10px;color:#111}
-h4{font-size:15.5px;margin:20px 0 8px;color:var(--ink-2)}
-p{margin:12px 0}
-blockquote{margin:16px 0;padding:12px 18px;background:var(--accent-soft);
-  border-left:3px solid var(--accent);border-radius:0 8px 8px 0;color:var(--ink-2);font-size:14.5px}
+  font-size:var(--size);line-height:1.85;-webkit-font-smoothing:antialiased;
+  transition:background .18s,color .18s}
+a{color:var(--accent);text-decoration:none}
+
+#bar{position:fixed;top:0;left:0;right:0;height:var(--bar);z-index:60;
+  display:flex;align-items:center;gap:14px;padding:0 18px;
+  background:var(--bg);border-bottom:1px solid var(--line)}
+#prog{position:absolute;left:0;bottom:-1px;height:2px;width:0;background:var(--accent);transition:width .1s linear}
+#burger{display:none;border:1px solid var(--line);background:none;border-radius:7px;
+  width:34px;height:34px;cursor:pointer;color:var(--ink2);font-size:15px;line-height:1}
+.crumb{display:flex;align-items:center;gap:8px;font-size:13px;min-width:0}
+.crumb .sub{color:var(--ink3);white-space:nowrap}
+.crumb .sep{color:var(--ink3)}
+.crumb .cur{color:var(--ink);font-weight:700;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;max-width:44vw}
+.tools{margin-left:auto;display:flex;align-items:center;gap:8px}
+#q{width:180px;padding:7px 11px;border:1px solid var(--line);border-radius:8px;
+  background:var(--bg-soft);color:var(--ink);font-size:13px;outline:none}
+#q:focus{border-color:var(--accent);background:var(--bg)}
+.tbtn{border:1px solid var(--line);background:var(--bg-soft);color:var(--ink2);
+  border-radius:7px;height:32px;min-width:32px;padding:0 8px;cursor:pointer;font-size:13px;line-height:1}
+.tbtn:hover{background:var(--bg-hover);color:var(--ink)}
+
+#side{position:fixed;top:var(--bar);left:0;bottom:0;width:var(--left);z-index:50;
+  background:var(--bg-soft);border-right:1px solid var(--line);
+  overflow-y:auto;padding:22px 12px 60px}
+#side .cap{font-size:11.5px;letter-spacing:.08em;color:var(--ink3);margin:0 10px 10px;font-weight:700}
+#side a{display:block;font-size:13.5px;color:var(--ink2);padding:7px 10px;border-radius:7px;
+  line-height:1.5;margin-bottom:2px;border-left:2px solid transparent}
+#side a:hover{background:var(--bg-hover);color:var(--ink)}
+#side a.on{background:var(--accent-soft);color:var(--accent);font-weight:700;border-left-color:var(--accent)}
+#side a.hide{display:none}
+#side .note{margin:22px 10px 0;padding-top:14px;border-top:1px solid var(--line);
+  font-size:11.5px;color:var(--ink3);line-height:1.7}
+
+main{margin-left:var(--left);margin-right:var(--right);padding-top:var(--bar)}
+#doc{max-width:760px;margin:0 auto;padding:38px 44px 120px}
+#out{position:fixed;top:var(--bar);right:0;width:var(--right);bottom:0;z-index:40;
+  overflow-y:auto;padding:26px 18px 60px 10px}
+#out .cap{font-size:11.5px;letter-spacing:.08em;color:var(--ink3);margin:0 0 10px 12px;font-weight:700}
+#out a{display:block;font-size:12.5px;color:var(--ink3);padding:4px 12px;line-height:1.5;
+  border-left:2px solid var(--line-soft)}
+#out a.lv3{padding-left:24px;font-size:12px}
+#out a:hover{color:var(--ink)}
+#out a.on{color:var(--accent);border-left-color:var(--accent);font-weight:700}
+#out .grp{display:none}
+#out .grp.on{display:block}
+#out a.hide{display:none}
+
+h1,h2,h3,h4{line-height:1.45;font-weight:700;scroll-margin-top:calc(var(--bar) + 20px)}
+h1{font-size:1.62em;margin:0 0 8px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+h1+h1{margin-top:64px}
+h2{font-size:1.28em;margin:44px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line-soft)}
+h3{font-size:1.09em;margin:30px 0 10px;color:var(--ink)}
+h4{font-size:1em;margin:22px 0 8px;color:var(--ink2)}
+h2 .ah,h3 .ah{opacity:0;margin-left:8px;font-weight:400;color:var(--ink3);font-size:.8em;transition:opacity .15s}
+h2:hover .ah,h3:hover .ah{opacity:1}
+p{margin:13px 0}
+ul,ol{padding-left:24px;margin:12px 0}
+li{margin:6px 0}
+li>ul,li>ol{margin:6px 0}
+strong{font-weight:700;color:var(--ink)}
+code{background:var(--code-bg);padding:2px 5px;border-radius:4px;font-size:.88em;
+  font-family:"Cascadia Mono",Consolas,Menlo,monospace;color:var(--accent)}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;
+  padding:16px 18px;overflow-x:auto;margin:18px 0;line-height:1.7}
+pre code{background:none;padding:0;color:var(--ink);font-size:.82em;line-height:1.75}
+blockquote{margin:18px 0;padding:12px 18px;background:var(--accent-soft);
+  border-left:3px solid var(--accent);border-radius:0 8px 8px 0;color:var(--ink2);font-size:.94em}
 blockquote p{margin:6px 0}
-ul,ol{padding-left:26px;margin:10px 0}
-li{margin:5px 0}
-strong{color:#000;font-weight:700}
-code{background:var(--code);padding:1.5px 5px;border-radius:4px;font-size:13.5px;
-  font-family:"Cascadia Mono",Consolas,Menlo,monospace;color:#a03a2d}
-pre{background:#fbfbf9;border:1px solid var(--line);border-radius:10px;padding:16px 18px;
-  overflow-x:auto;margin:16px 0}
-pre code{background:none;padding:0;color:var(--ink);font-size:13px;line-height:1.75}
-table{border-collapse:collapse;width:100%;margin:16px 0;font-size:14px;display:block;overflow-x:auto}
-th,td{border:1px solid var(--line);padding:8px 12px;text-align:left;vertical-align:top}
-th{background:#f2f2ee;font-weight:700;white-space:nowrap}
-tr:nth-child(even) td{background:#fbfbf9}
-hr{border:0;border-top:1px dashed var(--line);margin:44px 0}
-a{color:var(--accent)}
-mark{background:var(--mark);padding:0 2px}
-#toTop{position:fixed;right:26px;bottom:26px;width:42px;height:42px;border-radius:50%;
-  border:1px solid var(--line);background:#fff;color:var(--ink-2);cursor:pointer;font-size:16px;
-  box-shadow:0 4px 14px rgba(0,0,0,.08);display:none}
-@media (max-width:1080px){
-  #side{transform:translateX(-100%);transition:transform .2s}
-  #side.open{transform:none;box-shadow:0 0 40px rgba(0,0,0,.15)}
-  main{margin-left:0;padding:40px 20px 100px}
-  article{padding:32px 22px 50px}
-  #bar{left:0}
-  #menu{display:block !important}
+table{border-collapse:collapse;width:100%;font-size:.9em}
+.tbl{overflow-x:auto;margin:18px 0}
+th,td{border:1px solid var(--line);padding:9px 13px;text-align:left;vertical-align:top}
+th{background:var(--bg-hover);font-weight:700;white-space:nowrap}
+tbody tr:nth-child(even) td{background:var(--bg-soft)}
+hr{border:0;border-top:1px solid var(--line-soft);margin:34px 0}
+mark{background:var(--mark);color:inherit;padding:0 2px}
+#top{position:fixed;right:calc(var(--right) + 18px);bottom:26px;width:38px;height:38px;
+  border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--ink2);
+  cursor:pointer;font-size:14px;display:none;z-index:45}
+#top:hover{background:var(--bg-hover)}
+
+@media (max-width:1180px){
+  main{margin-right:0}
+  #out{display:none}
+  #top{right:18px}
 }
-#menu{display:none;position:fixed;left:14px;top:12px;z-index:40;background:#fff;border:1px solid var(--line);
-  border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer}
+@media (max-width:900px){
+  :root{--bar:52px}
+  main{margin-left:0}
+  #doc{padding:26px 18px 100px;overflow-wrap:break-word}
+  #burger{display:block}
+  #side{transform:translateX(-100%);transition:transform .22s;box-shadow:0 0 40px rgba(0,0,0,.12)}
+  #side.open{transform:none}
+  #bar{gap:8px;padding:0 10px}
+  #q{width:74px;padding:6px 8px;font-size:12px}
+  .tbtn{min-width:27px;height:27px;padding:0 4px;font-size:12px}
+  .crumb{flex:1;min-width:0}
+  .crumb .sub{display:none}
+  .crumb .cur{max-width:30vw;font-size:12.5px}
+  .tools{gap:6px}
+  h1{font-size:1.38em}
+  h1+h1{margin-top:44px}
+  table{font-size:.82em}
+}
 @media print{
-  #side,#bar,#toTop,#menu{display:none}
-  main{margin:0;padding:0;max-width:none}
-  article{border:0;padding:0}
+  #bar,#side,#out,#top,#burger{display:none}
+  main{margin:0;padding:0}
+  #doc{max-width:none;padding:0}
   h1{page-break-before:always}
-  article>h1:first-child{page-break-before:avoid}
+  #doc>h1:first-child{page-break-before:avoid}
   pre,table,blockquote{page-break-inside:avoid}
+  body{font-size:11.5pt}
 }
 </style></head>
 <body>
-<button id="menu">目录</button>
-<div id="bar"><i></i></div>
-<aside id="side">
-  <div class="head">
-    <h1>408 数据结构 · 知识点总结</h1>
-    <input id="q" placeholder="搜索章节标题…（回车跳转）" autocomplete="off">
-    <div class="sub">基于 87 个分P 字幕整理 · 2026-10-17</div>
+<header id="bar">
+  <button id="burger" aria-label="目录">☰</button>
+  <div class="crumb"><span class="sub">数据结构</span><span class="sep">/</span><span class="cur" id="crumbCur">数据结构</span></div>
+  <div class="tools">
+    <input id="q" placeholder="搜索标题…" autocomplete="off" aria-label="搜索标题">
+    <button class="tbtn" id="tSmall" title="缩小字号">A−</button>
+    <button class="tbtn" id="tBig" title="放大字号">A+</button>
+    <button class="tbtn" id="tTheme" title="切换夜间模式">夜</button>
   </div>
-  <nav id="toc"><div class="grp"><a class="lv1" href="#总纲">总纲</a><a class="lv2" href="#一数据结构在408里的位置">一、数据结构在 408 里的位置</a><a class="lv2" href="#二八章知识地图含性价比评估">二、八章知识地图（含性价比评估）</a><a class="lv2" href="#三跨章高频考点top15">三、跨章高频考点 Top 15</a><a class="lv2" href="#四本课程未覆盖需自己补的部分">四、本课程未覆盖 / 需自己补的部分</a><a class="lv2" href="#五三阶段复习与刷题顺序">五、三阶段复习与刷题顺序</a><a class="lv2" href="#六笔记怎么用">六、笔记怎么用</a></div>
-<div class="grp"><a class="lv1" href="#第1章绪论11数据结构基本概念与三要素12算法与时间空间复杂度分析">第1章 绪论（1.1 数据结构基本概念与三要素、1.2 算法与时间/空间复杂度分析）</a><a class="lv2" href="#知识框架">知识框架</a><a class="lv2" href="#知识点详解">知识点详解</a><a class="lv3" href="#一数据结构的三要素111">一、数据结构的三要素（1.1.1）</a><a class="lv3" href="#二算法的基本概念与效率度量121">二、算法的基本概念与效率度量（1.2.1）</a><a class="lv3" href="#三while循环的时间复杂度122">三、while 循环的时间复杂度（1.2.2）</a><a class="lv3" href="#四双层for循环的时间复杂度123">四、双层 for 循环的时间复杂度（1.2.3）</a><a class="lv3" href="#五递归函数的时间复杂度124">五、递归函数的时间复杂度（1.2.4）</a><a class="lv3" href="#六空间复杂度小结">六、空间复杂度小结</a><a class="lv2" href="#老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题">本章例题</a><a class="lv2" href="#对应分p">对应分P</a></div>
-<div class="grp"><a class="lv1" href="#第4章串41串的定义与kmp算法">第4章 串（4.1 串的定义与 KMP 算法）</a><a class="lv2" href="#知识框架_1">知识框架</a><a class="lv2" href="#知识点详解_1">知识点详解</a><a class="lv3" href="#一串的基本概念与存储411前半">一、串的基本概念与存储（4.1.1 前半）</a><a class="lv3" href="#二朴素模式匹配bf">二、朴素模式匹配（BF）</a><a class="lv3" href="#三next数组的手算核心">三、next 数组的手算（核心）</a><a class="lv3" href="#四失配后的移动规则与滑动距离">四、失配后的移动规则与滑动距离</a><a class="lv3" href="#五nextval数组kmp优化">五、nextval 数组（KMP 优化）</a><a class="lv3" href="#六kmp的时间复杂度onm">六、KMP 的时间复杂度 O(n+m)</a><a class="lv2" href="#老师强调的考点_1">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_1">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_1">易错点与坑</a><a class="lv2" href="#本章例题_1">本章例题</a><a class="lv2" href="#对应分p_1">对应分P</a></div>
-<div class="grp"><a class="lv1" href="#第8章排序插入希尔冒泡快速选择堆归并基数外部排序">第8章 排序（插入/希尔/冒泡/快速/选择/堆/归并/基数/外部排序）</a><a class="lv2" href="#知识框架_2">知识框架</a><a class="lv2" href="#知识点详解_2">知识点详解</a><a class="lv3" href="#一基本概念81">一、基本概念（8.1）</a><a class="lv3" href="#二直接插入排序821">二、直接插入排序（8.2.1）</a><a class="lv3" href="#三折半插入排序822">三、折半插入排序（8.2.2）</a><a class="lv3" href="#四希尔排序823">四、希尔排序（8.2.3）</a><a class="lv3" href="#五冒泡排序831">五、冒泡排序（8.3.1）</a><a class="lv3" href="#六快速排序832重点">六、快速排序（8.3.2，重点）</a><a class="lv3" href="#七简单选择排序841">七、简单选择排序（8.4.1）</a><a class="lv3" href="#八堆排序842细节最多">八、堆排序（8.4.2，细节最多）</a><a class="lv3" href="#九归并排序851">九、归并排序（8.5.1）</a><a class="lv3" href="#十基数排序852">十、基数排序（8.5.2）</a><a class="lv3" href="#十一各种内部排序总表86必背">十一、各种内部排序总表（8.6，必背）</a><a class="lv3" href="#十二外部排序87">十二、外部排序（8.7）</a><a class="lv2" href="#老师强调的考点_2">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_2">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_2">易错点与坑</a><a class="lv2" href="#本章例题_2">本章例题</a><a class="lv2" href="#对应分p_2">对应分P</a><a class="lv2" href="#待补充">待补充</a></div>
-<div class="grp"><a class="lv1" href="#第2章线性表21线性表的定义和基本操作22顺序表23链表">第2章 线性表（2.1 线性表的定义和基本操作、2.2 顺序表、2.3 链表）</a><a class="lv2" href="#知识框架_3">知识框架</a><a class="lv2" href="#知识点详解_3">知识点详解</a><a class="lv3" href="#一211线性表的定义和基本操作">一、2.1.1 线性表的定义和基本操作</a><a class="lv3" href="#二221顺序表的定义与实现">二、2.2.1 顺序表的定义与实现</a><a class="lv3" href="#三231指针与结构体语法链表的语言基础">三、2.3.1 指针与结构体语法（链表的语言基础）</a><a class="lv3" href="#四232单链表的结点定义必须会默写">四、2.3.2 单链表的结点定义（必须会默写）</a><a class="lv3" href="#五233头指针与头结点">五、2.3.3 头指针与头结点</a><a class="lv3" href="#六234单链表的插入与删除指针步骤可照抄">六、2.3.4 单链表的插入与删除（指针步骤，可照抄）</a><a class="lv3" href="#七235双链表">七、2.3.5 双链表</a><a class="lv3" href="#八236循环单链表">八、2.3.6 循环单链表</a><a class="lv3" href="#九237循环双链表">九、2.3.7 循环双链表</a><a class="lv3" href="#十238静态链表">十、2.3.8 静态链表</a><a class="lv3" href="#十一239顺序表vs链表专设对比">十一、2.3.9 顺序表 vs 链表（专设对比）</a><a class="lv3" href="#十二2310选取最合适的链表">十二、2.3.10 选取最合适的链表</a><a class="lv3" href="#十三算法题模板一顺序表">十三、算法题模板（一）：顺序表</a><a class="lv3" href="#十四算法题模板二链表">十四、算法题模板（二）：链表</a><a class="lv2" href="#老师强调的考点_3">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_3">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_3">易错点与坑</a><a class="lv2" href="#本章例题_3">本章例题</a><a class="lv3" href="#例1课后13题选择平均o1的操作">例 1（课后 13 题·选择）平均 O(1) 的操作</a><a class="lv3" href="#例2课后第10题2010真题算法大题循环左移p位">例 2（课后第 10 题·2010 真题·算法大题）循环左移 p 位</a><a class="lv3" href="#例3课后第6题选择q与p之间插入s">例 3（课后第 6 题·选择）Q 与 P 之间插入 S</a><a class="lv3" href="#例443页36题选择四行代码的作用">例 4（43 页 36 题·选择）四行代码的作用</a><a class="lv3" href="#例5课后17题选择双链表插入的合法顺序">例 5（课后 17 题·选择）双链表插入的合法顺序</a><a class="lv3" href="#例635题选择双链表插入的补全">例 6（35 题·选择）双链表插入的补全</a><a class="lv3" href="#例72232题选择循环双链表的判空与删除">例 7（22、32 题·选择）循环双链表的判空与删除</a><a class="lv3" href="#例826题选择删除首元为on的循环单链表">例 8（26 题·选择）删除首元为 O(n) 的循环单链表</a><a class="lv3" href="#例927题选择headnextnexthead时表长">例 9（27 题·选择）head-&amp;gt;next-&amp;gt;next == head 时表长</a><a class="lv3" href="#例1034题选择带头结点循环单链表删首元">例 10（34 题·选择）带头结点循环单链表删首元</a><a class="lv3" href="#例1133题2016真题选择静态链表插入">例 11（33 题·2016 真题·选择）静态链表插入</a><a class="lv2" href="#对应分p_3">对应分P</a><a class="lv2" href="#待补充_1">待补充</a></div>
-<div class="grp"><a class="lv1" href="#第3章栈队列和数组31栈32队列33栈和队列的应用34数组与特殊矩阵">第3章 栈、队列和数组（3.1 栈 / 3.2 队列 / 3.3 栈和队列的应用 / 3.4 数组与特殊矩阵）</a><a class="lv2" href="#知识框架_4">知识框架</a><a class="lv2" href="#知识点详解_4">知识点详解</a><a class="lv3" href="#一栈的基本概念与顺序链式存储311">一、栈的基本概念与顺序/链式存储（3.1.1）</a><a class="lv3" href="#二共享栈312">二、共享栈（3.1.2）</a><a class="lv3" href="#三栈的入栈出栈分析313">三、栈的入栈出栈分析（3.1.3）</a><a class="lv3" href="#四队列的基本概念321">四、队列的基本概念（3.2.1）</a><a class="lv3" href="#五顺序队列与循环队列322">五、顺序队列与循环队列（3.2.2）</a><a class="lv3" href="#六链队与双端队列323">六、链队与双端队列（3.2.3）</a><a class="lv3" href="#七栈在括号匹配中的应用331">七、栈在括号匹配中的应用（3.3.1）</a><a class="lv3" href="#八中缀转后缀332">八、中缀转后缀（3.3.2）</a><a class="lv3" href="#九后缀表达式求值双栈直接求中缀值333">九、后缀表达式求值 / 双栈直接求中缀值（3.3.3）</a><a class="lv3" href="#十栈在递归与函数调用中的应用334">十、栈在递归与函数调用中的应用（3.3.4）</a><a class="lv3" href="#十一队列的应用335">十一、队列的应用（3.3.5）</a><a class="lv3" href="#十二一维二维数组的地址计算341">十二、一维/二维数组的地址计算（3.4.1）</a><a class="lv3" href="#十三特殊矩阵的压缩存储342">十三、特殊矩阵的压缩存储（3.4.2）</a><a class="lv2" href="#老师强调的考点_4">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_4">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_4">易错点与坑</a><a class="lv2" href="#本章例题_4">本章例题</a><a class="lv2" href="#对应分p_4">对应分P</a><a class="lv2" href="#待补充_2">待补充</a></div>
-<div class="grp"><a class="lv1" href="#第5章树与二叉树51树的基本概念52二叉树概念与存储53遍历与线索二叉树54树森林与二叉树55哈夫曼树与编码">第5章 树与二叉树（5.1 树的基本概念 / 5.2 二叉树概念与存储 / 5.3 遍历与线索二叉树 / 5.4 树森林与二叉树 / 5.5 哈夫曼树与编码）</a><a class="lv2" href="#知识框架_5">知识框架</a><a class="lv2" href="#知识点详解_5">知识点详解</a><a class="lv3" href="#一树的基本概念与性质511">一、树的基本概念与性质（5.1.1）</a><a class="lv3" href="#二二叉树的定义特殊形态与五大性质521">二、二叉树的定义、特殊形态与五大性质（5.2.1）</a><a class="lv3" href="#三二叉树的存储结构522523">三、二叉树的存储结构（5.2.2 / 5.2.3）</a><a class="lv3" href="#四二叉树的遍历531532">四、二叉树的遍历（5.3.1 / 5.3.2）</a><a class="lv3" href="#五线索二叉树535">五、线索二叉树（5.3.5）</a><a class="lv3" href="#六树的存储与树森林二叉树的转换541542">六、树的存储与树、森林、二叉树的转换（5.4.1 / 5.4.2）</a><a class="lv3" href="#七树与森林的遍历543">七、树与森林的遍历（5.4.3）</a><a class="lv3" href="#八哈夫曼树551">八、哈夫曼树（5.5.1）</a><a class="lv3" href="#九哈夫曼编码552">九、哈夫曼编码（5.5.2）</a><a class="lv2" href="#老师强调的考点_5">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_5">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_5">易错点与坑</a><a class="lv2" href="#本章例题_5">本章例题</a><a class="lv2" href="#对应分p_5">对应分P</a><a class="lv2" href="#待补充_3">待补充</a></div>
-<div class="grp"><a class="lv1" href="#第6章图61基本概念62存储结构63遍历64应用">第6章 图（6.1 基本概念、6.2 存储结构、6.3 遍历、6.4 应用）</a><a class="lv2" href="#知识框架_6">知识框架</a><a class="lv2" href="#知识点详解_6">知识点详解</a><a class="lv3" href="#一611图的基本概念">一、6.1.1 图的基本概念</a><a class="lv3" href="#二621邻接矩阵">二、6.2.1 邻接矩阵</a><a class="lv3" href="#三622邻接表">三、6.2.2 邻接表</a><a class="lv3" href="#四623十字链表有向图">四、6.2.3 十字链表（有向图）</a><a class="lv3" href="#五624邻接多重表无向图">五、6.2.4 邻接多重表（无向图）</a><a class="lv3" href="#六四种存储结构对比必背表">六、四种存储结构对比（必背表）</a><a class="lv3" href="#七63图的遍历">七、6.3 图的遍历</a><a class="lv3" href="#八641最小生成树mst">八、6.4.1 最小生成树（MST）</a><a class="lv3" href="#九642最短路径">九、6.4.2 最短路径</a><a class="lv3" href="#十643有向无环图描述表达式">十、6.4.3 有向无环图描述表达式</a><a class="lv3" href="#十一644拓扑排序">十一、6.4.4 拓扑排序</a><a class="lv3" href="#十二645关键路径aoe网">十二、6.4.5 关键路径（AOE 网）</a><a class="lv2" href="#老师强调的考点_6">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_6">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_6">易错点与坑</a><a class="lv2" href="#本章例题_6">本章例题</a><a class="lv2" href="#对应分p_6">对应分P</a><a class="lv2" href="#待补充_4">待补充</a></div>
-<div class="grp"><a class="lv1" href="#第7章查找71基本概念72顺序折半分块查找73树形查找74b树与b树75散列表">第7章 查找（7.1 基本概念、7.2 顺序/折半/分块查找、7.3 树形查找、7.4 B树与B+树、7.5 散列表）</a><a class="lv2" href="#知识框架_7">知识框架</a><a class="lv2" href="#知识点详解_7">知识点详解</a><a class="lv3" href="#一711查找的基本概念">一、7.1.1 查找的基本概念</a><a class="lv3" href="#二721顺序查找">二、7.2.1 顺序查找</a><a class="lv3" href="#三722折半查找的基本流程">三、7.2.2 折半查找的基本流程</a><a class="lv3" href="#四723折半查找判定树本章第一重点">四、7.2.3 折半查找判定树（本章第一重点）</a><a class="lv3" href="#五724分块查找索引顺序查找">五、7.2.4 分块查找（索引顺序查找）</a><a class="lv3" href="#六731732二叉排序树bst">六、7.3.1~7.3.2 二叉排序树（BST）</a><a class="lv3" href="#七733737平衡二叉树avl">七、7.3.3~7.3.7 平衡二叉树（AVL）</a><a class="lv3" href="#八741743b树">八、7.4.1~7.4.3 B 树</a><a class="lv3" href="#九744b树与b树的区别">九、7.4.4 B+ 树与 B 树的区别</a><a class="lv3" href="#十75散列表hashtable">十、7.5 散列表（Hash Table）</a><a class="lv2" href="#老师强调的考点_7">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_7">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_7">易错点与坑</a><a class="lv2" href="#本章例题_7">本章例题</a><a class="lv2" href="#对应分p_7">对应分P</a><a class="lv2" href="#待补充_5">待补充</a></div></nav>
-</aside>
-<main><article><h1 id="408数据结构知识点总结基于复旦发哥带学40887p课程">408 数据结构 · 知识点总结（基于「复旦发哥带学 408」87P 课程）</h1>
+  <div id="prog"></div>
+</header>
+<aside id="side"><div class="cap">章节目录</div><a class="ch" href="#总纲" title="总纲">总纲</a>
+<a class="ch" href="#第1章绪论11数据结构基本概念与三要素12算法与时间空间复杂度分析" title="第1章 绪论（1.1 数据结构基本概念与三要素、1.2 算法与时间/空间复杂度分析）">第1章 绪论</a>
+<a class="ch" href="#第2章线性表21线性表的定义和基本操作22顺序表23链表" title="第2章 线性表（2.1 线性表的定义和基本操作、2.2 顺序表、2.3 链表）">第2章 线性表</a>
+<a class="ch" href="#第3章栈队列和数组31栈32队列33栈和队列的应用34数组与特殊矩阵" title="第3章 栈、队列和数组（3.1 栈 / 3.2 队列 / 3.3 栈和队列的应用 / 3.4 数组与特殊矩阵）">第3章 栈、队列和数组</a>
+<a class="ch" href="#第4章串41串的定义与kmp算法" title="第4章 串（4.1 串的定义与 KMP 算法）">第4章 串</a>
+<a class="ch" href="#第5章树与二叉树51树的基本概念52二叉树概念与存储53遍历与线索二叉树54树森林与二叉树55哈夫曼树与编码" title="第5章 树与二叉树（5.1 树的基本概念 / 5.2 二叉树概念与存储 / 5.3 遍历与线索二叉树 / 5.4 树森林与二叉树 / 5.5 哈夫曼树与编码）">第5章 树与二叉树</a>
+<a class="ch" href="#第6章图61基本概念62存储结构63遍历64应用" title="第6章 图（6.1 基本概念、6.2 存储结构、6.3 遍历、6.4 应用）">第6章 图</a>
+<a class="ch" href="#第7章查找71基本概念72顺序折半分块查找73树形查找74b树与b树75散列表" title="第7章 查找（7.1 基本概念、7.2 顺序/折半/分块查找、7.3 树形查找、7.4 B树与B+树、7.5 散列表）">第7章 查找</a>
+<a class="ch" href="#第8章排序插入希尔冒泡快速选择堆归并基数外部排序" title="第8章 排序（插入/希尔/冒泡/快速/选择/堆/归并/基数/外部排序）">第8章 排序</a><div class="note">8 章 · 15.9 万字</div></aside>
+<main><article id="doc"><h1 id="408数据结构知识点总结基于复旦发哥带学40887p课程">408 数据结构 · 知识点总结（基于「复旦发哥带学 408」87P 课程）</h1>
 <blockquote>
 <p><strong>来源</strong>：B 站 BV1SiDYBeET5《2027考研408WD课本数据结构带学》
 <strong>素材</strong>：87 个分P 的 AI 字幕，约 42 万字，已落盘到同级目录（<code>.srt</code> + <code>.txt</code>）
 <strong>说明</strong>：字幕由 AI 生成，代码与符号存在同音误识（如 <code>-&gt;</code> 被读成"箭头"、下标被吞），笔记中已按上下文还原；无法确定的标注「原文存疑」。结论以教材与官方大纲为准。</p>
 </blockquote>
-<h2 id="目录">目录</h2>
-<ul>
-<li><a href="#总纲">总纲：科目定位 · 知识地图 · 高频考点 · 复习顺序</a></li>
-<li><a href="#第1章绪论11数据结构基本概念与三要素12算法与时间空间复杂度分析">第1章 绪论（1.1 数据结构基本概念与三要素、1.2 算法与时间/空间复杂度分析）</a></li>
-<li><a href="#第2章线性表21线性表的定义和基本操作22顺序表23链表">第2章 线性表（2.1 线性表的定义和基本操作、2.2 顺序表、2.3 链表）</a></li>
-<li><a href="#第3章栈队列和数组31栈32队列33栈和队列的应用34数组与特殊矩阵">第3章 栈、队列和数组（3.1 栈 / 3.2 队列 / 3.3 栈和队列的应用 / 3.4 数组与特殊矩阵）</a></li>
-<li><a href="#第5章树与二叉树51树的基本概念52二叉树概念与存储53遍历与线索二叉树54树森林与二叉树55哈夫曼树与编码">第5章 树与二叉树（5.1 树的基本概念 / 5.2 二叉树概念与存储 / 5.3 遍历与线索二叉树 / 5.4 树森林与二叉树 / 5.5 哈夫曼树与编码）</a></li>
-<li><a href="#第6章图61基本概念62存储结构63遍历64应用">第6章 图（6.1 基本概念、6.2 存储结构、6.3 遍历、6.4 应用）</a></li>
-<li><a href="#第7章查找71基本概念72顺序折半分块查找73树形查找74B树与B树75散列表">第7章 查找（7.1 基本概念、7.2 顺序/折半/分块查找、7.3 树形查找、7.4 B树与B+树、7.5 散列表）</a></li>
-</ul>
+
 <hr />
 <h1 id="总纲">总纲</h1>
 <hr />
@@ -860,1314 +906,12 @@ while (i != 1)
 </tbody>
 </table>
 <hr />
-<h1 id="第4章串41串的定义与kmp算法">第4章 串（4.1 串的定义与 KMP 算法）</h1>
-<blockquote>
-<p>408 中本章只考选择题（老师统计 KMP 至今考过三道），考点几乎全部集中在 <strong>next / nextval 数组的求法、失配后指针的走向、子串向右滑动的距离、匹配过程中的比较次数</strong>。KMP 理解不难但规则繁琐，属于"必须动手写三四遍"的知识点。覆盖分P：4.1.1。</p>
-</blockquote>
-<h2 id="知识框架_1">知识框架</h2>
-<pre><code>第4章 串
-├─ 4.1 串的定义与实现
-│  ├─ 基本概念：串、串长、空串、空格串、子串、主串、位置、串相等
-│  └─ 存储结构：定长顺序存储、堆分配存储、块链存储
-└─ 4.2 串的模式匹配
-   ├─ 朴素（BF）算法：逐位比较，失配后主串回退、子串归零
-   └─ KMP 算法
-      ├─ next 数组：next[j] = P[0..j−1] 的最长相等真前后缀长度
-      ├─ 失配规则：i 不动，j = next[j]；next[j]=1 时 i++、j=0
-      ├─ 滑动距离 = j − next[j]
-      ├─ nextval 数组（优化）：同字符连续回退时一步到位
-      └─ 复杂度：O(n+m)
-</code></pre>
-<h2 id="知识点详解_1">知识点详解</h2>
-<h3 id="一串的基本概念与存储411前半">一、串的基本概念与存储（4.1.1 前半）</h3>
-<ul>
-<li><strong>串</strong>：由零个或多个字符组成的有限序列，记 S = "a₁a₂…aₙ"。</li>
-<li><strong>串长</strong>：字符个数。<strong>空串</strong>：长度 0，记 ""；<strong>空格串</strong>：由一个或多个空格组成，长度不为 0（易错）。</li>
-<li><strong>子串 / 主串</strong>：串中任意个连续字符组成的子序列叫子串，包含子串的串叫主串。子串在主串中的<strong>位置</strong>用子串第一个字符在主串中的序号表示。</li>
-<li><strong>串相等</strong>：长度相同且对应位置字符全部相同（"abc" ≠ "abc "）。</li>
-<li><strong>存储结构</strong>：</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>方式</th>
-<th>特点</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>定长顺序存储</td>
-<td>用定长数组，可在 0 号单元存长度，或用 '\0' 结尾；超长会截断</td>
-</tr>
-<tr>
-<td>堆分配存储</td>
-<td>malloc 申请，长度可变，最常用</td>
-</tr>
-<tr>
-<td>块链存储</td>
-<td>每个结点存多个字符，存储密度高但插入删除麻烦</td>
-</tr>
-</tbody>
-</table>
-<h3 id="二朴素模式匹配bf">二、朴素模式匹配（BF）</h3>
-<p>从主串 T 的第 1 个位置起，与模式串 P 逐位比较；失配则<strong>主串指针回退到本趟起点的下一位、模式串指针归零</strong>，重新开始。</p>
-<ul>
-<li>最好情况：每趟首字符就失配，共比较 n−m+1 次 → <strong>O(n)</strong>。</li>
-<li>最坏情况：如 T = "000…001"、P = "000…001"，每趟都比到最后一个字符 → <strong>O(nm)</strong>。</li>
-</ul>
-<blockquote>
-<p>暴力法的两个"浪费"：①主串指针会回退（已经比过的字符又比一遍）；②子串每次从头开始（已经匹配成功的前缀信息被丢弃）。KMP 就是同时解决这两点。</p>
-</blockquote>
-<h3 id="三next数组的手算核心">三、next 数组的手算（核心）</h3>
-<p><strong>定义（本笔记采用的口径，与课程板书一致，下标从 0 开始）</strong></p>
-<blockquote>
-<p><code>next[j]</code> = 模式串 P[0..j−1] 这段前缀中，<strong>最长的"既等于真前缀、又等于真后缀"的串的长度</strong>。
-规定：<code>next[0] = 1</code>（哨兵，0 号位失配只能让主串前进）、<code>next[1] = 0</code>。</p>
-</blockquote>
-<p>含义：j 处失配时，P[0..next[j]−1] 已经和主串对应段相等，可直接从 P[next[j]] 继续比较，主串指针 i 不回退。</p>
-<p><strong>手算方法（错位对齐法）</strong>：求 next[j] 时，只看 j <strong>前面</strong>那段，把它自己错开一位上下对齐，找"同一条竖直线上完全相等"的最长长度；不相等就继续右移，直到只剩一个字符或完全无重叠，则为 0。</p>
-<blockquote>
-<p>关键：必须是<strong>完全相等</strong>，不能只看"有一个字母相同"。老师特别指出这是最常见的错法。</p>
-</blockquote>
-<p><strong>例：P = "abaabc"（下标 0～5，2015、2019 年真题用的就是它）</strong></p>
-<table>
-<thead>
-<tr>
-<th>j</th>
-<th>P[j]</th>
-<th>前面这段 P[0..j−1]</th>
-<th>最长相等真前后缀</th>
-<th>长度</th>
-<th>next[j]</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0</td>
-<td>a</td>
-<td>—（无前面）</td>
-<td>—</td>
-<td>规定</td>
-<td><strong>1</strong></td>
-</tr>
-<tr>
-<td>1</td>
-<td>b</td>
-<td>"a"</td>
-<td>无（真前后缀为空）</td>
-<td>规定</td>
-<td><strong>0</strong></td>
-</tr>
-<tr>
-<td>2</td>
-<td>a</td>
-<td>"ab"</td>
-<td>前缀{a,ab}、后缀{b,ab}，无相等</td>
-<td>0</td>
-<td><strong>0</strong></td>
-</tr>
-<tr>
-<td>3</td>
-<td>a</td>
-<td>"aba"</td>
-<td>"a" = "a"</td>
-<td>1</td>
-<td><strong>1</strong></td>
-</tr>
-<tr>
-<td>4</td>
-<td>b</td>
-<td>"abaa"</td>
-<td>后缀{a,aa,baa} 与前缀{a,ab,aba}，只有 "a"</td>
-<td>1</td>
-<td><strong>1</strong></td>
-</tr>
-<tr>
-<td>5</td>
-<td>c</td>
-<td>"abaab"</td>
-<td>"ab" = "ab"（后缀 ab,aab,baab）</td>
-<td>2</td>
-<td><strong>2</strong></td>
-</tr>
-</tbody>
-</table>
-<p>即 <strong>next = [1, 0, 0, 1, 1, 2]</strong>（与老师板书的"一零、零、一、一、二"完全一致）。</p>
-<p><strong>逐位推导细节（考场上照这个顺序写）</strong></p>
-<ul>
-<li>j=3：写 <code>a b a</code>，错开一位对齐 → 上行 <code>a b</code>、下行 <code>a</code>；先试长度 2（"ab" vs "ba"）不等；退到长度 1（"a" vs "a"）相等 → 1。</li>
-<li>j=4：<code>a b a a</code>，先试长度 3（"aba" vs "baa"）不等；长度 2（"ab" vs "aa"）不等；长度 1（"a" vs "a"）相等 → 1。</li>
-<li>j=5：<code>a b a a b</code>，长度 4（"abaa" vs "baab"）不等；长度 3（"aba" vs "aab"）不等；长度 2（"ab" vs "ab"）相等 → 2。</li>
-</ul>
-<p><strong>再练一个（老师课堂练习，P = "ababaaa"）</strong></p>
-<table>
-<thead>
-<tr>
-<th>j</th>
-<th>P[j]</th>
-<th>next[j]</th>
-<th>理由</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0</td>
-<td>a</td>
-<td>1</td>
-<td>规定</td>
-</tr>
-<tr>
-<td>1</td>
-<td>b</td>
-<td>0</td>
-<td>规定</td>
-</tr>
-<tr>
-<td>2</td>
-<td>a</td>
-<td>0</td>
-<td>"ab" 无相等前后缀</td>
-</tr>
-<tr>
-<td>3</td>
-<td>b</td>
-<td>1</td>
-<td>"aba" → "a"</td>
-</tr>
-<tr>
-<td>4</td>
-<td>a</td>
-<td>2</td>
-<td>"abab" → "ab"</td>
-</tr>
-<tr>
-<td>5</td>
-<td>a</td>
-<td>3</td>
-<td>"ababa" → "aba"</td>
-</tr>
-<tr>
-<td>6</td>
-<td>a</td>
-<td>1</td>
-<td>"ababaa" → 只有 "a"</td>
-</tr>
-</tbody>
-</table>
-<p><strong>下标口径的换算（必看）</strong>：王道教材用 1 开始的下标，规定 next[1]=0、next[2]=1，其值 = 相等前后缀长度 + 1。同一模式串 "abaabc" 在王道口径下为 <strong>[0,1,1,2,2,3]</strong>，与上表<strong>整体相差 1</strong>。</p>
-<ul>
-<li>老师原话意思：上下两行同时加 1，对应关系不变，退到的还是同一个字符；滑动距离 j−next[j] 也不变（j 和 next[j] 同时加 1，差不变）。</li>
-<li>答题时<strong>看清题目用哪套</strong>：题目给 1 开始的下标就必须写 0,1,1,2,2,3；给 0 开始就写 1,0,0,1,1,2。</li>
-</ul>
-<h3 id="四失配后的移动规则与滑动距离">四、失配后的移动规则与滑动距离</h3>
-<p><strong>规则</strong></p>
-<ol>
-<li>若 next[j] ≠ 1：<strong>主串指针 i 不动</strong>，令 j = next[j]，从 P[j] 处与 T[i] 重新比较。</li>
-<li>若 next[j] = 1：说明 j 前面没有任何可用的相等前后缀，<strong>i 前进一位、j 归零</strong>（等价于整个模式串右移一位后从首字符重比）。</li>
-<li><strong>滑动距离 = j − next[j]</strong>（0 开始下标；1 开始下标同样是 j − next[j]）。回退后 P[0..next[j]−1] 与 T[i−next[j]..i−1] 必然相等，这段不必再比。</li>
-</ol>
-<p><strong>例（真题 2015 / 2019，T = "abaabaabcabaabc"，P = "abaabc"）</strong></p>
-<ul>
-<li>前 5 个字符 a b a a b 全部匹配，第 6 次比较 T[5]='a' 与 P[5]='c' 失配，此时 i = 5、j = 5。</li>
-<li>next[5] = 2 ≠ 1 → i 保持 5，j 回到 2，子串右移 5−2 = <strong>3</strong> 位。</li>
-<li>答案：<strong>i = 5，j = 2</strong>；若问滑动距离则为 <strong>3</strong>（校验：右移 3 位后 P 对齐到 T[3..8] = "abaabc"，确实完全匹配）。</li>
-</ul>
-<p><strong>例（next[j] = 1 的情形）</strong>：若在 P 的 0 号位就失配，next[0] = 1 → i++、j=0，相当于模式串整体右移一位。</p>
-<h3 id="五nextval数组kmp优化">五、nextval 数组（KMP 优化）</h3>
-<p><strong>动机</strong>：若 P[j] 失配后回退到的 P[next[j]] <strong>与 P[j] 是同一个字符</strong>，那么这次比较必然再次失配，纯属白比。优化就是<strong>继续往前跳，一步到位</strong>。</p>
-<p><strong>规则</strong></p>
-<ul>
-<li>nextval[0] = 1，nextval[1] = 0；</li>
-<li>对 j ≥ 2：若 <strong>P[j] == P[next[j]]</strong>，则 <code>nextval[j] = nextval[next[j]]</code>（沿用前面已算好的值，注意用<strong>更新后</strong>的值）；</li>
-<li>否则 <code>nextval[j] = next[j]</code>（保持原值）。</li>
-</ul>
-<p><strong>对 P = "abaabc" 逐位推</strong></p>
-<table>
-<thead>
-<tr>
-<th>j</th>
-<th>P[j]</th>
-<th>next[j]</th>
-<th>P[next[j]]</th>
-<th>是否同字符</th>
-<th>nextval[j]</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0</td>
-<td>a</td>
-<td>1</td>
-<td>—</td>
-<td>—</td>
-<td><strong>1</strong>（规定）</td>
-</tr>
-<tr>
-<td>1</td>
-<td>b</td>
-<td>0</td>
-<td>—</td>
-<td>—</td>
-<td><strong>0</strong>（规定）</td>
-</tr>
-<tr>
-<td>2</td>
-<td>a</td>
-<td>0</td>
-<td>P[0]=a</td>
-<td>相同</td>
-<td>nextval[0] = <strong>1</strong></td>
-</tr>
-<tr>
-<td>3</td>
-<td>a</td>
-<td>1</td>
-<td>P[1]=b</td>
-<td>不同</td>
-<td><strong>1</strong></td>
-</tr>
-<tr>
-<td>4</td>
-<td>b</td>
-<td>1</td>
-<td>P[1]=b</td>
-<td>相同</td>
-<td>nextval[1] = <strong>0</strong></td>
-</tr>
-<tr>
-<td>5</td>
-<td>c</td>
-<td>2</td>
-<td>P[2]=a</td>
-<td>不同</td>
-<td><strong>2</strong></td>
-</tr>
-</tbody>
-</table>
-<p>即 <strong>nextval = [1, 0, 1, 1, 0, 2]</strong>。</p>
-<p><strong>对 P = "ababaaa"</strong></p>
-<p>next = [1,0,0,1,2,3,1] →</p>
-<table>
-<thead>
-<tr>
-<th>j</th>
-<th>P[j]</th>
-<th>next[j]</th>
-<th>P[next[j]]</th>
-<th>nextval[j]</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0</td>
-<td>a</td>
-<td>1</td>
-<td>—</td>
-<td>1</td>
-</tr>
-<tr>
-<td>1</td>
-<td>b</td>
-<td>0</td>
-<td>—</td>
-<td>0</td>
-</tr>
-<tr>
-<td>2</td>
-<td>a</td>
-<td>0</td>
-<td>a（同）</td>
-<td>1</td>
-</tr>
-<tr>
-<td>3</td>
-<td>b</td>
-<td>1</td>
-<td>b（同）</td>
-<td>0</td>
-</tr>
-<tr>
-<td>4</td>
-<td>a</td>
-<td>2</td>
-<td>a（同）</td>
-<td>1</td>
-</tr>
-<tr>
-<td>5</td>
-<td>a</td>
-<td>3</td>
-<td>b（不同）</td>
-<td>3</td>
-</tr>
-<tr>
-<td>6</td>
-<td>a</td>
-<td>1</td>
-<td>b（不同）</td>
-<td>1</td>
-</tr>
-</tbody>
-</table>
-<p>nextval = [1,0,1,0,1,3,1]。</p>
-<p><strong>用 nextval 的收益</strong>：同一失配位置上，普通 KMP 可能需要连续回退两次（滑 3 再滑 1），用 nextval 一次滑到位（滑 4）。滑动距离仍按 <strong>j − nextval[j]</strong> 计算。</p>
-<p><strong>注意</strong>：nextval[j]=1 的含义与 next[j]=1 完全相同——<strong>i++、j 归零</strong>。这是 2013 年那道"最长滑动距离"题设的陷阱：并不是所有失配都"主串不动"。</p>
-<h3 id="六kmp的时间复杂度onm">六、KMP 的时间复杂度 O(n+m)</h3>
-<ul>
-<li><strong>匹配阶段</strong>：i 单调不减，最多自增 n 次；j 每次失配<strong>至少减 1</strong>，而 j 的自增只能伴随 i 自增发生（每轮循环 i、j 同增 1），所以 j 自增总次数 ≤ n，从而<strong>回退总次数 ≤ n</strong>。整个 while 循环的迭代次数 ≤ 2n → <strong>O(n)</strong>。</li>
-<li><strong>求 next 阶段</strong>：j 从 1 走到 m−1，回退同样单调，总代价 <strong>O(m)</strong>；求 nextval 只需再扫一遍，O(m)。</li>
-<li>合计 <strong>O(n+m)</strong>，比朴素的 O(nm) 好在"主串指针永不回退"。</li>
-</ul>
-<blockquote>
-<p>注意：KMP 的优势体现在"主串很长、模式串有很多自重复"的场合；平均而言常数因子比 BF 大，考试只考复杂度结论与手算。</p>
-</blockquote>
-<h2 id="老师强调的考点_1">老师强调的考点</h2>
-<ol>
-<li><strong>next 数组的求法是"整个 KMP 里最重要的一步"</strong>，"其他东西理不理解也没关系，但这一步一定要会算"——选择题必考，且是后续题目的前提。</li>
-<li><strong>next 与 nextval 两套表都要会手算</strong>，且要能对同一模式串同时写出两行。</li>
-<li><strong>失配后 i、j 的取值</strong>（2015、2019 都考同一模式串）：考"下一次比较时 i 和 j 分别是多少"。</li>
-<li><strong>匹配到成功为止的比较次数</strong>（2019 真题）：答案为 6+4=10，老师强调"千万不要写成 6+3"，因为回退后<strong>当前位置还要再比一次</strong>。</li>
-<li><strong>子串向右滑动的距离</strong>（2013 真题）：用 j − next[j]（或 j − nextval[j]），要会求"最长滑动距离"及对应的失配下标。</li>
-<li>目前 KMP 考过 <strong>三道选择题</strong>，老师建议一定要学，"后面做真题卷、模拟卷大概率会遇到"。</li>
-<li>出题会用 1 开始或 0 开始两种下标，<strong>两种都要能对上答案</strong>。</li>
-</ol>
-<h2 id="快速技巧与口诀_1">快速技巧与口诀</h2>
-<ul>
-<li><strong>"第一个 1、第二个 0"</strong>：next[0]=1、next[1]=0，先把这两个写死，再从左往右推。</li>
-<li><strong>"只看前面、不看自己；错开一位、完全相等"</strong>：求 next[j] 的铁律。</li>
-<li><strong>"同字符就继承，不同字符就保留"</strong>：nextval 一句话规则；继承时用<strong>已更新</strong>的 nextval 值。</li>
-<li><strong>"非 1 主串不动，是 1 主串加一"</strong>：判断 i 是否前进只看 next（或 nextval）是否为 1。</li>
-<li><strong>滑动距离 = j − next[j]</strong>；若问"最长滑动距离"，把所有 j 的 j−nextval[j] 都算出来取最大。</li>
-<li><strong>比较次数不要用"滑了几位"去减</strong>：回退后当前位置要重新比，逐次累加最稳。</li>
-<li>熟练后可"心中默念前缀"而不写全表：从最长的可能长度往下试，第一个对上的就是答案。</li>
-</ul>
-<h2 id="易错点与坑_1">易错点与坑</h2>
-<ol>
-<li><strong>把"有重叠字符"当成"完全相等"</strong>：如 "AAB" 与自身错位后重叠两个字母但内容不同，必须继续右移，不能记 2。</li>
-<li><strong>next 与 nextval 混用下标口径</strong>：题目 1 开始却写 0,1,1,2,2,3 之外的答案，整题作废。</li>
-<li><strong>nextval 继承时用了旧的 next 值</strong>：必须用 <code>nextval[next[j]]</code>（已经优化过的），不是 <code>next[next[j]]</code>。</li>
-<li><strong>以为失配后主串一定不动</strong>：next[j]=1（或 nextval[j]=1）时要 i++、j 归零。</li>
-<li><strong>比较次数按"位移"算</strong>：2019 题若答 6+3=9 就错，正确是 6+4=10。</li>
-<li><strong>滑动距离用 next 却写成 nextval 的值</strong>（或反之）：题目说"修正后的 next"就用 nextval。</li>
-<li><strong>忘记 next[0] 是哨兵</strong>：它不是"长度 0"，而是"无法回退"的标志，参与 1 开始口径换算时会变成王道表的 next[1]=0。</li>
-<li><strong>空串与空格串混淆</strong>："" 长度为 0；" " 长度为 1。</li>
-</ol>
-<h2 id="本章例题_1">本章例题</h2>
-<p><strong>例1（2015 真题）</strong>：P = "abaabc"，T 中前 5 个字符匹配，第 6 次比较失配（i=j=5），问下次比较的 i、j。
-① 求 next = [1,0,0,1,1,2]；② next[5]=2≠1；③ i 不动 = 5，j = 2；④ 滑动距离 5−2=3。<strong>答：i=5，j=2（滑动 3 位）</strong>。</p>
-<p><strong>例2（2019 真题）</strong>：T = "abaabaabcabaabc"，P = "abaabc"，求匹配成功时的比较次数。
-① 逐位比 a-b-a-a-b 五次成功，第 6 次 T[5]='a' 与 P[5]='c' 失配 → 已比较 <strong>6</strong> 次；② next[5]=2，j 回 2、i 仍为 5；③ 再比 T[5]/P[2]、T[6]/P[3]、T[7]/P[4]、T[8]/P[5]，四次全中 → <strong>4</strong> 次；④ 合计 6+4=<strong>10 次</strong>，匹配位置为 T 的第 4 个字符起。</p>
-<p><strong>例3（2013 真题改编）</strong>：P = "abaabc" 的 nextval = [1,0,1,1,0,2]，求"子串向右滑动的最大距离"及对应失配下标。
-① 逐位算 j − nextval[j]：j=0→−1，j=1→1，j=2→1，j=3→2，j=4→4，j=5→3；② 最大值 <strong>4</strong>；③ 对应失配下标 <strong>j=4</strong>（第 5 个字符 'b'）。<strong>答：最大滑动距离 4，失配下标 4</strong>。</p>
-<p><strong>例4（课堂练习，next 表）</strong>：P = "ababaaa"，求 next 与 nextval。
-next = [1,0,0,1,2,3,1]；nextval = [1,0,1,0,1,3,1]。要点：j=6 时前缀 "ababaa" 只有 "a" 相等，故 next=1；j=5 时 P[5]='a' 与 P[next[5]]=P[3]='b' 不同，nextval 保持 3。</p>
-<h2 id="对应分p_1">对应分P</h2>
-<table>
-<thead>
-<tr>
-<th>文件名</th>
-<th>主题</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>37_4.1.1 KMP算法.txt</td>
-<td>串的概念、BF、next/nextval 手算、失配规则、滑动距离、2015/2019/2013 真题</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h1 id="第8章排序插入希尔冒泡快速选择堆归并基数外部排序">第8章 排序（插入/希尔/冒泡/快速/选择/堆/归并/基数/外部排序）</h1>
-<blockquote>
-<p>408 中本章<strong>只出选择题</strong>（个别年份外部排序出过大题），特点是"不难但细节极多"，是全书错误率最高的一章。考点集中在：每一趟的结果、比较/移动次数、稳定性、时空复杂度、堆的建立/插入/删除、外部排序的趟数与 I/O 次数。覆盖分P：排序1、排序2、排序3（外部排序）。</p>
-</blockquote>
-<h2 id="知识框架_2">知识框架</h2>
-<pre><code>第8章 排序
-├─ 8.1 基本概念
-│  ├─ 排序、关键字、稳定性
-│  ├─ 内部排序 / 外部排序
-│  ├─ 两个基本操作：比较、移动
-│  └─ 分类：插入类、交换类、选择类、归并类、基数类
-├─ 8.2 插入类
-│  ├─ 直接插入：从第2个元素起，n−1趟
-│  ├─ 折半插入：只优化比较次数，移动次数不变，仅顺序表
-│  └─ 希尔：增量分组、组内直接插入、最后增量必为1
-├─ 8.3 交换类
-│  ├─ 冒泡：每趟冒出一个极值；某趟无交换即有序
-│  └─ 快速：枢轴 + 双指针 + 分治；一次划分 vs 一趟
-├─ 8.4 选择类
-│  ├─ 简单选择：n−1趟，比较次数固定 n(n−1)/2
-│  └─ 堆排序（重点）：建堆 O(n)、插入只上比、删除往下调、反复取堆顶
-├─ 8.5 归并与基数
-│  ├─ 归并：二路归并、双指针、⌈log₂n⌉趟、O(n) 辅助空间
-│  └─ 基数：分配与收集、r 个队列、d 趟、O(d(n+r))
-├─ 8.6 各种内部排序的比较（总表）
-└─ 8.7 外部排序
-   ├─ 流程：生成初始归并段 → 多路归并（输入/输出缓冲区）
-   ├─ 归并趟数 ⌈log_k r⌉ 与 I/O 次数 2n(1+趟数)
-   ├─ 败者树：k 个叶子 + k−1 内部结点 + 冠军，每次 log₂k 次比较
-   ├─ 置换选择：工作区 m，生成初始归并段
-   └─ 最佳归并树：k 叉哈夫曼、补虚段、I/O = 2×WPL
-</code></pre>
-<h2 id="知识点详解_2">知识点详解</h2>
-<h3 id="一基本概念81">一、基本概念（8.1）</h3>
-<p><strong>稳定性</strong>：排序前关键字相等的两个记录 Rᵢ、Rⱼ（i&lt;j），排序后 Rᵢ 仍在 Rⱼ 之前，则称该算法<strong>稳定</strong>。</p>
-<p>老师举的例子：<code>6, 1, 5, 8, 4, 5̄</code>（带杠的 5 用来区分两个相等关键字）。</p>
-<ul>
-<li>排成 <code>1, 4, 5, 5̄, 6, 8</code>：两个 5 的相对次序未变 → 稳定；</li>
-<li>排成 <code>1, 4, 5̄, 5, 6, 8</code>：带杠的 5 跑到前面 → 不稳定。</li>
-</ul>
-<p><strong>内排序 / 外排序</strong>：所有元素都能进内存为内排序；需要频繁在内外存之间交换数据为外排序（8.7）。</p>
-<p><strong>两个基本操作</strong>：<strong>比较</strong>与<strong>移动</strong>。真题经常问"比较了多少次""移动了多少次"，必须能数。</p>
-<p><strong>分类</strong>：插入类（直接插入、折半插入、希尔）、交换类（冒泡、快速）、选择类（简单选择、堆）、归并类、基数类。</p>
-<h3 id="二直接插入排序821">二、直接插入排序（8.2.1）</h3>
-<p><strong>思想</strong>：把 L[1] 视为已排好序，从第 2 个元素起，依次把 L[i] 插入前面有序区的正确位置；比它大的元素统统后移一位。</p>
-<p><strong>要点</strong>：从<strong>第 2 个元素</strong>开始；共 <strong>n−1 趟</strong>；空间 O(1)（原地）；<strong>稳定</strong>（相等时不越过，插在其后）；顺序存储与链式存储均可。</p>
-<p><strong>具体例子：对 49, 38, 65, 97, 76, 13, 27 做直接插入排序</strong></p>
-<table>
-<thead>
-<tr>
-<th>趟</th>
-<th>待插入</th>
-<th>过程</th>
-<th>结果</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>初始</td>
-<td>—</td>
-<td>—</td>
-<td>49, 38, 65, 97, 76, 13, 27</td>
-</tr>
-<tr>
-<td>1</td>
-<td>38</td>
-<td>38&lt;49，49 后移，38 放首位</td>
-<td><strong>38, 49</strong>, 65, 97, 76, 13, 27</td>
-</tr>
-<tr>
-<td>2</td>
-<td>65</td>
-<td>65&gt;49，不动</td>
-<td>38, 49, <strong>65</strong>, 97, 76, 13, 27</td>
-</tr>
-<tr>
-<td>3</td>
-<td>97</td>
-<td>97&gt;65，不动</td>
-<td>38, 49, 65, <strong>97</strong>, 76, 13, 27</td>
-</tr>
-<tr>
-<td>4</td>
-<td>76</td>
-<td>76&lt;97 后移，76&gt;65 停</td>
-<td>38, 49, 65, <strong>76, 97</strong>, 13, 27</td>
-</tr>
-<tr>
-<td>5</td>
-<td>13</td>
-<td>比 97、76、65、49、38 都小，全部后移</td>
-<td><strong>13, 38, 49, 65, 76, 97</strong>, 27</td>
-</tr>
-<tr>
-<td>6</td>
-<td>27</td>
-<td>比 97…38 小、比 13 大，后移 5 个</td>
-<td><strong>13, 27, 38, 49, 65, 76, 97</strong></td>
-</tr>
-</tbody>
-</table>
-<p><strong>复杂度</strong>：最好情况（原序列已升序）每趟只比 1 次、不移动 → O(n)；最坏（逆序）比较次数 = 1+2+…+(n−1) = n(n−1)/2，移动次数同阶 → <strong>O(n²)</strong>；平均 O(n²)。</p>
-<h3 id="三折半插入排序822">三、折半插入排序（8.2.2）</h3>
-<p><strong>思想</strong>：有序区本身有序，找插入位置时用<strong>折半查找</strong>，找到位置后<strong>照样要一个个后移</strong>。</p>
-<p><strong>对 13 的插入过程</strong>（前面有序区 38, 49, 65, 76, 97）：low=1, high=5 → mid=3（65）&gt;13 → high=2 → mid=1（38）&gt;13 → high=0，插入位置为 1；随后 38、49、65、76、97 <strong>5 个元素全部后移</strong>。</p>
-<table>
-<thead>
-<tr>
-<th>项目</th>
-<th>直接插入</th>
-<th>折半插入</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>比较次数</td>
-<td>最坏 O(n²)</td>
-<td><strong>O(n log₂n)</strong></td>
-</tr>
-<tr>
-<td>移动次数</td>
-<td>O(n²)</td>
-<td><strong>O(n²)，一点没减少</strong></td>
-</tr>
-<tr>
-<td>存储要求</td>
-<td>顺序 / 链式</td>
-<td><strong>只能顺序表</strong>（折半查找要求随机存取）</td>
-</tr>
-<tr>
-<td>时间复杂度</td>
-<td>O(n²)</td>
-<td><strong>仍是 O(n²)</strong>（瓶颈在移动）</td>
-</tr>
-<tr>
-<td>稳定性</td>
-<td>稳定</td>
-<td>稳定</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>结论一句话：<strong>折半插入只改进了比较次数，移动次数并未减少。</strong></p>
-</blockquote>
-<h3 id="四希尔排序823">四、希尔排序（8.2.3）</h3>
-<p><strong>思想</strong>（缩小增量排序）：取一个增量 d，把相隔 d 的元素分成一组（<strong>增量是几就分成几组</strong>），组内做<strong>直接插入排序</strong>；然后缩小 d 重复，<strong>最后一趟增量必须为 1</strong>（此时全部元素为一组，做一次完整直接插入）。</p>
-<p><strong>具体例子：49, 38, 65, 97, 76, 13, 27，增量取 4 → 2 → 1</strong></p>
-<ul>
-<li><strong>第一趟 d=4</strong>：分组 {49,76}、{38,13}、{65,27}、{97}</li>
-<li>{49,76} 不变；{38,13}→{13,38}；{65,27}→{27,65}</li>
-<li>结果：<strong>49, 13, 27, 97, 76, 38, 65</strong></li>
-<li><strong>第二趟 d=2</strong>：分组 {49,27,76,65}→排序→{27,49,65,76}；{13,97,38}→{13,38,97}</li>
-<li>结果：<strong>27, 13, 49, 38, 65, 97, 76</strong></li>
-<li><strong>第三趟 d=1</strong>：整体直接插入 → <strong>13, 27, 38, 49, 65, 76, 97</strong></li>
-</ul>
-<p><strong>复杂度</strong>：依赖增量序列。最好 O(n)；平均约 O(n^1.3)；最坏 O(n²)（如 Hibbard 增量可到 O(n^1.5)，教材不深究）。空间 O(1)；<strong>不稳定</strong>（相同关键字可能被分到不同组而交换次序）；仅适合<strong>顺序存储</strong>（要按增量随机跳转取元素）。</p>
-<h3 id="五冒泡排序831">五、冒泡排序（8.3.1）</h3>
-<p><strong>思想</strong>：相邻两两比较，逆序就交换；每一趟把当前极值"冒"到一端。可以从下往上把最小的顶到最前，也可以从上往下把最大的沉到最后（<strong>不唯一</strong>）。</p>
-<p><strong>具体例子：49, 38, 65, 97, 76, 13, 27（从上往下，大的下沉）</strong></p>
-<p>第 1 趟：</p>
-<pre><code>49&gt;38 交换 → 38 49 65 97 76 13 27
-49&lt;65 不动
-65&lt;97 不动
-97&gt;76 交换 → 38 49 65 76 97 13 27
-97&gt;13 交换 → 38 49 65 76 13 97 27
-97&gt;27 交换 → 38 49 65 76 13 27 97
-</code></pre>
-<p><strong>一趟结果：38, 49, 65, 76, 13, 27, 97</strong>（97 到位，有序区长度 +1）</p>
-<p>后续趟（每趟少比一个）：</p>
-<table>
-<thead>
-<tr>
-<th>趟</th>
-<th>结果</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>2</td>
-<td>38, 49, 65, 13, 27, 76, 97</td>
-</tr>
-<tr>
-<td>3</td>
-<td>38, 49, 13, 27, 65, 76, 97</td>
-</tr>
-<tr>
-<td>4</td>
-<td>38, 13, 27, 49, 65, 76, 97</td>
-</tr>
-<tr>
-<td>5</td>
-<td>13, 27, 38, 49, 65, 76, 97</td>
-</tr>
-<tr>
-<td>6</td>
-<td>无交换 → 判定有序，提前结束</td>
-</tr>
-</tbody>
-</table>
-<p><strong>要点</strong>：<strong>某一趟没有发生交换即说明已有序，可提前结束</strong>（对 1,2,3,…,n 只需 1 趟）。比较次数最坏 n(n−1)/2；移动次数最坏 3n(n−1)/2（每次交换 3 次赋值）。空间 O(1)；<strong>稳定</strong>（相等不交换）；顺序/链式均可。</p>
-<h3 id="六快速排序832重点">六、快速排序（8.3.2，重点）</h3>
-<p><strong>四句话记住全部流程</strong>（老师说"快排的思想和代码高度一致"）：</p>
-<ol>
-<li><strong>双指针 + 第一个元素作枢轴</strong>；</li>
-<li><strong>初始方向从后往前</strong>；</li>
-<li><strong>每次发生交换，改变移动方向</strong>；</li>
-<li><strong>两指针相遇，把枢轴填入该位置</strong>。</li>
-</ol>
-<p><strong>具体例子：49, 38, 65, 97, 76, 13, 27，取 49 为枢轴</strong></p>
-<pre><code>初态（取出 49，i=1, j=7）：
-_  38  65  97  76  13  27
-j 从右往左：27 &lt; 49 → 27 填到 i 位，i→2
-27 38  65  97  76  13  _
-i 从左往右：38 &lt; 49 → i→3；65 &gt; 49 → 65 填到 j 位，j→6
-27 38  _  97  76  13  65
-j 从右往左：13 &lt; 49 → 13 填到 i 位，i→4
-27 38  13  97  76  _  65
-i 从左往右：97 &gt; 49 → 97 填到 j 位，j→5
-27 38  13  _  76  97  65
-j 从右往左：76 &gt; 49 → j→4
-i == j == 4 → 填入枢轴 49
-</code></pre>
-<p><strong>一趟（一次划分）结果：27, 38, 13, 49, 76, 97, 65</strong></p>
-<p>校验：左边 {27,38,13} 全 &lt; 49，右边 {76,97,65} 全 &gt; 49，49 已落到<strong>最终位置</strong>。</p>
-<p><strong>"一次划分"与"一趟"必须区分</strong>（18 题就考这个）：</p>
-<ul>
-<li><strong>一次划分</strong>：对一个子区间做一遍双指针，产生 1 个到位枢轴，把区间分成两半；</li>
-<li><strong>一趟</strong>：对<strong>当前所有</strong>尚未确定位置的元素各处理一遍。第一趟产生 1 个枢轴；第二趟对左右两个子区间各划分一次，产生 2 个枢轴；所以<strong>前两趟最多产生 3 个已就位元素</strong>。</li>
-</ul>
-<p><strong>复杂度与稳定性</strong>：最好/平均 O(n log n)；<strong>最坏 O(n²)</strong>；空间为递归栈，平均 O(log n)、最坏 O(n)；<strong>不稳定</strong>；适合<strong>顺序存储</strong>（要随机访问、双向扫描）。</p>
-<p><strong>为什么快排最坏是 O(n²)？</strong></p>
-<ul>
-<li>每次划分都把区间分成 (0, n−1) 这种极端不平衡（例：序列已升序、又固定取首元素为枢轴，则每趟只确定 1 个元素）；</li>
-<li>递归深度变成 n，第 k 层需扫描约 n−k 个元素；</li>
-<li>总比较次数 = n + (n−1) + … + 1 = n(n−1)/2 → <strong>O(n²)</strong>，同时栈深 O(n)。</li>
-<li>反之若每次划分较均匀（约 n/2 分），递归树高 log₂n、每层扫描 O(n) → O(n log n)。<strong>"最坏"来自划分极不平衡，而不是数据规模</strong>。</li>
-</ul>
-<h3 id="七简单选择排序841">七、简单选择排序（8.4.1）</h3>
-<p><strong>思想</strong>：第 i 趟从 L[i..n] 中<strong>选出关键字最小者</strong>，与 L[i] 交换；n−1 趟后有序。核心动作是"<strong>选择</strong>"，交换只是附带。</p>
-<p><strong>具体例子：49, 38, 65, 97, 76, 13, 27</strong></p>
-<ul>
-<li>第 1 趟：扫描 38、65、97、76、13、27 找最小 = 13（第 6 个），与 49 交换
-  → <strong>13, 38, 65, 97, 76, 49, 27</strong>（一趟结果）</li>
-<li>第 2 趟：剩下中最小 27 → <strong>13, 27, 65, 97, 76, 49, 38</strong></li>
-<li>第 3 趟：最小 38 → <strong>13, 27, 38, 97, 76, 49, 65</strong></li>
-<li>第 4 趟：最小 49 → <strong>13, 27, 38, 49, 76, 97, 65</strong></li>
-<li>第 5 趟：最小 65 → <strong>13, 27, 38, 49, 65, 97, 76</strong></li>
-<li>第 6 趟：最小 76 → <strong>13, 27, 38, 49, 65, 76, 97</strong></li>
-</ul>
-<p><strong>比较次数固定</strong>：(n−1)+(n−2)+…+1 = n(n−1)/2，<strong>与初始状态无关</strong> → 最好/平均/最坏全是 O(n²)。移动次数少（最多 n−1 次交换，3(n−1) 次赋值）。空间 O(1)；<strong>不稳定</strong>（交换会跨越相等元素）。</p>
-<h3 id="八堆排序842细节最多">八、堆排序（8.4.2，细节最多）</h3>
-<p><strong>定义</strong>：堆是<strong>完全二叉树</strong>，用<strong>顺序（数组）存储</strong>。</p>
-<ul>
-<li><strong>大根堆</strong>：每个结点都 ≥ 其左右孩子（只看孩子，不必逐层推子树，但可推出"每个结点 ≥ 整个子树"）；</li>
-<li><strong>小根堆</strong>：每个结点都 ≤ 其左右孩子。</li>
-</ul>
-<p>数组下标（1 开始）：结点 i 的孩子是 2i、2i+1，父结点是 ⌊i/2⌋。</p>
-<h4 id="8421建堆on">8.4.2.1 建堆（O(n)）</h4>
-<p><strong>规则四句话</strong>：完全二叉树倒着来 → 从<strong>第一个非叶子结点 ⌊n/2⌋</strong> 开始 → <strong>左右孩子参与比较</strong>（先挑出较大的孩子，再与父比较）→ 换下来的结点<strong>若下面还有孩子，要继续向下调整</strong>。</p>
-<p><strong>具体例子：49, 38, 65, 97, 76, 13, 27 建大根堆</strong></p>
-<p>数组：<code>1:49  2:38  3:65  4:97  5:76  6:13  7:27</code>，n=7，从 i=⌊7/2⌋=3 开始。</p>
-<table>
-<thead>
-<tr>
-<th>步骤</th>
-<th>操作</th>
-<th>结果</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>i=3（65）</td>
-<td>孩子 13、27，较大者 27 &lt; 65，不动</td>
-<td>49,38,65,97,76,13,27</td>
-</tr>
-<tr>
-<td>i=2（38）</td>
-<td>孩子 97、76，较大者 97 &gt; 38，交换；38 换到 4 号，无孩子，停</td>
-<td>49,<strong>97</strong>,65,<strong>38</strong>,76,13,27</td>
-</tr>
-<tr>
-<td>i=1（49）</td>
-<td>孩子 97、65，较大者 97 &gt; 49，交换；49 到 2 号继续比</td>
-<td><strong>97</strong>,49,65,38,76,13,27</td>
-</tr>
-<tr>
-<td>继续下沉 49</td>
-<td>孩子 38、76，较大者 76 &gt; 49，交换；49 到 5 号，无孩子，停</td>
-<td><strong>97, 76, 65, 38, 49, 13, 27</strong></td>
-</tr>
-</tbody>
-</table>
-<p>最终堆：<code>97, 76, 65, 38, 49, 13, 27</code>（校验：97≥76、65；76≥38、49；65≥13、27 ✓）</p>
-<p><strong>为什么建堆是 O(n) 而不是 O(n log n)？</strong></p>
-<ul>
-<li>直觉算法是"n 个结点各下沉一次，每次 O(log n)"→ O(n log n)，但这是<strong>上界过松</strong>；</li>
-<li>关键：<strong>越往下结点越多，可下沉的高度却越小</strong>。高度为 h 的结点最多有 ⌈n/2^(h+1)⌉ 个，每个最多下沉 h 层：</li>
-</ul>
-<pre><code>T(n) = Σ(h=0..log₂n) h · n/2^(h+1)
-     = (n/2) · Σ(h=0..∞) h/2^h
-     = (n/2) · 2                ← Σ h/2^h = 2
-     = O(n)
-</code></pre>
-<ul>
-<li>结论：<strong>建堆 O(n)</strong>；只有"每次删除堆顶后的调整"才是 O(log n)，n−1 次删除共 O(n log n)。这也是"建堆 + 排序"整体 O(n log n) 的由来。</li>
-</ul>
-<h4 id="8422插入只往上比">8.4.2.2 插入（只往上比）</h4>
-<p><strong>规则</strong>：新结点放到<strong>完全二叉树的最后一个位置</strong>（数组末尾），然后<strong>只与父结点比较、只向上调整</strong>；<strong>不需要左右孩子比较，也不需要向下调整</strong>。</p>
-<p>原因：原结构本来就是堆，被换下来的父结点一定不小于其原来的孩子，故无需下沉。</p>
-<p><strong>具体例子</strong>：大根堆 <code>50, 30, 40, 10, 20, 35</code>（n=6），插入 <strong>45</strong>。</p>
-<ol>
-<li>45 放到 7 号位，父结点 3 号 = 40，45 &gt; 40 → 交换 → <code>50,30,45,10,20,35,40</code>（比较 1 次）</li>
-<li>45 到 3 号位，父结点 1 号 = 50，45 &lt; 50 → 停止（比较 2 次）</li>
-<li>结果：<code>50, 30, 45, 10, 20, 35, 40</code>，共比较 <strong>2 次</strong>，无需与兄弟 30 比较。</li>
-</ol>
-<blockquote>
-<p>真题 16 题（插入 18）答案就是 2 次：18 与 10 比（交换），18 与 25 比（不换）。老师提醒："<strong>你是比完才知道不需要往上走</strong>"，不能只算 1 次。</p>
-</blockquote>
-<h4 id="8423删除往下调">8.4.2.3 删除（往下调）</h4>
-<p><strong>规则</strong>：用<strong>最后一个结点</strong>替换被删结点 → 从删除位置<strong>向下调整</strong>（左右孩子参与比较，挑较大者，若大于自己就交换）→ 换下来后<strong>若下面还有孩子，继续向下调整</strong>。</p>
-<p><strong>具体例子</strong>：大根堆 <code>50, 30, 45, 10, 20, 35</code>，删除堆顶 50。</p>
-<ol>
-<li>末尾 35 移到 1 号位 → <code>35, 30, 45, 10, 20</code></li>
-<li>35 的孩子 30、45，较大者 45（比较 1 次）；45 &gt; 35 → 交换（比较 2 次）→ <code>45, 30, 35, 10, 20</code></li>
-<li>35 到 3 号位，此时堆只剩 5 个元素，3 号位已无孩子，调整结束。</li>
-</ol>
-<blockquote>
-<p>若换下来的结点下面还有孩子（如 17 题删 8），即使"看起来不用换"也必须再比一次才知道，这就是那道题比较次数为 3 而不是 2 的原因。</p>
-</blockquote>
-<h4 id="8424用堆排序">8.4.2.4 用堆排序</h4>
-<p><strong>思路 = 建堆 + 反复"删除堆顶"</strong>：堆顶即当前最大值，取出放到数组末尾（与末尾元素交换），堆规模减 1，再向下调整；重复 n−1 次得到升序序列。</p>
-<p><strong>接上例（堆 <code>97,76,65,38,49,13,27</code>）第一趟</strong>：</p>
-<ol>
-<li>97 与末尾 27 交换 → <code>27,76,65,38,49,13 | 97</code></li>
-<li>27 下沉：孩子 76、65，较大者 76 &gt; 27 → 交换 → <code>76,27,65,38,49,13</code></li>
-<li>27 继续下沉：孩子 38、49，较大者 49 &gt; 27 → 交换 → <code>76,49,65,38,27,13</code></li>
-<li><strong>一趟结果：76, 49, 65, 38, 27, 13, 97</strong></li>
-</ol>
-<p><strong>复杂度</strong>：建堆 O(n)，n−1 次调整每次 O(log n) → 最好/平均/最坏均为 <strong>O(n log n)</strong>；空间 <strong>O(1)</strong>；<strong>不稳定</strong>；<strong>顺序存储</strong>（完全二叉树性质依赖下标）。</p>
-<h3 id="九归并排序851">九、归并排序（8.5.1）</h3>
-<p><strong>思想（二路归并）</strong>：先让每 2 个元素有序，再让每 4 个有序，翻倍合并，直到整体有序。合并两个有序段时用<strong>双指针</strong>，谁小取谁，某段取完后把另一段剩余整体搬过来。</p>
-<p><strong>具体例子：49, 38, 65, 97, 76, 13, 27</strong></p>
-<table>
-<thead>
-<tr>
-<th>趟</th>
-<th>合并动作</th>
-<th>结果</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>[49,38]→[38,49]；[65,97]→[65,97]；[76,13]→[13,76]；[27] 单独</td>
-<td><strong>38, 49, 65, 97, 13, 76, 27</strong></td>
-</tr>
-<tr>
-<td>2</td>
-<td>[38,49]+[65,97]→[38,49,65,97]；[13,76]+[27]→[13,27,76]</td>
-<td><strong>38, 49, 65, 97, 13, 27, 76</strong></td>
-</tr>
-<tr>
-<td>3</td>
-<td>两段合并</td>
-<td><strong>13, 27, 38, 49, 65, 76, 97</strong></td>
-</tr>
-</tbody>
-</table>
-<p><strong>趟数</strong>：每趟段长翻倍，⌈log₂n⌉ = ⌈log₂7⌉ = <strong>3 趟</strong>。</p>
-<p><strong>比较次数</strong>（真题爱考）：合并 [38,49,65,97] 与 [13,27,76] 时，依次比较 13/38、27/38、76/38、76/49、76/65、76/97 共 <strong>6 次</strong>（老师课上数的就是 6 次），最后 76 取完、右段空，左段剩余 97 直接搬。</p>
-<p><strong>复杂度</strong>：最好/平均/最坏都是 <strong>O(n log n)</strong>（与初始序列无关，划分永远对半）；空间 <strong>O(n)</strong>（辅助数组）；<strong>稳定</strong>；顺序、链式均可。</p>
-<p><strong>为什么归并稳定但要多 O(n) 空间？</strong></p>
-<ul>
-<li>稳定：合并时若两段首元素<strong>相等，优先取左段</strong>，左段元素原本就在前面，相对次序得以保持；</li>
-<li>多 O(n)：合并结果不能就地覆盖（会破坏尚未处理的元素），必须开一个长度 n 的辅助数组存放本趟合并结果，再整体拷回；这是"用空间换稳定 + 稳定 O(n log n)"的典型。</li>
-</ul>
-<h3 id="十基数排序852">十、基数排序（8.5.2）</h3>
-<p><strong>思想</strong>：<strong>分配 + 收集</strong>，按位从低位到高位（LSD）做 d 趟。每一位取值 0～9，需要 <strong>r 个队列</strong>（r 为基数，十进制 r=10），用链式队列以便"整串接入"。</p>
-<p><strong>具体例子</strong>：278, 109, 63, 930, 589, 184, 505, 269, 8, 83</p>
-<p><strong>第 1 趟（按个位分配，再 0→9 收集）</strong></p>
-<table>
-<thead>
-<tr>
-<th>队列</th>
-<th>0</th>
-<th>1</th>
-<th>2</th>
-<th>3</th>
-<th>4</th>
-<th>5</th>
-<th>6</th>
-<th>7</th>
-<th>8</th>
-<th>9</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>元素</td>
-<td>930</td>
-<td>—</td>
-<td>—</td>
-<td>63, 83</td>
-<td>184</td>
-<td>505</td>
-<td>—</td>
-<td>—</td>
-<td>278, 8</td>
-<td>109, 589, 269</td>
-</tr>
-</tbody>
-</table>
-<p>收集结果（<strong>一趟结果</strong>）：<strong>930, 63, 83, 184, 505, 278, 8, 109, 589, 269</strong>（个位已非降）</p>
-<p><strong>第 2 趟（按十位）</strong>：505, 8, 109（十位 0）→ 930（3）→ 63, 269（6）→ 278（7）→ 83, 184, 589（8）
-收集：<strong>505, 8, 109, 930, 63, 269, 278, 83, 184, 589</strong></p>
-<p><strong>第 3 趟（按百位）</strong>：8, 63, 83（0）→ 109, 184（1）→ 269, 278（2）→ 505, 589（5）→ 930（9）
-收集：<strong>8, 63, 83, 109, 184, 269, 278, 505, 589, 930</strong>（有序）</p>
-<p><strong>要点</strong>：分配必须<strong>一个一个</strong>放入队列；收集可以<strong>整串接到队尾</strong>（链式队列，O(r) 而非 O(n)）。相同位值保持原相对次序 → <strong>稳定</strong>。复杂度 <strong>O(d(n+r))</strong>：d 趟 ×（分配 n + 收集 r）；空间 O(r)（r 个队列头尾指针，不计元素本身）；顺序/链式均可。</p>
-<h3 id="十一各种内部排序总表86必背">十一、各种内部排序总表（8.6，必背）</h3>
-<table>
-<thead>
-<tr>
-<th>算法</th>
-<th>最好</th>
-<th>平均</th>
-<th>最坏</th>
-<th>辅助空间</th>
-<th>稳定性</th>
-<th>是否原地</th>
-<th>适用场景 / 存储</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>直接插入</td>
-<td><strong>O(n)</strong></td>
-<td>O(n²)</td>
-<td>O(n²)</td>
-<td>O(1)</td>
-<td><strong>稳定</strong></td>
-<td>是</td>
-<td>基本有序、n 小；顺序/链式</td>
-</tr>
-<tr>
-<td>折半插入</td>
-<td>O(n²)</td>
-<td>O(n²)</td>
-<td>O(n²)</td>
-<td>O(1)</td>
-<td>稳定</td>
-<td>是</td>
-<td>比较次数降到 O(n log n)，移动不变；<strong>仅顺序表</strong></td>
-</tr>
-<tr>
-<td>希尔</td>
-<td>O(n)</td>
-<td>~O(n^1.3)</td>
-<td>O(n²)</td>
-<td>O(1)</td>
-<td><strong>不稳定</strong></td>
-<td>是</td>
-<td>中等规模、增量跳跃；仅顺序表</td>
-</tr>
-<tr>
-<td>冒泡</td>
-<td><strong>O(n)</strong></td>
-<td>O(n²)</td>
-<td>O(n²)</td>
-<td>O(1)</td>
-<td><strong>稳定</strong></td>
-<td>是</td>
-<td>基本有序、n 小；顺序/链式</td>
-</tr>
-<tr>
-<td>快速</td>
-<td>O(n log n)</td>
-<td>O(n log n)</td>
-<td><strong>O(n²)</strong></td>
-<td>平均 O(log n)、最坏 O(n)</td>
-<td><strong>不稳定</strong></td>
-<td>是（不算栈）</td>
-<td>大规模、随机数据；顺序表（链式差）</td>
-</tr>
-<tr>
-<td>简单选择</td>
-<td>O(n²)</td>
-<td>O(n²)</td>
-<td>O(n²)</td>
-<td>O(1)</td>
-<td><strong>不稳定</strong></td>
-<td>是</td>
-<td>移动次数要求少、n 小；顺序/链式</td>
-</tr>
-<tr>
-<td>堆</td>
-<td>O(n log n)</td>
-<td>O(n log n)</td>
-<td>O(n log n)</td>
-<td>O(1)</td>
-<td><strong>不稳定</strong></td>
-<td>是</td>
-<td>要 O(1) 空间又要最坏 O(n log n)、Top-K；仅顺序</td>
-</tr>
-<tr>
-<td>归并</td>
-<td>O(n log n)</td>
-<td>O(n log n)</td>
-<td>O(n log n)</td>
-<td><strong>O(n)</strong></td>
-<td><strong>稳定</strong></td>
-<td>否</td>
-<td>要求稳定、可给辅助空间、外排序；顺序/链式</td>
-</tr>
-<tr>
-<td>基数</td>
-<td>O(d(n+r))</td>
-<td>O(d(n+r))</td>
-<td>O(d(n+r))</td>
-<td>O(r)</td>
-<td><strong>稳定</strong></td>
-<td>否（需队列）</td>
-<td>关键字可分解为有限位、位数少；顺序/链式</td>
-</tr>
-</tbody>
-</table>
-<p><strong>三个"为什么"（简答题式记忆点）</strong></p>
-<ol>
-<li><strong>为什么快排最坏 O(n²)</strong>：枢轴选取使划分极不平衡（如已有序 + 取首元素），递归深度 n，每层 O(n) 扫描，总 n+(n−1)+…+1 = O(n²)。</li>
-<li><strong>为什么堆排序建堆 O(n) 而非 O(n log n)</strong>：结点数随高度指数减少，高度 h 的结点约 n/2^(h+1) 个、每个下沉 ≤ h 层，Σ h/2^h = 2，总和 O(n)；只有后续 n−1 次删除调整才是 O(n log n)。</li>
-<li><strong>为什么归并稳定但要额外 O(n)</strong>：合并时相等取左段故稳定；合并结果必须写入辅助数组再拷回，无法就地完成。</li>
-</ol>
-<p><strong>一趟特征对照表（选项题高频）</strong></p>
-<table>
-<thead>
-<tr>
-<th>算法</th>
-<th>每一趟能确定什么</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>直接插入</td>
-<td>前 i+1 个元素局部有序（不保证到位）</td>
-</tr>
-<tr>
-<td>希尔</td>
-<td>间隔为 d 的每个子序列内部有序</td>
-</tr>
-<tr>
-<td>冒泡</td>
-<td>产生一个极值放到一端（有序区长度 +1）</td>
-</tr>
-<tr>
-<td>快速</td>
-<td>产生一个枢轴落到<strong>最终位置</strong>，左小右大</td>
-</tr>
-<tr>
-<td>简单选择</td>
-<td>产生当前最小值放到前端最终位置</td>
-</tr>
-<tr>
-<td>堆</td>
-<td>产生当前最大值放到末尾最终位置</td>
-</tr>
-<tr>
-<td>归并</td>
-<td>段长翻倍，每段内部有序</td>
-</tr>
-<tr>
-<td>基数</td>
-<td>按当前位（个/十/百）有序</td>
-</tr>
-</tbody>
-</table>
-<h3 id="十二外部排序87">十二、外部排序（8.7）</h3>
-<p><strong>为什么要外排序</strong>：记录太多，内存装不下（如 10TB 数据、内存只有几十 GB），不能一次读入排序。</p>
-<p><strong>8.7.1 基本流程（三段）</strong></p>
-<ol>
-<li><strong>生成初始归并段</strong>：按内存容量把文件分块读入，块内用内排序排好，写回外存；</li>
-<li><strong>多路归并</strong>：每次把 k 个归并段合并成一个更长的归并段；</li>
-<li><strong>重复归并</strong>，直到只剩一个归并段。</li>
-</ol>
-<p><strong>内存与外存以"磁盘块"为单位交换</strong>（不是字节）；归并时设 <strong>k 个输入缓冲区 + 1 个输出缓冲区</strong>（k 路归并就 k 个输入缓冲区）。输出缓冲区满了就写出，某个输入缓冲区空了就再读一个磁盘块进来。</p>
-<p><strong>老师举的例子</strong>：3 个有序段按磁盘块存放（每块 3 个记录），做<strong>三路归并</strong>——三个输入缓冲区各读 1 块，三个指针取最小者送入输出缓冲区，缓冲区满则写回磁盘，某段用完再补读一块。整个过程共 <strong>7 次读磁盘 + 7 次写磁盘</strong>（每个磁盘块读一次、写一次）。</p>
-<p><strong>8.7.2 归并趟数与 I/O 次数</strong></p>
-<ul>
-<li>设初始归并段 r 个、做 k 路归并，则<strong>归并趟数 = ⌈log_k r⌉</strong>；总 I/O 次数（以磁盘块计）≈ <strong>2n(1 + ⌈log_k r⌉)</strong>，其中 n 为总块数，系数 2 表示"读一遍 + 写一遍"。</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>r（初始段数）</th>
-<th>k（路数）</th>
-<th>⌈log_k r⌉</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>100</td>
-<td>2</td>
-<td>7</td>
-<td>log₂100 ≈ 6.64</td>
-</tr>
-<tr>
-<td>1000</td>
-<td>5</td>
-<td>5</td>
-<td>log₅1000 ≈ 4.29 → 5</td>
-</tr>
-<tr>
-<td>1000</td>
-<td>10</td>
-<td>3</td>
-<td>log₁₀1000 = 3</td>
-</tr>
-<tr>
-<td>120</td>
-<td>12</td>
-<td>2</td>
-<td>log₁₂120 ≈ 1.93 → 2</td>
-</tr>
-</tbody>
-</table>
-<p>例：n = 10000 块、r = 1000、k = 5 → I/O = 2×10000×(1+5) = <strong>120000 次</strong>；改成 k = 10 → 2×10000×(1+3) = <strong>80000 次</strong>。</p>
-<p><strong>减少 I/O 的两条路</strong>：① <strong>增大 k</strong>（多路归并，趟数按对数下降）；② <strong>减少 r</strong>（用置换选择排序生成更长的初始归并段）。</p>
-<p><strong>8.7.3 败者树</strong></p>
-<p><strong>作用</strong>：从 k 个归并段的当前记录中选最小，普通方法每输出一个记录要比较 <strong>k−1</strong> 次；败者树只需 <strong>⌈log₂k⌉</strong> 次。</p>
-<p><strong>结构（k=5）</strong>：共 <strong>k 个结点</strong>——1 个<strong>冠军结点</strong>（单独在最上面，存当前最小者的段号）+ <strong>k−1 = 4 个内部结点</strong>构成完全二叉树；<strong>叶子是 k 个归并段</strong>（各带一个指针指向其当前记录），<strong>结点内存放的是"归并段编号"，不是关键字</strong>。</p>
-<p><strong>初始化与调整规则</strong></p>
-<ol>
-<li>归并段编号 0 ~ k−1，<strong>每个内部结点初值置为 k</strong>（编号取不到 k），并假想第 k 段关键字为 <strong>−∞</strong>（求最大值时改 +∞）；</li>
-<li><strong>倒着调整</strong>：i 从 k−1 递减到 0，每次从该叶子向上走到根；</li>
-<li>每次比较两个"胜者"：<strong>关键字小者胜、继续上升；大者（败者）留在当前结点</strong>；相等时也让其上升；</li>
-<li>根结点的胜者写入<strong>冠军结点</strong>，即当前最小记录所在的归并段号；</li>
-<li>冠军段输出一个记录后，读入该段下一个记录，<strong>只需从该叶子沿路径重比 ⌈log₂k⌉ 次</strong>，不必全场重比。</li>
-</ol>
-<p><strong>例（5 路，各段当前值）</strong></p>
-<table>
-<thead>
-<tr>
-<th>段号</th>
-<th>0</th>
-<th>1</th>
-<th>2</th>
-<th>3</th>
-<th>4</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>当前值</td>
-<td>10</td>
-<td>9</td>
-<td>20</td>
-<td><strong>6</strong></td>
-<td>12</td>
-</tr>
-</tbody>
-</table>
-<p>建树（自 4 号向上、再 3、2、1、0 依次调整）后，冠军 = <strong>3 号（值 6）</strong>，因为 6 最小。输出 6、补入 15 后，仅沿 3 号叶子的路径重比（约 3 次 = ⌈log₂5⌉），冠军变为 <strong>1 号（值 9）</strong>。</p>
-<p><strong>比较次数对比</strong>：输出 n 个记录，普通方法约 (k−1)(n−1) 次；败者树约 n⌈log₂k⌉ 次。k 越大优势越明显（k=1000 时 999 次 → 约 10 次）。</p>
-<blockquote>
-<p>老师提醒：不要用"两两配对先比一轮"的简化画法，那种做法只在<strong>满二叉树</strong>（k 恰为 2 的幂）时结果正确，非满时比较路径会乱。</p>
-</blockquote>
-<p><strong>8.7.4 置换选择排序（生成初始归并段）</strong></p>
-<p><strong>作用</strong>：把"每块排好序"的定长归并段，变成<strong>长度不等、平均约为 2m</strong> 的更长的初始归并段（m 为工作区能容纳的记录数），从而减少 r、减少归并趟数。</p>
-<p><strong>规则</strong></p>
-<ol>
-<li>从外存读入 m 个记录填满<strong>工作区</strong>；</li>
-<li>从工作区中选"<strong>关键字 ≥ 当前段末元素</strong>"的最小者输出，并补入一个新记录；</li>
-<li>若工作区中已没有 ≥ 段末元素的记录，则本段结束，<strong>开新段</strong>（工作区中的记录留给下一段）；</li>
-<li>重复直到数据取完。</li>
-</ol>
-<p><strong>具体例子（m=3）</strong>：15, 9, 20, 4, 12, 18, 6</p>
-<table>
-<thead>
-<tr>
-<th>步骤</th>
-<th>工作区</th>
-<th>输出</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>初始</td>
-<td>15, 9, 20</td>
-<td>—</td>
-<td>读满 3 个</td>
-</tr>
-<tr>
-<td>1</td>
-<td>15, 20, <strong>4</strong></td>
-<td>9</td>
-<td>最小者 9 输出，补入 4</td>
-</tr>
-<tr>
-<td>2</td>
-<td>20, 4, <strong>12</strong></td>
-<td>15</td>
-<td>需 ≥9，最小是 15</td>
-</tr>
-<tr>
-<td>3</td>
-<td>4, 12, <strong>18</strong></td>
-<td>20</td>
-<td>需 ≥15，只有 20</td>
-</tr>
-<tr>
-<td>4</td>
-<td>4, 12, 18</td>
-<td>—</td>
-<td>没有 ≥20 的 → <strong>第 1 段结束：[9, 15, 20]</strong></td>
-</tr>
-<tr>
-<td>5</td>
-<td>12, 18, <strong>6</strong></td>
-<td>4</td>
-<td>新段开始，取最小 4</td>
-</tr>
-<tr>
-<td>6</td>
-<td>12, 18</td>
-<td>6</td>
-<td>需 ≥4，取 6</td>
-</tr>
-<tr>
-<td>7</td>
-<td>18</td>
-<td>12</td>
-<td></td>
-</tr>
-<tr>
-<td>8</td>
-<td>—</td>
-<td>18</td>
-<td><strong>第 2 段：[4, 6, 12, 18]</strong></td>
-</tr>
-</tbody>
-</table>
-<p>结论：7 个记录生成 <strong>2 个</strong>归并段，长度分别为 3 和 4。</p>
-<p><strong>2023 年真题（大题）两问的结论</strong>：</p>
-<ul>
-<li>第一个归并段的<strong>最大长度 = N</strong>（若整个文件本就有序，一段到底）；</li>
-<li>第一个归并段的<strong>最小长度 = m</strong>（前 m 个恰好是全局最大的 m 个时，输出一个后就没有更大的可接，只能结束该段）；</li>
-<li>平均长度约 <strong>2m</strong>（教材补充）。</li>
-</ul>
-<p><strong>8.7.5 最佳归并树（k 叉哈夫曼）</strong></p>
-<p><strong>核心结论</strong>：把每个归并段看成一个叶子，其<strong>权值 = 该段占用的磁盘块数</strong>；按 <strong>k 叉哈夫曼</strong>合并，可使<strong>总 I/O 次数最少</strong>，且</p>
-<blockquote>
-<p><strong>WPL = 归并过程读/写的总块数</strong>，<strong>总 I/O 次数 = 2 × WPL</strong>（读一次 + 写一次）。</p>
-</blockquote>
-<p><strong>补虚段</strong>：k 叉哈夫曼树要求"只有度 0 和度 k 的结点"，由 n₀ = (k−1)·n_k + 1 得 <strong>(n₀−1) 必须能被 (k−1) 整除</strong>。若 (n₀−1) mod (k−1) = u ≠ 0，则需补 <strong>(k−1−u)</strong> 个权值为 0 的虚段（相当于"长度为 0 的归并段"）。</p>
-<table>
-<thead>
-<tr>
-<th>情形</th>
-<th>计算</th>
-<th>需补虚段</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>n₀=120，k=12</td>
-<td>119 mod 11 = 9</td>
-<td>11−9 = <strong>2</strong> 个（2023 真题）</td>
-</tr>
-<tr>
-<td>n₀=6，k=3</td>
-<td>5 mod 2 = 1</td>
-<td>2−1 = <strong>1</strong> 个</td>
-</tr>
-<tr>
-<td>n₀=7，k=3</td>
-<td>6 mod 2 = 0</td>
-<td><strong>0</strong> 个</td>
-</tr>
-</tbody>
-</table>
-<p><strong>例（k=3，权值 2,3,5,6,7,8,18）</strong>：不用补虚段。</p>
-<ul>
-<li>取最小的三个：2+3+5 = 10；</li>
-<li>剩下 {6,7,8,10,18}，取 6+7+8 = 21；</li>
-<li>剩下 {10,18,21}，合并 = 49。</li>
-<li>WPL = 非叶结点之和 = 10+21+49 = <strong>80</strong>；总 I/O = 2×80 = <strong>160 块次</strong>。</li>
-<li>校验（叶子加权）：(2+3+5)×2 + (6+7+8)×2 + 18×1 = 20+42+18 = 80 ✓</li>
-</ul>
-<p><strong>反例对比（k=3，权值 1,2,3,4,5）</strong>：按顺序先并 3,4,5=12，再并 12,1,2=15，WPL = 27；按哈夫曼先并 1,2,3=6，再并 6,4,5=15，WPL = 21。<strong>每次选最短的 k 段合并，总 I/O 最少</strong>，这就是"最佳"的含义。</p>
-<p><strong>三者关系（老师最后的总结）</strong>：置换选择 → 生成尽量少而长的初始归并段；最佳归并树 → 决定先用哪些段合并（每次取最短的 k 个），使总 I/O 最少；败者树 → 在 k 路归并的每一步快速选出最小记录。三者共同服务于"外排序总时间最短"。</p>
-<h2 id="老师强调的考点_2">老师强调的考点</h2>
-<ol>
-<li><strong>本章只考选择题</strong>（个别年份外部排序出大题），但"内容不难、细节极多"，错误率高，"要把书上那个 49,38,65,97,76,13,27,49̄ 的例子看懂，这是最关键的"。</li>
-<li><strong>稳定性、时空复杂度、适用场景三件套必须背</strong>，8.6 有汇总表，"到时候直接背那个表"。</li>
-<li><strong>快排是重点</strong>，必须掌握"双指针 + 枢轴 + 交换换向 + 相遇填坑"，并且能区分<strong>一次划分</strong>与<strong>一趟</strong>（18 题年年有人错）。</li>
-<li><strong>堆排序细节最多</strong>：建堆（⌊n/2⌋ 起倒着调、左右比、换下来继续下沉）、插入（只往上比、不左右比、不下沉）、删除（末尾替换、往下调、左右比）三个动作的差异必考。</li>
-<li><strong>比较次数是高频小题</strong>：堆的插入 16 题（2 次）、删除 17 题（3 次）、归并 20 题、简单选择 n(n−1)/2。</li>
-<li><strong>希尔排序题两种问法</strong>：给结果猜增量、给增量写结果，都要会（14 年与 18 年同类题）。</li>
-<li><strong>外部排序是"整章最难"</strong>，基础阶段可后置，但<strong>置换选择排序 2023 年出过大题</strong>，"时间宽裕的情况下大纲上的东西尽量多学"。</li>
-<li>结论句要记：<strong>初始序列基本有序时，选直接插入或冒泡，最好情况 O(n)</strong>（全表只有这两个能达到 O(n)）。</li>
-<li>堆的插入与"建堆"是两回事：<strong>"依次插入" ≠ "一次性建堆"</strong>（20 题就设了这个陷阱，误按建堆做会选中干扰项 9875641）。</li>
-</ol>
-<h2 id="快速技巧与口诀_2">快速技巧与口诀</h2>
-<ul>
-<li><strong>插入类</strong>："从第二个开始，往前找位置，大的往后挪"。</li>
-<li><strong>希尔</strong>："增量是几就分几组，写几行竖着排"——验证增量时直接按增量写成若干行，每行一组，一眼看出是否组内有序。</li>
-<li><strong>冒泡</strong>："一趟一个极值；某趟没交换，直接收工"。</li>
-<li><strong>快排</strong>："挖坑填数、左右交替、相遇填枢轴"；<strong>换向只看是否发生了交换</strong>。</li>
-<li><strong>简单选择</strong>："选最小，换到位；比较次数永远是 n(n−1)/2"。</li>
-<li><strong>堆</strong>："建堆倒着调、左右挑大个、换下继续沉；插入只上比；删除末尾替、往下沉"。</li>
-<li><strong>归并</strong>："两两合并，段长翻倍，⌈log₂n⌉ 趟"。</li>
-<li><strong>基数</strong>："先个位、再十位、后百位；分配一个个放，收集一串串接"。</li>
-<li><strong>外排</strong>："先生成段、再多路并；趟数 ⌈log_k r⌉，I/O 两倍 WPL；k 叉哈夫曼要补零，补 (k−1)−余数 个"。</li>
-<li><strong>选算法</strong>：基本有序→插入/冒泡；要稳定→插入/冒泡/归并/基数；要 O(1) 空间又要最坏 n log n→堆；数据量大且随机→快排；外部→归并。</li>
-</ul>
-<h2 id="易错点与坑_2">易错点与坑</h2>
-<ol>
-<li><strong>"一趟"与"一次划分"混淆</strong>：快排第一趟只产生 1 个到位枢轴，第二趟产生 2 个；18 题按"每趟产生几个枢轴"倒推。</li>
-<li><strong>快排比较次数与交换方向</strong>：初始必须<strong>从后往前</strong>；只有发生交换才换向，没交换不换向。</li>
-<li><strong>堆的插入去做左右孩子比较</strong>：插入只与父结点比，比兄弟是多余的，会多算次数。</li>
-<li><strong>删除后忘记继续下沉</strong>：换下来的结点若下面还有孩子，必须继续比，即使"看起来不用换"也要比一次才知道（17 题 3 次的来源）。</li>
-<li><strong>"依次插入"当成"一次建堆"</strong>：前者每来一个元素调整一次，结果通常不同。</li>
-<li><strong>建堆从 1 号还是 ⌊n/2⌋ 号开始</strong>：从<strong>最后一个非叶子结点</strong> ⌊n/2⌋ 开始倒着调到 1，从叶子开始调是无效动作。</li>
-<li><strong>希尔增量最后不是 1</strong>：最后一趟增量必须为 1，否则不能保证整体有序。</li>
-<li><strong>稳定性判断错</strong>：希尔、快排、简单选择、堆都是<strong>不稳定</strong>；直接插入、折半插入、冒泡、归并、基数是稳定。</li>
-<li><strong>简单选择的时间复杂度以为与初始序列有关</strong>：比较次数恒为 n(n−1)/2，与初始状态无关。</li>
-<li><strong>归并趟数写成 log₂n 不取整</strong>：必须<strong>向上取整</strong>；比较次数不等于"移动次数"，也不等于 n。</li>
-<li><strong>基数排序空间写成 O(n)</strong>：只需 r 个队列的头尾指针，O(r)；时间是 O(d(n+r))，别丢 r。</li>
-<li><strong>外部排序 I/O 忘记乘 2</strong>：读写各一遍，总 I/O = 2×WPL；WPL 本身只是"块数"。</li>
-<li><strong>最佳归并树补虚段算反</strong>：补的是 <strong>(k−1) − 余数</strong> 个，不是余数本身。</li>
-<li><strong>败者树结点里存关键字</strong>：存的是<strong>归并段编号</strong>；冠军结点存当前最小段的编号。</li>
-<li><strong>折半插入以为移动次数也减少了</strong>：只减少比较次数，移动次数不变，时间仍是 O(n²)。</li>
-</ol>
-<h2 id="本章例题_2">本章例题</h2>
-<p><strong>例1（希尔，课后 20 题）</strong>：给出一趟排序结果，判断增量是 3 还是 5（选项只有这两个）。
-① 把原序列按增量<strong>竖着写成若干行</strong>，一行即一组：增量 5 就写 5 行、增量 3 就写 3 行；② 逐行检查是否组内有序；③ 增量为 5 时五行全部有序，增量为 3 时第一组（第 1、4、7、10 个元素）就已乱序，排除。<strong>答案：增量 = 5</strong>（该题选 D）。</p>
-<p><strong>例2（快排，19 题）</strong>：给一个序列，问哪个元素可能是一次划分后的枢轴。
-① 枢轴必须满足"左边全小于它、右边全大于它"；② 逐项检查，只有 <strong>81</strong> 满足（左边全 &lt;81、右边全 &gt;81）；③ 其余选项左侧或右侧存在比它大/小的元素，排除。<strong>答案：81</strong>。</p>
-<p><strong>例3（快排，20 题）</strong>：选项形如 <code>(…) 81 (…)</code>，问哪个可能是快排某趟结果。
-① 括号内<strong>不必有序</strong>（同一趟内左右子区间还没排）；② 但<strong>括号之间必须整体有序</strong>（左括号内全部 &lt; 枢轴 &lt; 右括号内全部）；③ 只有满足该性质的选项正确。<strong>答案：D</strong>（括号内无序、括号间有序）。</p>
-<p><strong>例4（快排，18 题）</strong>：给四个序列，判断哪个可能是快排<strong>第二趟</strong>结束后的结果。
-① 第一趟产生 1 个枢轴，第二趟在左右各产生 1 个 → 两趟后应至少有 <strong>2~3 个</strong>到位枢轴；② 找各选项中的"到位元素"（左小右大）；③ A 中 72、28 为两个到位枢轴，若 72 是第一趟枢轴，则第二趟在左侧产生 28，成立；④ D 只有 12、32 两个，无论如何安排都无法满足"第二趟左右各一个"。<strong>答案：A</strong>（第一趟枢轴 72，第二趟 28）。</p>
-<p><strong>例5（堆插入，对应 16 题）</strong>：大根堆 <code>25, 10, 20</code>，插入 18，问比较次数。
-① 18 放到末尾（4 号位），父结点是 2 号位的 10，比较 → 18 大，交换（第 1 次）→ <code>25, 18, 20, 10</code>；② 18 升到 2 号位，父结点 25 比较 → 18 小，停（第 2 次）；③ 全程<strong>未与兄弟结点比较</strong>。<strong>答案：2 次</strong>（第 2 次"不交换"也必须计入——"你是比完才知道不需要往上走"）。</p>
-<p><strong>例6（堆删除，对应 17 题）</strong>：小根堆 <code>8, 15, 10, 16, 20, 20, 18</code>，删除根 8，问比较次数。
-① 末尾 18 替换到根 → <code>18, 15, 10, 16, 20, 20</code>；② 左右孩子 15、10 比较 → 10 更小（第 1 次）；③ 10 与 18 比较 → 10 小，交换（第 2 次）→ <code>10, 15, 18, 16, 20, 20</code>；④ 18 被换到 3 号位，与其孩子 20 比较 → 18 小，不换（第 3 次）。<strong>答案：3 次</strong>；删除后 <code>10, 15, 18, 16, 20, 20</code> 仍是小根堆。</p>
-<p><strong>例7（堆，20 题，易错题）</strong>：给 7 个整数，问"<strong>依次插入</strong>"建堆后的结果。
-① 审题：题干是"依次插入一个元素就调整一次"，等价于连续做 7 次插入，<strong>不是</strong>一次性建堆；② 插入只与父结点比、只上浮；③ 一次性建堆（从 ⌊n/2⌋ 倒着调）得到的是 <code>9, 8, 7, 5, 6, 4, 1</code>，正是选项里的<strong>干扰项 C</strong>；④ 按插入法逐次上浮得到的序列与此不同。<strong>考点在审题，不在算力</strong>。</p>
-<p><strong>例8（归并，20 题）</strong>：三个有序段，做二路归并，问比较次数。
-① 先合并前两段：双指针逐次比较，谁小取谁；② 一段取完后另一段剩余直接搬，<strong>不产生比较</strong>；③ 再把结果与第三段合并，同样计数；④ 两轮次数相加。<strong>要点：剩余元素整段搬运不计比较次数</strong>。</p>
-<p><strong>例9（外排，2023 大题）</strong>：置换选择排序，工作区 m=4，给一串记录。
-① 读满 4 个；② 每次输出"≥段末元素的最小者"并补入新记录；③ 无可用元素时结束该段、开新段；④ 第一问：能生成几个归并段及各段内容；⑤ 第二问：第一段最长 = <strong>N</strong>（整体有序时），最短 = <strong>m</strong>。</p>
-<p><strong>例10（外排，16 题）</strong>：120 个初始归并段，12 路归并，求需补的虚段数。
-① (120−1) mod (12−1) = 119 mod 11 = 9；② 补 11−9 = <strong>2</strong> 个虚段；③ 归并趟数 = ⌈log₁₂120⌉ = <strong>2</strong> 趟。</p>
-<h2 id="对应分p_2">对应分P</h2>
-<table>
-<thead>
-<tr>
-<th>文件名</th>
-<th>主题</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>85_第八章排序1(先用这版，后期再补录).txt</td>
-<td>排序基本概念、稳定性、直接插入、折半插入、希尔</td>
-</tr>
-<tr>
-<td>86_第八章排序2(先用这版，后期再补录).txt</td>
-<td>冒泡、快速、简单选择、堆（建/插/删/排序）、归并、基数、内部排序比较</td>
-</tr>
-<tr>
-<td>87_第八章排序3：外部排序.txt</td>
-<td>外排流程与缓冲区、多路归并、归并趟数、败者树、置换选择、最佳归并树</td>
-</tr>
-</tbody>
-</table>
-<h2 id="待补充">待补充</h2>
-<ol>
-<li><strong>87 败者树部分</strong>：字幕中树的形态描述与结点编号多处含糊（"五个节点""31024""10423"等数字无法确认对应关系），本笔记按"k 个结点 = 1 冠军 + k−1 内部结点、初值置 k、倒序向上调整、败者留原位"的规则重新组织了例子，具体树形请对照讲义图再核一遍。</li>
-<li><strong>87 置换选择排序原例</strong>：字幕给出的记录序列（51,19,43,37,92,14,63,15,99,48,56,23,60,31,17,8,90,166,100…）有明显跳读与错字，无法逐项复原老师的三段划分；本笔记改用 m=3 的自算例子（15,9,20,4,12,18,6），规则与结论一致。</li>
-<li><strong>87 三叉哈夫曼原例</strong>：叶子集合转录不全（"235""678""十十八21"），本笔记改用 2,3,5,6,7,8,18 的完整算例，WPL=80。</li>
-<li><strong>85/86 标注"先用这版，后期再补录"</strong>：若后续补录版本对快排/堆的例题数字有修订，以补录版为准。</li>
-<li><strong>1.2 课后题 6、7、8、9、10、16、18 题</strong>：老师明确留作课下练习，课堂未讲，故本笔记未收录题干。</li>
-</ol>
 <hr />
 <h1 id="第2章线性表21线性表的定义和基本操作22顺序表23链表">第2章 线性表（2.1 线性表的定义和基本操作、2.2 顺序表、2.3 链表）</h1>
 <blockquote>
 <p>线性表是 408 的<strong>算法题命题重点</strong>：整卷 7 道大题中固定 1 道代码题（约 13～15 分），只能用 C/C++；同时是选择题高频区（链表代码分析、判空条件、插入顺序）。本章也是前三章的难点，属"刚学难、学透后不易丢分"的类型。本笔记覆盖分P 07～22 共 16 个。</p>
 </blockquote>
-<h2 id="知识框架_3">知识框架</h2>
+<h2 id="知识框架_1">知识框架</h2>
 <pre><code>第2章 线性表
 ├── 2.1 线性表的定义和基本操作（逻辑结构）
 │   ├── 定义：n 个相同数据类型的元素的有限序列
@@ -2195,7 +939,7 @@ i == j == 4 → 填入枢轴 49
 │   ├── 2.3.10 选取最合适的链表（四种运算全 O(1)）
 │   └── 算法题：求表长、按位插删、头插法、尾插法、就地逆置、双指针
 </code></pre>
-<h2 id="知识点详解_3">知识点详解</h2>
+<h2 id="知识点详解_1">知识点详解</h2>
 <h3 id="一211线性表的定义和基本操作">一、2.1.1 线性表的定义和基本操作</h3>
 <p><strong>定义</strong>：线性表是由 <strong>n 个相同数据类型的元素</strong>组成的<strong>有限序列</strong>，n ≥ 0。</p>
 <p><strong>前驱与后继</strong>：序列 <code>A B C D</code> 中，C 的<strong>直接前驱</strong>是 B，<strong>直接后继</strong>是 D，即"前一个/后一个元素"，无更多含义。</p>
@@ -2951,7 +1695,7 @@ void Converse(int R[], int n, int p) {
 </tr>
 </tbody>
 </table>
-<h2 id="老师强调的考点_3">老师强调的考点</h2>
+<h2 id="老师强调的考点_1">老师强调的考点</h2>
 <ol>
 <li><strong>代码题只能用 C/C++</strong>，2010 年代后真题一律如此——大题。</li>
 <li><strong>每年 7 道大题中必有 1 道代码题，13～15 分</strong>；只写核心函数，不写头文件和 main——大题。</li>
@@ -2968,7 +1712,7 @@ void Converse(int R[], int n, int p) {
 <li><strong>"链表插入删除 O(1)"必须补"已定位到前驱"</strong>——辨析。</li>
 <li><strong>静态链表真题要看清问 AEF 还是 AFE</strong>（33 题）——选择。</li>
 </ol>
-<h2 id="快速技巧与口诀_3">快速技巧与口诀</h2>
+<h2 id="快速技巧与口诀_1">快速技巧与口诀</h2>
 <p><strong>1. 顺序表 vs 链表 选择题口诀</strong></p>
 <blockquote>
 <p><strong>顺序表：随机存取快，插删要搬家，空间要连续，长度得先定。</strong>
@@ -3043,7 +1787,7 @@ void Converse(int R[], int n, int p) {
 ② 代码：（核心函数，for/while 关键行加 // 注释）
 ③ 复杂度：时间复杂度 O(?), 空间复杂度 O(?)
 </code></pre>
-<h2 id="易错点与坑_3">易错点与坑</h2>
+<h2 id="易错点与坑_1">易错点与坑</h2>
 <ol>
 <li><strong>头指针 ≠ 头结点</strong>：前者是指针（必有），后者是结点（可无）；且<strong>求表长时头结点不计入</strong>，<code>h→A→B→C→D</code> 长度 4 不是 5。</li>
 <li><strong>插入顺序写反导致断链</strong>：先 <code>p-&gt;next = s</code> 再写 <code>s-&gt;next = p-&gt;next</code>，<code>s-&gt;next</code> 会指向自己，B 及其后全部丢失。</li>
@@ -3058,7 +1802,7 @@ void Converse(int R[], int n, int p) {
 <li><strong>双链表插入只背顺序不记原因</strong>：死记"①②在④前"，换到前插场景就套错——前插是"①② 在改 <code>p-&gt;prior</code> 之前"。</li>
 <li><strong>循环双链表删除画蛇添足加特判</strong>：两句本身对首、尾、唯一结点都成立，加 <code>if</code> 反而易错（32 题 D 选项就没加）。</li>
 </ol>
-<h2 id="本章例题_3">本章例题</h2>
+<h2 id="本章例题_1">本章例题</h2>
 <h3 id="例1课后13题选择平均o1的操作">例 1（课后 13 题·选择）平均 O(1) 的操作</h3>
 <p><strong>题干</strong>：顺序存储的有序表中，平均时间复杂度为 O(1) 的是？
 A. 查找指定值　B. 插入指定值　C. 删除第 i 个　D. 获取第 i 个</p>
@@ -3135,7 +1879,7 @@ A. 查找指定值　B. 插入指定值　C. 删除第 i 个　D. 获取第 i �
 </table>
 <p>链序：C(100c)→A(1000)→E(1010)→B(1004)→D(1008)→0。将 F(1014) 插在 A 与 E 之间：F 的 next 指 E(1010)，A 的 next 改 F(1014)，E 的 next 不变仍为 B(1004)。
 故 <strong>A=1014、E=1004、F=1010，答案 D</strong>。年年有人把"AEF"读成"AFE"误选 C。</p>
-<h2 id="对应分p_3">对应分P</h2>
+<h2 id="对应分p_1">对应分P</h2>
 <table>
 <thead>
 <tr>
@@ -3210,7 +1954,7 @@ A. 查找指定值　B. 插入指定值　C. 删除第 i 个　D. 获取第 i �
 </tr>
 </tbody>
 </table>
-<h2 id="待补充_1">待补充</h2>
+<h2 id="待补充">待补充</h2>
 <ul>
 <li><strong>08、09</strong>：口播题号未给年份，2010 年（循环左移）按题意推定。</li>
 <li><strong>14（35 题）</strong>：字幕对选项描述较乱，本笔记按"P 之后插入 S"四步给出答案 C，原文措辞以书为准。</li>
@@ -3222,7 +1966,7 @@ A. 查找指定值　B. 插入指定值　C. 删除第 i 个　D. 获取第 i �
 <blockquote>
 <p>408 中本章<strong>以选择题为主</strong>，难度大多数不大，但"循环队列指针约定""卡特兰数""中缀转后缀""矩阵压缩下标"这四块细节极多，属于"学懂一次、隔半月必忘"的类型，需要反复画图复习。2026 考研（25 年 12 月那场）数据结构两道大题中，<strong>非代码那道大题考的就是栈，其中一小问直接用到卡特兰数</strong>，所以本章不是纯小题章节。本笔记覆盖分P 23–36（3.1.1 至 3.4.3）。</p>
 </blockquote>
-<h2 id="知识框架_4">知识框架</h2>
+<h2 id="知识框架_2">知识框架</h2>
 <pre><code>第3章 栈、队列和数组
 ├── 3.1 栈
 │   ├── 3.1.1 基本概念：LIFO、栈顶/栈底、入栈/出栈/取栈顶
@@ -3250,7 +1994,7 @@ A. 查找指定值　B. 插入指定值　C. 删除第 i 个　D. 获取第 i �
     ├── 3.4.2 压缩存储：对称矩阵、三角矩阵、三对角矩阵
     └── 3.4.3 稀疏矩阵：三元组表（必须另存行列数）、十字链表
 </code></pre>
-<h2 id="知识点详解_4">知识点详解</h2>
+<h2 id="知识点详解_2">知识点详解</h2>
 <h3 id="一栈的基本概念与顺序链式存储311">一、栈的基本概念与顺序/链式存储（3.1.1）</h3>
 <p><strong>定义</strong>：只允许在<strong>一端</strong>（栈顶）进行插入和删除的线性表，是操作受限的线性表。特性 <strong>后进先出 LIFO</strong>。术语：栈顶（top，最后进入的元素）、栈底（bottom，最先进入的元素）；基本运算只有入栈 Push、出栈 Pop、取栈顶 GetTop。</p>
 <p><strong>关键结论（卡特兰数）</strong>：n 个<strong>互不相同</strong>的元素按<strong>固定次序</strong>入栈（可边进边出，栈容量不限），得到的出栈序列总数为</p>
@@ -3909,7 +2653,7 @@ for 每个字符 c in 表达式:
 <p><strong>（4）稀疏矩阵</strong>（3.4.3）</p>
 <p>非零元素极少（如 100×100 只有不到 100 个非零元）。<strong>三元组</strong> = <code>(行标, 列标, 值)</code>，按行优先顺序存进<strong>一维数组</strong>（不是二维数组！），称为<strong>三元组表</strong>；另有<strong>十字链表</strong>（行链表 + 列链表交叉，只需存非零结点）。</p>
 <p><strong>关键结论（真题考过）</strong>：只有三元组表<strong>无法唯一还原</strong>矩阵——同一个三元组表既可以还原成 4×4，也可以还原成 6×6、8×4。所以<strong>必须额外存储原矩阵的行数和列数</strong>。非零元素个数<strong>不必</strong>单独存（三元组表长度 ÷ 3 即得）。</p>
-<h2 id="老师强调的考点_4">老师强调的考点</h2>
+<h2 id="老师强调的考点_2">老师强调的考点</h2>
 <ol>
 <li><strong>卡特兰数 $C(2n,n)/(n+1)$ 必须背下来并理解含义</strong>——2026 考研数据结构非代码大题的一小问直接用到了它（大题）。</li>
 <li><strong>循环队列的 front/rear 四种指向约定、判空判满、长度公式</strong>——"每年都有很多同学理解不透"，真题选择题考过两次（选择）。</li>
@@ -3923,7 +2667,7 @@ for 每个字符 c in 表达式:
 <li><strong>矩阵压缩不要记公式</strong>，现场数；"最后一行/最后一列单独考虑"（选择）。</li>
 <li><strong>递归的空间复杂度看递归树高度，时间复杂度看结点数</strong>（选择）。</li>
 </ol>
-<h2 id="快速技巧与口诀_4">快速技巧与口诀</h2>
+<h2 id="快速技巧与口诀_2">快速技巧与口诀</h2>
 <ul>
 <li><strong>栈</strong>："后进先出，一端进出"；<strong>队列</strong>："先进先出，一端进另一端出"。</li>
 <li><strong>顺序栈判空判满</strong>：<code>top=-1</code> 起 → 空 -1、满 MaxSize-1；<code>top=0</code> 起 → 空 0、满 MaxSize。<strong>先移再存指向栈顶，先存再移指向栈顶之上</strong>。</li>
@@ -3937,7 +2681,7 @@ for 每个字符 c in 表达式:
 <li><strong>数组地址一句话</strong>：<strong>行优先乘列数，列优先乘行数</strong>。</li>
 <li><strong>递归树</strong>：结点数 = 时间，高度 = 空间。</li>
 </ul>
-<h2 id="易错点与坑_4">易错点与坑</h2>
+<h2 id="易错点与坑_2">易错点与坑</h2>
 <ol>
 <li><strong>长度公式里的 M</strong>：题目给 <code>0..M-1</code> 共 M 个单元、实际只存 M-1 个，取模仍用 <strong>M</strong>，用 M-1 就全错（第 5、9 题专治这个）。</li>
 <li><strong>判满公式与初始化绑定</strong>：<code>(rear+1)%M == front</code> 只在"front 指队头、rear 指队尾后一个"时成立；换约定必须重推，不能照抄。</li>
@@ -3952,7 +2696,7 @@ for 每个字符 c in 表达式:
 <li><strong>只用 front==rear 判满</strong>：没有牺牲单元/没有 size/tag 时，装满一圈与空无法区分，必须靠"牺牲一个单元"。</li>
 <li><strong>栈的链式存储别在表尾操作</strong>：单链表删尾结点找不到前驱，出栈代价 O(n)，所以链栈一律在表头。</li>
 </ol>
-<h2 id="本章例题_4">本章例题</h2>
+<h2 id="本章例题_2">本章例题</h2>
 <p><strong>例 1（课后 4、5、6：由 top 初值判断入栈语句）</strong>
 - 第 4 题：数组 <code>data[0..N-1]</code>，<code>top</code> 初始化为 <strong>1</strong>。1 号位置本来不能直接存，必须<strong>先移再存</strong> → <code>data[++top] = x</code>（选 C）。
 - 第 5 题：数组写成 <code>data[1..N]</code>，<code>top</code> 初始化为 <strong>1</strong>。1 号位置本来就能存 → <strong>先存再移</strong> → <code>data[top++] = x</code>（选 B）。若把初值改成 0，就变成先移再存（选 D）。
@@ -4003,7 +2747,7 @@ for 每个字符 c in 表达式:
 <p><strong>例 23（栈和队列应用概念 17 题）</strong> 关于栈的说法错误的是 <strong>"非递归方式改写递归程序必须使用栈"</strong>。反例：求 n! 的递归可改成 <code>for(i=2;i&lt;=n;i++) a*=i;</code>，<strong>完全不用栈</strong>。其余选项：函数调用需要栈（对）、入栈顺序确定则出栈顺序不确定（对，卡特兰数）、栈是受限线性表且只允许一端操作（对）。答案 <strong>C（含 1、3、4 三项）</strong>。</p>
 <p><strong>例 24（队列应用 16 题：火车轨道）</strong> 列车按 <code>8 4 2 5 3 9 1 6 7</code> 进轨道，要求按 <code>1..9</code> 顺序出，每条轨道可停多列且先进先出，问最少几条轨道。做法：把序列切成尽量少的<strong>递增子序列</strong>（同一条轨道内必须递增，否则后进的小编号永远出不来）：
 <code>8 9</code>｜<code>4 5 6 7</code>｜<code>2 3</code>｜<code>1</code> → 共 <strong>4</strong> 条（答案 4）。切法不唯一，但最少就是 4。</p>
-<h2 id="对应分p_4">对应分P</h2>
+<h2 id="对应分p_2">对应分P</h2>
 <table>
 <thead>
 <tr>
@@ -4070,18 +2814,436 @@ for 每个字符 c in 表达式:
 </tr>
 </tbody>
 </table>
-<h2 id="待补充_2">待补充</h2>
+<h2 id="待补充_1">待补充</h2>
 <ul>
 <li><strong>P26（3.2.1 队列的基本概念）</strong> 字幕仅 1.3 KB，只有 FIFO 与队头队尾的定性描述，<strong>缺少队列的抽象数据类型定义、基本操作（InitQueue/EnQueue/DeQueue/GetHead）的规范表述</strong>，也未讲顺序/链式存储的引出（老师明确说留到 3.2.2 一起讲）。本笔记按目录结构补齐了操作名，未补入老师未讲的内容。</li>
 <li><strong>P30（3.3.2）课后 13 题</strong> 的中缀表达式字幕识别严重残缺（后缀串被识别为"AB加AC…"一类乱码），笔记中的表达式为按算法流程复盘的等价形式，<strong>"栈内最多 5 个运算符"这一结论与字幕一致</strong>；若与教材原题不符，以教材原题重跑一遍流程为准。</li>
 <li><strong>P34（3.4.1）课后第 5 题</strong> 首地址基准口播不严谨（472 与 459 的差异），已在例 16 标注，按"首地址 = A[0][0]"的通用约定取 472。</li>
 </ul>
 <hr />
+<h1 id="第4章串41串的定义与kmp算法">第4章 串（4.1 串的定义与 KMP 算法）</h1>
+<blockquote>
+<p>408 中本章只考选择题（老师统计 KMP 至今考过三道），考点几乎全部集中在 <strong>next / nextval 数组的求法、失配后指针的走向、子串向右滑动的距离、匹配过程中的比较次数</strong>。KMP 理解不难但规则繁琐，属于"必须动手写三四遍"的知识点。覆盖分P：4.1.1。</p>
+</blockquote>
+<h2 id="知识框架_3">知识框架</h2>
+<pre><code>第4章 串
+├─ 4.1 串的定义与实现
+│  ├─ 基本概念：串、串长、空串、空格串、子串、主串、位置、串相等
+│  └─ 存储结构：定长顺序存储、堆分配存储、块链存储
+└─ 4.2 串的模式匹配
+   ├─ 朴素（BF）算法：逐位比较，失配后主串回退、子串归零
+   └─ KMP 算法
+      ├─ next 数组：next[j] = P[0..j−1] 的最长相等真前后缀长度
+      ├─ 失配规则：i 不动，j = next[j]；next[j]=1 时 i++、j=0
+      ├─ 滑动距离 = j − next[j]
+      ├─ nextval 数组（优化）：同字符连续回退时一步到位
+      └─ 复杂度：O(n+m)
+</code></pre>
+<h2 id="知识点详解_3">知识点详解</h2>
+<h3 id="一串的基本概念与存储411前半">一、串的基本概念与存储（4.1.1 前半）</h3>
+<ul>
+<li><strong>串</strong>：由零个或多个字符组成的有限序列，记 S = "a₁a₂…aₙ"。</li>
+<li><strong>串长</strong>：字符个数。<strong>空串</strong>：长度 0，记 ""；<strong>空格串</strong>：由一个或多个空格组成，长度不为 0（易错）。</li>
+<li><strong>子串 / 主串</strong>：串中任意个连续字符组成的子序列叫子串，包含子串的串叫主串。子串在主串中的<strong>位置</strong>用子串第一个字符在主串中的序号表示。</li>
+<li><strong>串相等</strong>：长度相同且对应位置字符全部相同（"abc" ≠ "abc "）。</li>
+<li><strong>存储结构</strong>：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定长顺序存储</td>
+<td>用定长数组，可在 0 号单元存长度，或用 '\0' 结尾；超长会截断</td>
+</tr>
+<tr>
+<td>堆分配存储</td>
+<td>malloc 申请，长度可变，最常用</td>
+</tr>
+<tr>
+<td>块链存储</td>
+<td>每个结点存多个字符，存储密度高但插入删除麻烦</td>
+</tr>
+</tbody>
+</table>
+<h3 id="二朴素模式匹配bf">二、朴素模式匹配（BF）</h3>
+<p>从主串 T 的第 1 个位置起，与模式串 P 逐位比较；失配则<strong>主串指针回退到本趟起点的下一位、模式串指针归零</strong>，重新开始。</p>
+<ul>
+<li>最好情况：每趟首字符就失配，共比较 n−m+1 次 → <strong>O(n)</strong>。</li>
+<li>最坏情况：如 T = "000…001"、P = "000…001"，每趟都比到最后一个字符 → <strong>O(nm)</strong>。</li>
+</ul>
+<blockquote>
+<p>暴力法的两个"浪费"：①主串指针会回退（已经比过的字符又比一遍）；②子串每次从头开始（已经匹配成功的前缀信息被丢弃）。KMP 就是同时解决这两点。</p>
+</blockquote>
+<h3 id="三next数组的手算核心">三、next 数组的手算（核心）</h3>
+<p><strong>定义（本笔记采用的口径，与课程板书一致，下标从 0 开始）</strong></p>
+<blockquote>
+<p><code>next[j]</code> = 模式串 P[0..j−1] 这段前缀中，<strong>最长的"既等于真前缀、又等于真后缀"的串的长度</strong>。
+规定：<code>next[0] = 1</code>（哨兵，0 号位失配只能让主串前进）、<code>next[1] = 0</code>。</p>
+</blockquote>
+<p>含义：j 处失配时，P[0..next[j]−1] 已经和主串对应段相等，可直接从 P[next[j]] 继续比较，主串指针 i 不回退。</p>
+<p><strong>手算方法（错位对齐法）</strong>：求 next[j] 时，只看 j <strong>前面</strong>那段，把它自己错开一位上下对齐，找"同一条竖直线上完全相等"的最长长度；不相等就继续右移，直到只剩一个字符或完全无重叠，则为 0。</p>
+<blockquote>
+<p>关键：必须是<strong>完全相等</strong>，不能只看"有一个字母相同"。老师特别指出这是最常见的错法。</p>
+</blockquote>
+<p><strong>例：P = "abaabc"（下标 0～5，2015、2019 年真题用的就是它）</strong></p>
+<table>
+<thead>
+<tr>
+<th>j</th>
+<th>P[j]</th>
+<th>前面这段 P[0..j−1]</th>
+<th>最长相等真前后缀</th>
+<th>长度</th>
+<th>next[j]</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>a</td>
+<td>—（无前面）</td>
+<td>—</td>
+<td>规定</td>
+<td><strong>1</strong></td>
+</tr>
+<tr>
+<td>1</td>
+<td>b</td>
+<td>"a"</td>
+<td>无（真前后缀为空）</td>
+<td>规定</td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td>a</td>
+<td>"ab"</td>
+<td>前缀{a,ab}、后缀{b,ab}，无相等</td>
+<td>0</td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>a</td>
+<td>"aba"</td>
+<td>"a" = "a"</td>
+<td>1</td>
+<td><strong>1</strong></td>
+</tr>
+<tr>
+<td>4</td>
+<td>b</td>
+<td>"abaa"</td>
+<td>后缀{a,aa,baa} 与前缀{a,ab,aba}，只有 "a"</td>
+<td>1</td>
+<td><strong>1</strong></td>
+</tr>
+<tr>
+<td>5</td>
+<td>c</td>
+<td>"abaab"</td>
+<td>"ab" = "ab"（后缀 ab,aab,baab）</td>
+<td>2</td>
+<td><strong>2</strong></td>
+</tr>
+</tbody>
+</table>
+<p>即 <strong>next = [1, 0, 0, 1, 1, 2]</strong>（与老师板书的"一零、零、一、一、二"完全一致）。</p>
+<p><strong>逐位推导细节（考场上照这个顺序写）</strong></p>
+<ul>
+<li>j=3：写 <code>a b a</code>，错开一位对齐 → 上行 <code>a b</code>、下行 <code>a</code>；先试长度 2（"ab" vs "ba"）不等；退到长度 1（"a" vs "a"）相等 → 1。</li>
+<li>j=4：<code>a b a a</code>，先试长度 3（"aba" vs "baa"）不等；长度 2（"ab" vs "aa"）不等；长度 1（"a" vs "a"）相等 → 1。</li>
+<li>j=5：<code>a b a a b</code>，长度 4（"abaa" vs "baab"）不等；长度 3（"aba" vs "aab"）不等；长度 2（"ab" vs "ab"）相等 → 2。</li>
+</ul>
+<p><strong>再练一个（老师课堂练习，P = "ababaaa"）</strong></p>
+<table>
+<thead>
+<tr>
+<th>j</th>
+<th>P[j]</th>
+<th>next[j]</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>a</td>
+<td>1</td>
+<td>规定</td>
+</tr>
+<tr>
+<td>1</td>
+<td>b</td>
+<td>0</td>
+<td>规定</td>
+</tr>
+<tr>
+<td>2</td>
+<td>a</td>
+<td>0</td>
+<td>"ab" 无相等前后缀</td>
+</tr>
+<tr>
+<td>3</td>
+<td>b</td>
+<td>1</td>
+<td>"aba" → "a"</td>
+</tr>
+<tr>
+<td>4</td>
+<td>a</td>
+<td>2</td>
+<td>"abab" → "ab"</td>
+</tr>
+<tr>
+<td>5</td>
+<td>a</td>
+<td>3</td>
+<td>"ababa" → "aba"</td>
+</tr>
+<tr>
+<td>6</td>
+<td>a</td>
+<td>1</td>
+<td>"ababaa" → 只有 "a"</td>
+</tr>
+</tbody>
+</table>
+<p><strong>下标口径的换算（必看）</strong>：王道教材用 1 开始的下标，规定 next[1]=0、next[2]=1，其值 = 相等前后缀长度 + 1。同一模式串 "abaabc" 在王道口径下为 <strong>[0,1,1,2,2,3]</strong>，与上表<strong>整体相差 1</strong>。</p>
+<ul>
+<li>老师原话意思：上下两行同时加 1，对应关系不变，退到的还是同一个字符；滑动距离 j−next[j] 也不变（j 和 next[j] 同时加 1，差不变）。</li>
+<li>答题时<strong>看清题目用哪套</strong>：题目给 1 开始的下标就必须写 0,1,1,2,2,3；给 0 开始就写 1,0,0,1,1,2。</li>
+</ul>
+<h3 id="四失配后的移动规则与滑动距离">四、失配后的移动规则与滑动距离</h3>
+<p><strong>规则</strong></p>
+<ol>
+<li>若 next[j] ≠ 1：<strong>主串指针 i 不动</strong>，令 j = next[j]，从 P[j] 处与 T[i] 重新比较。</li>
+<li>若 next[j] = 1：说明 j 前面没有任何可用的相等前后缀，<strong>i 前进一位、j 归零</strong>（等价于整个模式串右移一位后从首字符重比）。</li>
+<li><strong>滑动距离 = j − next[j]</strong>（0 开始下标；1 开始下标同样是 j − next[j]）。回退后 P[0..next[j]−1] 与 T[i−next[j]..i−1] 必然相等，这段不必再比。</li>
+</ol>
+<p><strong>例（真题 2015 / 2019，T = "abaabaabcabaabc"，P = "abaabc"）</strong></p>
+<ul>
+<li>前 5 个字符 a b a a b 全部匹配，第 6 次比较 T[5]='a' 与 P[5]='c' 失配，此时 i = 5、j = 5。</li>
+<li>next[5] = 2 ≠ 1 → i 保持 5，j 回到 2，子串右移 5−2 = <strong>3</strong> 位。</li>
+<li>答案：<strong>i = 5，j = 2</strong>；若问滑动距离则为 <strong>3</strong>（校验：右移 3 位后 P 对齐到 T[3..8] = "abaabc"，确实完全匹配）。</li>
+</ul>
+<p><strong>例（next[j] = 1 的情形）</strong>：若在 P 的 0 号位就失配，next[0] = 1 → i++、j=0，相当于模式串整体右移一位。</p>
+<h3 id="五nextval数组kmp优化">五、nextval 数组（KMP 优化）</h3>
+<p><strong>动机</strong>：若 P[j] 失配后回退到的 P[next[j]] <strong>与 P[j] 是同一个字符</strong>，那么这次比较必然再次失配，纯属白比。优化就是<strong>继续往前跳，一步到位</strong>。</p>
+<p><strong>规则</strong></p>
+<ul>
+<li>nextval[0] = 1，nextval[1] = 0；</li>
+<li>对 j ≥ 2：若 <strong>P[j] == P[next[j]]</strong>，则 <code>nextval[j] = nextval[next[j]]</code>（沿用前面已算好的值，注意用<strong>更新后</strong>的值）；</li>
+<li>否则 <code>nextval[j] = next[j]</code>（保持原值）。</li>
+</ul>
+<p><strong>对 P = "abaabc" 逐位推</strong></p>
+<table>
+<thead>
+<tr>
+<th>j</th>
+<th>P[j]</th>
+<th>next[j]</th>
+<th>P[next[j]]</th>
+<th>是否同字符</th>
+<th>nextval[j]</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>a</td>
+<td>1</td>
+<td>—</td>
+<td>—</td>
+<td><strong>1</strong>（规定）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>b</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td><strong>0</strong>（规定）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>a</td>
+<td>0</td>
+<td>P[0]=a</td>
+<td>相同</td>
+<td>nextval[0] = <strong>1</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>a</td>
+<td>1</td>
+<td>P[1]=b</td>
+<td>不同</td>
+<td><strong>1</strong></td>
+</tr>
+<tr>
+<td>4</td>
+<td>b</td>
+<td>1</td>
+<td>P[1]=b</td>
+<td>相同</td>
+<td>nextval[1] = <strong>0</strong></td>
+</tr>
+<tr>
+<td>5</td>
+<td>c</td>
+<td>2</td>
+<td>P[2]=a</td>
+<td>不同</td>
+<td><strong>2</strong></td>
+</tr>
+</tbody>
+</table>
+<p>即 <strong>nextval = [1, 0, 1, 1, 0, 2]</strong>。</p>
+<p><strong>对 P = "ababaaa"</strong></p>
+<p>next = [1,0,0,1,2,3,1] →</p>
+<table>
+<thead>
+<tr>
+<th>j</th>
+<th>P[j]</th>
+<th>next[j]</th>
+<th>P[next[j]]</th>
+<th>nextval[j]</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>a</td>
+<td>1</td>
+<td>—</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>b</td>
+<td>0</td>
+<td>—</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>a</td>
+<td>0</td>
+<td>a（同）</td>
+<td>1</td>
+</tr>
+<tr>
+<td>3</td>
+<td>b</td>
+<td>1</td>
+<td>b（同）</td>
+<td>0</td>
+</tr>
+<tr>
+<td>4</td>
+<td>a</td>
+<td>2</td>
+<td>a（同）</td>
+<td>1</td>
+</tr>
+<tr>
+<td>5</td>
+<td>a</td>
+<td>3</td>
+<td>b（不同）</td>
+<td>3</td>
+</tr>
+<tr>
+<td>6</td>
+<td>a</td>
+<td>1</td>
+<td>b（不同）</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>nextval = [1,0,1,0,1,3,1]。</p>
+<p><strong>用 nextval 的收益</strong>：同一失配位置上，普通 KMP 可能需要连续回退两次（滑 3 再滑 1），用 nextval 一次滑到位（滑 4）。滑动距离仍按 <strong>j − nextval[j]</strong> 计算。</p>
+<p><strong>注意</strong>：nextval[j]=1 的含义与 next[j]=1 完全相同——<strong>i++、j 归零</strong>。这是 2013 年那道"最长滑动距离"题设的陷阱：并不是所有失配都"主串不动"。</p>
+<h3 id="六kmp的时间复杂度onm">六、KMP 的时间复杂度 O(n+m)</h3>
+<ul>
+<li><strong>匹配阶段</strong>：i 单调不减，最多自增 n 次；j 每次失配<strong>至少减 1</strong>，而 j 的自增只能伴随 i 自增发生（每轮循环 i、j 同增 1），所以 j 自增总次数 ≤ n，从而<strong>回退总次数 ≤ n</strong>。整个 while 循环的迭代次数 ≤ 2n → <strong>O(n)</strong>。</li>
+<li><strong>求 next 阶段</strong>：j 从 1 走到 m−1，回退同样单调，总代价 <strong>O(m)</strong>；求 nextval 只需再扫一遍，O(m)。</li>
+<li>合计 <strong>O(n+m)</strong>，比朴素的 O(nm) 好在"主串指针永不回退"。</li>
+</ul>
+<blockquote>
+<p>注意：KMP 的优势体现在"主串很长、模式串有很多自重复"的场合；平均而言常数因子比 BF 大，考试只考复杂度结论与手算。</p>
+</blockquote>
+<h2 id="老师强调的考点_3">老师强调的考点</h2>
+<ol>
+<li><strong>next 数组的求法是"整个 KMP 里最重要的一步"</strong>，"其他东西理不理解也没关系，但这一步一定要会算"——选择题必考，且是后续题目的前提。</li>
+<li><strong>next 与 nextval 两套表都要会手算</strong>，且要能对同一模式串同时写出两行。</li>
+<li><strong>失配后 i、j 的取值</strong>（2015、2019 都考同一模式串）：考"下一次比较时 i 和 j 分别是多少"。</li>
+<li><strong>匹配到成功为止的比较次数</strong>（2019 真题）：答案为 6+4=10，老师强调"千万不要写成 6+3"，因为回退后<strong>当前位置还要再比一次</strong>。</li>
+<li><strong>子串向右滑动的距离</strong>（2013 真题）：用 j − next[j]（或 j − nextval[j]），要会求"最长滑动距离"及对应的失配下标。</li>
+<li>目前 KMP 考过 <strong>三道选择题</strong>，老师建议一定要学，"后面做真题卷、模拟卷大概率会遇到"。</li>
+<li>出题会用 1 开始或 0 开始两种下标，<strong>两种都要能对上答案</strong>。</li>
+</ol>
+<h2 id="快速技巧与口诀_3">快速技巧与口诀</h2>
+<ul>
+<li><strong>"第一个 1、第二个 0"</strong>：next[0]=1、next[1]=0，先把这两个写死，再从左往右推。</li>
+<li><strong>"只看前面、不看自己；错开一位、完全相等"</strong>：求 next[j] 的铁律。</li>
+<li><strong>"同字符就继承，不同字符就保留"</strong>：nextval 一句话规则；继承时用<strong>已更新</strong>的 nextval 值。</li>
+<li><strong>"非 1 主串不动，是 1 主串加一"</strong>：判断 i 是否前进只看 next（或 nextval）是否为 1。</li>
+<li><strong>滑动距离 = j − next[j]</strong>；若问"最长滑动距离"，把所有 j 的 j−nextval[j] 都算出来取最大。</li>
+<li><strong>比较次数不要用"滑了几位"去减</strong>：回退后当前位置要重新比，逐次累加最稳。</li>
+<li>熟练后可"心中默念前缀"而不写全表：从最长的可能长度往下试，第一个对上的就是答案。</li>
+</ul>
+<h2 id="易错点与坑_3">易错点与坑</h2>
+<ol>
+<li><strong>把"有重叠字符"当成"完全相等"</strong>：如 "AAB" 与自身错位后重叠两个字母但内容不同，必须继续右移，不能记 2。</li>
+<li><strong>next 与 nextval 混用下标口径</strong>：题目 1 开始却写 0,1,1,2,2,3 之外的答案，整题作废。</li>
+<li><strong>nextval 继承时用了旧的 next 值</strong>：必须用 <code>nextval[next[j]]</code>（已经优化过的），不是 <code>next[next[j]]</code>。</li>
+<li><strong>以为失配后主串一定不动</strong>：next[j]=1（或 nextval[j]=1）时要 i++、j 归零。</li>
+<li><strong>比较次数按"位移"算</strong>：2019 题若答 6+3=9 就错，正确是 6+4=10。</li>
+<li><strong>滑动距离用 next 却写成 nextval 的值</strong>（或反之）：题目说"修正后的 next"就用 nextval。</li>
+<li><strong>忘记 next[0] 是哨兵</strong>：它不是"长度 0"，而是"无法回退"的标志，参与 1 开始口径换算时会变成王道表的 next[1]=0。</li>
+<li><strong>空串与空格串混淆</strong>："" 长度为 0；" " 长度为 1。</li>
+</ol>
+<h2 id="本章例题_3">本章例题</h2>
+<p><strong>例1（2015 真题）</strong>：P = "abaabc"，T 中前 5 个字符匹配，第 6 次比较失配（i=j=5），问下次比较的 i、j。
+① 求 next = [1,0,0,1,1,2]；② next[5]=2≠1；③ i 不动 = 5，j = 2；④ 滑动距离 5−2=3。<strong>答：i=5，j=2（滑动 3 位）</strong>。</p>
+<p><strong>例2（2019 真题）</strong>：T = "abaabaabcabaabc"，P = "abaabc"，求匹配成功时的比较次数。
+① 逐位比 a-b-a-a-b 五次成功，第 6 次 T[5]='a' 与 P[5]='c' 失配 → 已比较 <strong>6</strong> 次；② next[5]=2，j 回 2、i 仍为 5；③ 再比 T[5]/P[2]、T[6]/P[3]、T[7]/P[4]、T[8]/P[5]，四次全中 → <strong>4</strong> 次；④ 合计 6+4=<strong>10 次</strong>，匹配位置为 T 的第 4 个字符起。</p>
+<p><strong>例3（2013 真题改编）</strong>：P = "abaabc" 的 nextval = [1,0,1,1,0,2]，求"子串向右滑动的最大距离"及对应失配下标。
+① 逐位算 j − nextval[j]：j=0→−1，j=1→1，j=2→1，j=3→2，j=4→4，j=5→3；② 最大值 <strong>4</strong>；③ 对应失配下标 <strong>j=4</strong>（第 5 个字符 'b'）。<strong>答：最大滑动距离 4，失配下标 4</strong>。</p>
+<p><strong>例4（课堂练习，next 表）</strong>：P = "ababaaa"，求 next 与 nextval。
+next = [1,0,0,1,2,3,1]；nextval = [1,0,1,0,1,3,1]。要点：j=6 时前缀 "ababaa" 只有 "a" 相等，故 next=1；j=5 时 P[5]='a' 与 P[next[5]]=P[3]='b' 不同，nextval 保持 3。</p>
+<h2 id="对应分p_3">对应分P</h2>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>主题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>37_4.1.1 KMP算法.txt</td>
+<td>串的概念、BF、next/nextval 手算、失配规则、滑动距离、2015/2019/2013 真题</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<hr />
 <h1 id="第5章树与二叉树51树的基本概念52二叉树概念与存储53遍历与线索二叉树54树森林与二叉树55哈夫曼树与编码">第5章 树与二叉树（5.1 树的基本概念 / 5.2 二叉树概念与存储 / 5.3 遍历与线索二叉树 / 5.4 树森林与二叉树 / 5.5 哈夫曼树与编码）</h1>
 <blockquote>
 <p>第五章是"后四章"（树、图、查找、排序）的开头，老师明确说这四章的重要性<strong>远高于前四章</strong>，复习时应当<strong>先复习后四章</strong>。本章本身几乎没有难点，但<strong>性质公式多、遍历熟练度要求高</strong>，选择题每年 2–3 道，且常与第 7 章查找、第 8 章排序（堆）联合出题；哈夫曼、遍历还原也可能进大题。本笔记覆盖分P 38–51（5.1.1 至 5.5.2）。</p>
 </blockquote>
-<h2 id="知识框架_5">知识框架</h2>
+<h2 id="知识框架_4">知识框架</h2>
 <pre><code>第5章 树与二叉树
 ├── 5.1 树的基本概念
 │   ├── 递归定义（树 = 根 + 若干棵互不相交的子树）
@@ -4110,7 +3272,7 @@ for 每个字符 c in 表达式:
     ├── 5.5.1 带权路径长度、WPL、哈夫曼树构造、WPL=非叶结点权值和
     └── 5.5.2 前缀编码、左0右1、编码长度=深度、加权平均长度
 </code></pre>
-<h2 id="知识点详解_5">知识点详解</h2>
+<h2 id="知识点详解_4">知识点详解</h2>
 <h3 id="一树的基本概念与性质511">一、树的基本概念与性质（5.1.1）</h3>
 <p><strong>定义（递归）</strong>：树是 n（n≥0）个结点的有限集；n=0 为空树；n&gt;0 时有唯一根，其余结点分成若干<strong>互不相交</strong>的子树。老师强调"树的定义是递归的"：每个孩子本身又是一棵树，所以遍历、求高、转换都用递归写。</p>
 <p><strong>核心结论 1</strong>：n 个结点的树有 <strong>n-1 条边</strong>。推导：除根外，每个结点<strong>向上</strong>恰有一条边连向双亲，根没有，故边数 = n-1 → <strong>顶点比边多 1</strong>。</p>
@@ -5091,7 +4253,7 @@ WPL = 7×1 + 5×2 + <strong>2×3 + 4×3</strong> = 7 + 10 + 6 + 12 = <strong>35<
 <p>$$\text{加权平均长度}=\frac{WPL}{\sum w_i}=\frac{\text{报文总位数}}{\text{字符总数}}$$</p>
 <p>例（权 3、4、5、6、8、10，共 36 个字符）：构造 3+4=7，5+6=11，7+8=15，10+11=21，15+21=36。
 WPL = (8+10)×2 + (3+4+5+6)×3 = 36 + 54 = <strong>90</strong>；加权平均长度 = 90/36 = <strong>2.5 位/字符</strong>，即平均每个字符占 2.5 个二进制位。</p>
-<h2 id="老师强调的考点_5">老师强调的考点</h2>
+<h2 id="老师强调的考点_4">老师强调的考点</h2>
 <ol>
 <li><strong>后四章比前四章重要</strong>，整本书学完要<strong>先复习后四章</strong>（第 38 分P，复习策略，直接关系分数分布）。</li>
 <li><strong>n0 = n2+1 必须背，考场不要现推</strong>；同理"第 i 层 2^(i-1)""高 h 形如 2^h-1"要条件反射（第 39 分P，选择题高频）。</li>
@@ -5108,7 +4270,7 @@ WPL = (8+10)×2 + (3+4+5+6)×3 = 36 + 54 = <strong>90</strong>；加权平均长
 <li><strong>重点研究历年真题</strong>，非真题风格与考场差别大；同一道题 17 年考过 23 年又考（第 43 分P）。</li>
 <li><strong>该跳就跳</strong>：线索二叉树代码、并查集第一轮直接跳过（第 51 分P，抓大放小）。</li>
 </ol>
-<h2 id="快速技巧与口诀_5">快速技巧与口诀</h2>
+<h2 id="快速技巧与口诀_4">快速技巧与口诀</h2>
 <table>
 <thead>
 <tr>
@@ -5183,7 +4345,7 @@ WPL = (8+10)×2 + (3+4+5+6)×3 = 36 + 54 = <strong>90</strong>；加权平均长
 </tr>
 </tbody>
 </table>
-<h2 id="易错点与坑_5">易错点与坑</h2>
+<h2 id="易错点与坑_4">易错点与坑</h2>
 <ol>
 <li><strong>深度与高度混用</strong>：深度从根往下数，高度从该结点往下数。D 的深度 2，但 D 的高度可能是 2 或 3，取决于子树。</li>
 <li><strong>路径长度数"边"不数"点"</strong>：A→B→C 长度 2，不是 3。</li>
@@ -5201,7 +4363,7 @@ WPL = (8+10)×2 + (3+4+5+6)×3 = 36 + 54 = <strong>90</strong>；加权平均长
 <li><strong>森林的树的棵数 = 根右链结点数</strong>，不是"根 + 右子树"的结点数；16 个结点的完全二叉树是 4 棵树。</li>
 <li><strong>哈夫曼树形态不唯一但码长固定</strong>：自己画的树和选项长得不一样时，用<strong>码长 + 前缀性</strong>排除选项，不要重画。</li>
 </ol>
-<h2 id="本章例题_5">本章例题</h2>
+<h2 id="本章例题_4">本章例题</h2>
 <p><strong>例 1（5.1 课后 9 题）</strong> 一棵度为 4 的树，度 4 的结点 20 个、度 3 的 10 个、度 2 的 1 个、度 1 的 10 个，求叶子数。
 解：设叶子 x 个。
 ① 结点总数 n = 20+10+1+10+x = 41+x；
@@ -5268,7 +4430,7 @@ F(4) = F0F3+F1F2+F2F1+F3F0 = 5+2+2+5 = <strong>14</strong>；
 <p><strong>例 19（5.5.2 课后 4 题）</strong> 已有编码 1 和 01，哈夫曼编码长度不超过 4，最多还能编多少个字符？
 解：1 占右分支、01 占"左-右"，均为<strong>叶子</strong>不能再长。可扩展空间只剩根的左侧 00，向下每层分两叉，最长到第 5 层（码长 4）→ 还能容纳 2×2 = <strong>4</strong> 个字符。</p>
 <p><strong>其余题目</strong>（老师点到、课下做）：5.3.2 的 39 题（给形状+后序填结点，17 年考、23 年再现）、5.3.3 的 5/10/14/16/17/18 题、5.4.2 的 6/12/14/15/8 题、5.5 的 1/2/16/20 题、5.5.2 的 15/21/23 题。</p>
-<h2 id="对应分p_5">对应分P</h2>
+<h2 id="对应分p_4">对应分P</h2>
 <table>
 <thead>
 <tr>
@@ -5335,7 +4497,7 @@ F(4) = F0F3+F1F2+F2F1+F3F0 = 5+2+2+5 = <strong>14</strong>；
 </tr>
 </tbody>
 </table>
-<h2 id="待补充_3">待补充</h2>
+<h2 id="待补充_2">待补充</h2>
 <ul>
 <li>46 分P 只口述了中序序列 BDAEC、5 个结点、6 个空链域，<strong>未描述树形</strong>；本笔记的树形（A 左 B 右 C，B 右 D，C 左 E）是按这三个条件反推的唯一形态。</li>
 <li>51 分P 中哈夫曼树的权值顺序口播含糊（"45、12、13、16、9、5"前后不一），本笔记按教材图取 A=45、B=13、C=12、D=16、E=9、F=5，WPL=224 与老师口算结果一致。</li>
@@ -5346,7 +4508,7 @@ F(4) = F0F3+F1F2+F2F1+F3F0 = 5+2+2+5 = <strong>14</strong>；
 <blockquote>
 <p>408 中图是"概念 + 手工模拟"双高发章节：6.1 概念每年 1~2 道选择，6.2 存储结构常与遍历、拓扑排序混合命题，6.4 是本章绝对重点——Dijkstra 选择考过 3 次、大题 2 次，关键路径选择+大题都常考，拓扑排序 2024 年还出过代码大题。本章算法几乎全部是"模板题"，背流程比理解证明更划算。笔记覆盖分P 52~65（含 6.4.3 有向无环图描述表达式）。</p>
 </blockquote>
-<h2 id="知识框架_6">知识框架</h2>
+<h2 id="知识框架_5">知识框架</h2>
 <pre><code>第6章 图
 ├─ 6.1.1 基本概念
 │   ├─ 图的定义：V（顶点集）+ E（边集）
@@ -5377,7 +4539,7 @@ F(4) = F0F3+F1F2+F2F1+F3F0 = 5+2+2+5 = <strong>14</strong>；
     ├─ 6.4.4 拓扑排序 / 逆拓扑排序（判环）
     └─ 6.4.5 关键路径（AOE 网，ve/vl/e/l，e=l 为关键活动）
 </code></pre>
-<h2 id="知识点详解_6">知识点详解</h2>
+<h2 id="知识点详解_5">知识点详解</h2>
 <h3 id="一611图的基本概念">一、6.1.1 图的基本概念</h3>
 <p><strong>定义</strong>：图 G=(V,E)，V 是顶点集，E 是边集。课上例子：ABCD 四个顶点、5 条边。</p>
 <table>
@@ -6173,7 +5335,7 @@ D、E 为第3层 → 距离 2
 </table>
 <p>关键活动 a2、a4、a7 ⇒ 关键路径 <strong>V1→V3→V4→V6</strong>，长度 <strong>8</strong>（与观察法一致；字幕口播为"A2、A5、A7"，按图编号应为 a2、a4、a7）。</p>
 <p><strong>快速做法（只做第 1 步）</strong>：ve(汇) 就是关键路径长度；再从汇点倒推，若 vl(j)-w = ve(i)（即该边 d=0）就选入，可一次找出所有关键路径。45 题、22 题都可用此法秒杀"关键路径是哪条/长度为多少"。</p>
-<h2 id="老师强调的考点_6">老师强调的考点</h2>
+<h2 id="老师强调的考点_5">老师强调的考点</h2>
 <ol>
 <li><strong>无向图 Σdeg = 2E、有向图 ΣID=ΣOD=E</strong>——概念计算题必用（选择）。</li>
 <li><strong>n 顶点连通至少 n-1 条边、强连通至少 n 条边</strong>——"当成结论记"，选项判断直接用（选择）。</li>
@@ -6187,7 +5349,7 @@ D、E 为第3层 → 距离 2
 <li><strong>十字链表用于有向图、邻接多重表用于无向图</strong>——选择题就考这一句（选择）。</li>
 <li><strong>子图判定</strong>："顶点集和边集分别是子集 ⇒ 构成子图"是<strong>错的</strong>（选择选项陷阱）。</li>
 </ol>
-<h2 id="快速技巧与口诀_6">快速技巧与口诀</h2>
+<h2 id="快速技巧与口诀_5">快速技巧与口诀</h2>
 <ul>
 <li><strong>度与边</strong>：无向"度之和 = 2 倍边"，有向"入和 = 出和 = 边数"。</li>
 <li><strong>连通最少边</strong>：无向 n-1（留缺口/星形），强连通 n（绕一圈）。</li>
@@ -6203,7 +5365,7 @@ D、E 为第3层 → 距离 2
 <li><strong>关键路径速判</strong>：只算 ve，ve(汇)=长度；从汇点倒推 d=0 的边即关键路径。</li>
 <li><strong>拓扑判环</strong>："输出个数不足 V，必有环"。</li>
 </ul>
-<h2 id="易错点与坑_6">易错点与坑</h2>
+<h2 id="易错点与坑_5">易错点与坑</h2>
 <ol>
 <li><strong>极大 / 极小连通子图混淆</strong>：极大是"连通分量，顶点边尽量多"；极小是"边尽量少，顶点数不限"；生成树才要求"含全部顶点 + 极小"。</li>
 <li><strong>子图反向不成立</strong>：只取部分顶点和部分边，若某条边的端点没被选进来，就不是子图。选项"顶点集与边集分别是子集即可构成子图"必错。</li>
@@ -6221,7 +5383,7 @@ D、E 为第3层 → 距离 2
 <li><strong>BFS 求最短路只能用于无权图/等权图</strong>，带权必须用 Dijkstra。</li>
 <li><strong>十字链表 / 邻接多重表用错图类型</strong>：十字链表只用于有向图，邻接多重表只用于无向图。</li>
 </ol>
-<h2 id="本章例题_6">本章例题</h2>
+<h2 id="本章例题_5">本章例题</h2>
 <p><strong>例 1（6.1 节 17 题）</strong> 无向图有 16 条边，度为 4 的顶点 3 个，度为 3 的顶点 4 个，其余顶点度均小于 3。求顶点数至少多少。</p>
 <ol>
 <li>Σdeg = 2E = 32。</li>
@@ -6326,7 +5488,7 @@ D、E 为第3层 → 距离 2
 <li>缩短 <strong>F、D</strong>：F 覆盖第一条，D 覆盖后两条 ⇒ 三条全被压缩，工期缩短。选 <strong>C</strong>。</li>
 </ul>
 <p><strong>例 19（6.4.5 节 42、25 题，概念）</strong> 关键路径是<strong>权值之和最大</strong>的路径（不是边数最多）；延长任一关键活动必延长工期；缩短任一关键活动<strong>不一定</strong>缩短工期（多关键路径时）；缩短所有关键路径<strong>共有</strong>的活动才一定缩短。</p>
-<h2 id="对应分p_6">对应分P</h2>
+<h2 id="对应分p_5">对应分P</h2>
 <table>
 <thead>
 <tr>
@@ -6393,7 +5555,7 @@ D、E 为第3层 → 距离 2
 </tr>
 </tbody>
 </table>
-<h2 id="待补充_4">待补充</h2>
+<h2 id="待补充_3">待补充</h2>
 <ul>
 <li>54 分P 中 15 题结论字幕前后口播为"选 C"与"选 B"各一次，按"O(n+e)"的标准答案应为 <strong>B</strong>，已按 B 记录。</li>
 <li>56 分P 口播图 6.x 为"六条边"，但按所列边（AB、AD、BD、AC、DC、EC、ED）及 B=2、D=4 反推应为 <strong>7 条边</strong>（Σdeg=14），不影响答案。</li>
@@ -6405,7 +5567,7 @@ D、E 为第3层 → 距离 2
 <blockquote>
 <p>408 中"查找"是选择题的稳定产分区：折半判定树 2010、2023 两次出选择真题，B 树/B+ 树在 09~25 的 17 年里考了 12 年（课后 14~25 题），25 年首次考分块查找，散列表的 ASL 计算既可出选择也可出大题（2010 年大题）。全章几乎都是"流程 + 表格计算"，背规则比推证明更划算。红黑树老师明确要求基础阶段跳过。本笔记覆盖分P 66~84。</p>
 </blockquote>
-<h2 id="知识框架_7">知识框架</h2>
+<h2 id="知识框架_6">知识框架</h2>
 <pre><code>第7章 查找
 ├─ 7.1.1 查找基本概念
 │   ├─ 查找成功 / 查找失败（贯穿全章的两分法）
@@ -6451,7 +5613,7 @@ D、E 为第3层 → 距离 2
     ├─ BST/AVL：数层数，ASL_失败 分母 n+1
     └─ 散列：数探测次数，ASL_失败 分母 = 散列函数值域大小
 </code></pre>
-<h2 id="知识点详解_7">知识点详解</h2>
+<h2 id="知识点详解_6">知识点详解</h2>
 <h3 id="一711查找的基本概念">一、7.1.1 查找的基本概念</h3>
 <p><strong>查找</strong>：在数据集合中找出关键字等于给定值的元素。结果只有两种——<strong>查找成功</strong>、<strong>查找失败</strong>。老师强调：后面每一个知识点（折半、BST、B 树、散列）都要分这两种情况讨论，先把这条"主线"立起来。</p>
 <table>
@@ -7516,7 +6678,7 @@ D、E 为第3层 → 距离 2
 <li>理论上（教材补充）：线性探测 $\text{ASL}<em 失败="失败">{成功}\approx\frac{1}{2}\left(1+\frac{1}{1-\alpha}\right)$，$\text{ASL}</em>}\approx\frac{1}{2}\left(1+\frac{1}{(1-\alpha)^2}\right)$；链地址 $\text{ASL<em 失败="失败">{成功}\approx1+\frac{\alpha}{2}$，$\text{ASL}</em>\approx\alpha$。用 $\alpha=0.75$ 验证：$0.5(1+4)=2.5$，与实测 2.5 完全吻合。</li>
 <li>降低 ASL 的手段：选好散列函数（$p$ 取素数）、控制 $\alpha$、必要时扩容重散列。</li>
 </ul>
-<h2 id="老师强调的考点_7">老师强调的考点</h2>
+<h2 id="老师强调的考点_6">老师强调的考点</h2>
 <ol>
 <li><strong>折半查找判定树"一定要会画"</strong>——画出来之后查任何一个元素的比较路径都一目了然，判断形态题、求 ASL 题全靠它（选择 + 计算）。</li>
 <li><strong>判定树比较次数的三条结论是真题</strong>：成功看层数；失败看父层；最多 $\lceil\log_2(n+1)\rceil$，失败最少 $h-1$（$\log_2(n+1)$ 为整数时取 $h$）。2010 年、2023 年各考一次，老师要求"真题一定要反复研究"（选择）。</li>
@@ -7535,7 +6697,7 @@ D、E 为第3层 → 距离 2
 <li><strong>散列表删除是逻辑删除</strong>，物理抹空会截断探测链（选择，23 题专门考）。</li>
 <li><strong>红黑树基础阶段直接跳过</strong>：从未考过、规则比 AVL 复杂、且与后续章节独立，留到真题做完后再补。</li>
 </ol>
-<h2 id="快速技巧与口诀_7">快速技巧与口诀</h2>
+<h2 id="快速技巧与口诀_6">快速技巧与口诀</h2>
 <table>
 <thead>
 <tr>
@@ -7618,7 +6780,7 @@ D、E 为第3层 → 距离 2
 </tr>
 </tbody>
 </table>
-<h2 id="易错点与坑_7">易错点与坑</h2>
+<h2 id="易错点与坑_6">易错点与坑</h2>
 <ol>
 <li><strong>折半查找用于有序链表</strong>——错。链表不支持随机访问，只能顺序查找。</li>
 <li><strong>判定树混用取整方式</strong>——同一棵树必须处处一致；形态判断题里出现"有的结点左少、有的右少"就是错树。</li>
@@ -7641,7 +6803,7 @@ D、E 为第3层 → 距离 2
 <li><strong>拉链法失败分母</strong>——是散列函数值域大小（如 mod 13 → 13 条链），不是元素个数。</li>
 <li><strong>装填因子代入错误</strong>——$\alpha=n/m$（记录数/表长），不是 $m/n$；开放定址 $\alpha$ 必须 &lt;1。</li>
 </ol>
-<h2 id="本章例题_7">本章例题</h2>
+<h2 id="本章例题_6">本章例题</h2>
 <p><strong>例 1（课后 9，折半判定树 + 比较下标）</strong>
 题干：11 个元素 1~11，<code>mid=⌊(low+high)/2⌋</code>，问查找 11 依次比较的下标。
 步骤：① 取整为向下（中间偏左）；② 建树：根 6；左 1~5 根 3（左 1~2 根 1，右 4~5 根 4）；右 7~11 根 9（左 7~8 根 7，右 10~11 根 10）；③ 查 11：11&gt;6 → 11&gt;9 → 11&gt;10 → 与 10 比后右侧空，失败。
@@ -7703,7 +6865,7 @@ $20\to24\bmod5=4$；$12\to16\bmod5=1$；$25\to29\bmod5=4$ 与 20 冲突 → 循�
 <p>（字幕口述答案 1.8，即 $9/5$，是"0 号标记处只比 1 次就停"的口径；按"逻辑删除后须继续探测"的统一口径应为 2.2。原文存疑，考试按题干对"标记单元是否继续探测"的说明为准。）</p>
 <p><strong>例 22（拉链法 ASL）</strong>
 同 12 个关键字用链地址法（$p=13$）：$\text{ASL}<em 失败="失败">{成功}=21/12=1.75$；空指针算一次时 $\text{ASL}</em>=25/13\approx1.92$，不算时 $12/13\approx0.92$。</p>
-<h2 id="对应分p_7">对应分P</h2>
+<h2 id="对应分p_6">对应分P</h2>
 <table>
 <thead>
 <tr>
@@ -7790,58 +6952,1006 @@ $20\to24\bmod5=4$；$12\to16\bmod5=1$；$25\to29\bmod5=4$ 与 20 冲突 → 循�
 </tr>
 </tbody>
 </table>
-<h2 id="待补充_5">待补充</h2>
+<h2 id="待补充_4">待补充</h2>
 <ul>
 <li><strong>7.3.x 红黑树</strong>：老师明确要求基础阶段直接跳过（"从未考过、规则比 AVL 更麻烦、后期再补"），分P 66~84 中无红黑树内容，本笔记相应留空。</li>
 <li><strong>69_7.2.3</strong>：11 元素有序表的具体数值在字幕中转录不清（"32/33"处含混、"大于 43"后无更多元素），已按老师口述的判定树形态与 ASL 数值（$33/11=3$、$44/12=11/3$）反推校正为 7,10,13,16,19,29,32,33,37,41,43；若与教材图 7.2 有出入，以教材图为准，方法与结论不变。</li>
 <li><strong>74/75/77</strong>：教材图 7.10~7.15 的具体数字与插入序列字幕未完整口述（如"插入 8、9"处含混），本篇旋转示例改用可自校验的数字序列（3,2,1 / 1,2,3 / 3,1,2 / 1,3,2 与 100-140-120-130 例），旋转规则与老师所讲一致。</li>
 <li><strong>79/80</strong>：B 树部分插图（如课后 15 题原图、课后 23 题原树）无法从字幕还原完整形态，只保留结论与通用规则；做原题时需对照教材图。</li>
 <li><strong>83</strong>：字幕中 $\text{ASL}_{失败}$ 的一串加数（"1+13+12+10+…"）口误漏项，已按表中 13 个余数逐项重算为 $91/13=7$。</li>
-</ul></article></main>
-<button id="toTop">↑</button>
+</ul>
+<hr />
+<h1 id="第8章排序插入希尔冒泡快速选择堆归并基数外部排序">第8章 排序（插入/希尔/冒泡/快速/选择/堆/归并/基数/外部排序）</h1>
+<blockquote>
+<p>408 中本章<strong>只出选择题</strong>（个别年份外部排序出过大题），特点是"不难但细节极多"，是全书错误率最高的一章。考点集中在：每一趟的结果、比较/移动次数、稳定性、时空复杂度、堆的建立/插入/删除、外部排序的趟数与 I/O 次数。覆盖分P：排序1、排序2、排序3（外部排序）。</p>
+</blockquote>
+<h2 id="知识框架_7">知识框架</h2>
+<pre><code>第8章 排序
+├─ 8.1 基本概念
+│  ├─ 排序、关键字、稳定性
+│  ├─ 内部排序 / 外部排序
+│  ├─ 两个基本操作：比较、移动
+│  └─ 分类：插入类、交换类、选择类、归并类、基数类
+├─ 8.2 插入类
+│  ├─ 直接插入：从第2个元素起，n−1趟
+│  ├─ 折半插入：只优化比较次数，移动次数不变，仅顺序表
+│  └─ 希尔：增量分组、组内直接插入、最后增量必为1
+├─ 8.3 交换类
+│  ├─ 冒泡：每趟冒出一个极值；某趟无交换即有序
+│  └─ 快速：枢轴 + 双指针 + 分治；一次划分 vs 一趟
+├─ 8.4 选择类
+│  ├─ 简单选择：n−1趟，比较次数固定 n(n−1)/2
+│  └─ 堆排序（重点）：建堆 O(n)、插入只上比、删除往下调、反复取堆顶
+├─ 8.5 归并与基数
+│  ├─ 归并：二路归并、双指针、⌈log₂n⌉趟、O(n) 辅助空间
+│  └─ 基数：分配与收集、r 个队列、d 趟、O(d(n+r))
+├─ 8.6 各种内部排序的比较（总表）
+└─ 8.7 外部排序
+   ├─ 流程：生成初始归并段 → 多路归并（输入/输出缓冲区）
+   ├─ 归并趟数 ⌈log_k r⌉ 与 I/O 次数 2n(1+趟数)
+   ├─ 败者树：k 个叶子 + k−1 内部结点 + 冠军，每次 log₂k 次比较
+   ├─ 置换选择：工作区 m，生成初始归并段
+   └─ 最佳归并树：k 叉哈夫曼、补虚段、I/O = 2×WPL
+</code></pre>
+<h2 id="知识点详解_7">知识点详解</h2>
+<h3 id="一基本概念81">一、基本概念（8.1）</h3>
+<p><strong>稳定性</strong>：排序前关键字相等的两个记录 Rᵢ、Rⱼ（i&lt;j），排序后 Rᵢ 仍在 Rⱼ 之前，则称该算法<strong>稳定</strong>。</p>
+<p>老师举的例子：<code>6, 1, 5, 8, 4, 5̄</code>（带杠的 5 用来区分两个相等关键字）。</p>
+<ul>
+<li>排成 <code>1, 4, 5, 5̄, 6, 8</code>：两个 5 的相对次序未变 → 稳定；</li>
+<li>排成 <code>1, 4, 5̄, 5, 6, 8</code>：带杠的 5 跑到前面 → 不稳定。</li>
+</ul>
+<p><strong>内排序 / 外排序</strong>：所有元素都能进内存为内排序；需要频繁在内外存之间交换数据为外排序（8.7）。</p>
+<p><strong>两个基本操作</strong>：<strong>比较</strong>与<strong>移动</strong>。真题经常问"比较了多少次""移动了多少次"，必须能数。</p>
+<p><strong>分类</strong>：插入类（直接插入、折半插入、希尔）、交换类（冒泡、快速）、选择类（简单选择、堆）、归并类、基数类。</p>
+<h3 id="二直接插入排序821">二、直接插入排序（8.2.1）</h3>
+<p><strong>思想</strong>：把 L[1] 视为已排好序，从第 2 个元素起，依次把 L[i] 插入前面有序区的正确位置；比它大的元素统统后移一位。</p>
+<p><strong>要点</strong>：从<strong>第 2 个元素</strong>开始；共 <strong>n−1 趟</strong>；空间 O(1)（原地）；<strong>稳定</strong>（相等时不越过，插在其后）；顺序存储与链式存储均可。</p>
+<p><strong>具体例子：对 49, 38, 65, 97, 76, 13, 27 做直接插入排序</strong></p>
+<table>
+<thead>
+<tr>
+<th>趟</th>
+<th>待插入</th>
+<th>过程</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>初始</td>
+<td>—</td>
+<td>—</td>
+<td>49, 38, 65, 97, 76, 13, 27</td>
+</tr>
+<tr>
+<td>1</td>
+<td>38</td>
+<td>38&lt;49，49 后移，38 放首位</td>
+<td><strong>38, 49</strong>, 65, 97, 76, 13, 27</td>
+</tr>
+<tr>
+<td>2</td>
+<td>65</td>
+<td>65&gt;49，不动</td>
+<td>38, 49, <strong>65</strong>, 97, 76, 13, 27</td>
+</tr>
+<tr>
+<td>3</td>
+<td>97</td>
+<td>97&gt;65，不动</td>
+<td>38, 49, 65, <strong>97</strong>, 76, 13, 27</td>
+</tr>
+<tr>
+<td>4</td>
+<td>76</td>
+<td>76&lt;97 后移，76&gt;65 停</td>
+<td>38, 49, 65, <strong>76, 97</strong>, 13, 27</td>
+</tr>
+<tr>
+<td>5</td>
+<td>13</td>
+<td>比 97、76、65、49、38 都小，全部后移</td>
+<td><strong>13, 38, 49, 65, 76, 97</strong>, 27</td>
+</tr>
+<tr>
+<td>6</td>
+<td>27</td>
+<td>比 97…38 小、比 13 大，后移 5 个</td>
+<td><strong>13, 27, 38, 49, 65, 76, 97</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>复杂度</strong>：最好情况（原序列已升序）每趟只比 1 次、不移动 → O(n)；最坏（逆序）比较次数 = 1+2+…+(n−1) = n(n−1)/2，移动次数同阶 → <strong>O(n²)</strong>；平均 O(n²)。</p>
+<h3 id="三折半插入排序822">三、折半插入排序（8.2.2）</h3>
+<p><strong>思想</strong>：有序区本身有序，找插入位置时用<strong>折半查找</strong>，找到位置后<strong>照样要一个个后移</strong>。</p>
+<p><strong>对 13 的插入过程</strong>（前面有序区 38, 49, 65, 76, 97）：low=1, high=5 → mid=3（65）&gt;13 → high=2 → mid=1（38）&gt;13 → high=0，插入位置为 1；随后 38、49、65、76、97 <strong>5 个元素全部后移</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>直接插入</th>
+<th>折半插入</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>比较次数</td>
+<td>最坏 O(n²)</td>
+<td><strong>O(n log₂n)</strong></td>
+</tr>
+<tr>
+<td>移动次数</td>
+<td>O(n²)</td>
+<td><strong>O(n²)，一点没减少</strong></td>
+</tr>
+<tr>
+<td>存储要求</td>
+<td>顺序 / 链式</td>
+<td><strong>只能顺序表</strong>（折半查找要求随机存取）</td>
+</tr>
+<tr>
+<td>时间复杂度</td>
+<td>O(n²)</td>
+<td><strong>仍是 O(n²)</strong>（瓶颈在移动）</td>
+</tr>
+<tr>
+<td>稳定性</td>
+<td>稳定</td>
+<td>稳定</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>结论一句话：<strong>折半插入只改进了比较次数，移动次数并未减少。</strong></p>
+</blockquote>
+<h3 id="四希尔排序823">四、希尔排序（8.2.3）</h3>
+<p><strong>思想</strong>（缩小增量排序）：取一个增量 d，把相隔 d 的元素分成一组（<strong>增量是几就分成几组</strong>），组内做<strong>直接插入排序</strong>；然后缩小 d 重复，<strong>最后一趟增量必须为 1</strong>（此时全部元素为一组，做一次完整直接插入）。</p>
+<p><strong>具体例子：49, 38, 65, 97, 76, 13, 27，增量取 4 → 2 → 1</strong></p>
+<ul>
+<li><strong>第一趟 d=4</strong>：分组 {49,76}、{38,13}、{65,27}、{97}</li>
+<li>{49,76} 不变；{38,13}→{13,38}；{65,27}→{27,65}</li>
+<li>结果：<strong>49, 13, 27, 97, 76, 38, 65</strong></li>
+<li><strong>第二趟 d=2</strong>：分组 {49,27,76,65}→排序→{27,49,65,76}；{13,97,38}→{13,38,97}</li>
+<li>结果：<strong>27, 13, 49, 38, 65, 97, 76</strong></li>
+<li><strong>第三趟 d=1</strong>：整体直接插入 → <strong>13, 27, 38, 49, 65, 76, 97</strong></li>
+</ul>
+<p><strong>复杂度</strong>：依赖增量序列。最好 O(n)；平均约 O(n^1.3)；最坏 O(n²)（如 Hibbard 增量可到 O(n^1.5)，教材不深究）。空间 O(1)；<strong>不稳定</strong>（相同关键字可能被分到不同组而交换次序）；仅适合<strong>顺序存储</strong>（要按增量随机跳转取元素）。</p>
+<h3 id="五冒泡排序831">五、冒泡排序（8.3.1）</h3>
+<p><strong>思想</strong>：相邻两两比较，逆序就交换；每一趟把当前极值"冒"到一端。可以从下往上把最小的顶到最前，也可以从上往下把最大的沉到最后（<strong>不唯一</strong>）。</p>
+<p><strong>具体例子：49, 38, 65, 97, 76, 13, 27（从上往下，大的下沉）</strong></p>
+<p>第 1 趟：</p>
+<pre><code>49&gt;38 交换 → 38 49 65 97 76 13 27
+49&lt;65 不动
+65&lt;97 不动
+97&gt;76 交换 → 38 49 65 76 97 13 27
+97&gt;13 交换 → 38 49 65 76 13 97 27
+97&gt;27 交换 → 38 49 65 76 13 27 97
+</code></pre>
+<p><strong>一趟结果：38, 49, 65, 76, 13, 27, 97</strong>（97 到位，有序区长度 +1）</p>
+<p>后续趟（每趟少比一个）：</p>
+<table>
+<thead>
+<tr>
+<th>趟</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2</td>
+<td>38, 49, 65, 13, 27, 76, 97</td>
+</tr>
+<tr>
+<td>3</td>
+<td>38, 49, 13, 27, 65, 76, 97</td>
+</tr>
+<tr>
+<td>4</td>
+<td>38, 13, 27, 49, 65, 76, 97</td>
+</tr>
+<tr>
+<td>5</td>
+<td>13, 27, 38, 49, 65, 76, 97</td>
+</tr>
+<tr>
+<td>6</td>
+<td>无交换 → 判定有序，提前结束</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：<strong>某一趟没有发生交换即说明已有序，可提前结束</strong>（对 1,2,3,…,n 只需 1 趟）。比较次数最坏 n(n−1)/2；移动次数最坏 3n(n−1)/2（每次交换 3 次赋值）。空间 O(1)；<strong>稳定</strong>（相等不交换）；顺序/链式均可。</p>
+<h3 id="六快速排序832重点">六、快速排序（8.3.2，重点）</h3>
+<p><strong>四句话记住全部流程</strong>（老师说"快排的思想和代码高度一致"）：</p>
+<ol>
+<li><strong>双指针 + 第一个元素作枢轴</strong>；</li>
+<li><strong>初始方向从后往前</strong>；</li>
+<li><strong>每次发生交换，改变移动方向</strong>；</li>
+<li><strong>两指针相遇，把枢轴填入该位置</strong>。</li>
+</ol>
+<p><strong>具体例子：49, 38, 65, 97, 76, 13, 27，取 49 为枢轴</strong></p>
+<pre><code>初态（取出 49，i=1, j=7）：
+_  38  65  97  76  13  27
+j 从右往左：27 &lt; 49 → 27 填到 i 位，i→2
+27 38  65  97  76  13  _
+i 从左往右：38 &lt; 49 → i→3；65 &gt; 49 → 65 填到 j 位，j→6
+27 38  _  97  76  13  65
+j 从右往左：13 &lt; 49 → 13 填到 i 位，i→4
+27 38  13  97  76  _  65
+i 从左往右：97 &gt; 49 → 97 填到 j 位，j→5
+27 38  13  _  76  97  65
+j 从右往左：76 &gt; 49 → j→4
+i == j == 4 → 填入枢轴 49
+</code></pre>
+<p><strong>一趟（一次划分）结果：27, 38, 13, 49, 76, 97, 65</strong></p>
+<p>校验：左边 {27,38,13} 全 &lt; 49，右边 {76,97,65} 全 &gt; 49，49 已落到<strong>最终位置</strong>。</p>
+<p><strong>"一次划分"与"一趟"必须区分</strong>（18 题就考这个）：</p>
+<ul>
+<li><strong>一次划分</strong>：对一个子区间做一遍双指针，产生 1 个到位枢轴，把区间分成两半；</li>
+<li><strong>一趟</strong>：对<strong>当前所有</strong>尚未确定位置的元素各处理一遍。第一趟产生 1 个枢轴；第二趟对左右两个子区间各划分一次，产生 2 个枢轴；所以<strong>前两趟最多产生 3 个已就位元素</strong>。</li>
+</ul>
+<p><strong>复杂度与稳定性</strong>：最好/平均 O(n log n)；<strong>最坏 O(n²)</strong>；空间为递归栈，平均 O(log n)、最坏 O(n)；<strong>不稳定</strong>；适合<strong>顺序存储</strong>（要随机访问、双向扫描）。</p>
+<p><strong>为什么快排最坏是 O(n²)？</strong></p>
+<ul>
+<li>每次划分都把区间分成 (0, n−1) 这种极端不平衡（例：序列已升序、又固定取首元素为枢轴，则每趟只确定 1 个元素）；</li>
+<li>递归深度变成 n，第 k 层需扫描约 n−k 个元素；</li>
+<li>总比较次数 = n + (n−1) + … + 1 = n(n−1)/2 → <strong>O(n²)</strong>，同时栈深 O(n)。</li>
+<li>反之若每次划分较均匀（约 n/2 分），递归树高 log₂n、每层扫描 O(n) → O(n log n)。<strong>"最坏"来自划分极不平衡，而不是数据规模</strong>。</li>
+</ul>
+<h3 id="七简单选择排序841">七、简单选择排序（8.4.1）</h3>
+<p><strong>思想</strong>：第 i 趟从 L[i..n] 中<strong>选出关键字最小者</strong>，与 L[i] 交换；n−1 趟后有序。核心动作是"<strong>选择</strong>"，交换只是附带。</p>
+<p><strong>具体例子：49, 38, 65, 97, 76, 13, 27</strong></p>
+<ul>
+<li>第 1 趟：扫描 38、65、97、76、13、27 找最小 = 13（第 6 个），与 49 交换
+  → <strong>13, 38, 65, 97, 76, 49, 27</strong>（一趟结果）</li>
+<li>第 2 趟：剩下中最小 27 → <strong>13, 27, 65, 97, 76, 49, 38</strong></li>
+<li>第 3 趟：最小 38 → <strong>13, 27, 38, 97, 76, 49, 65</strong></li>
+<li>第 4 趟：最小 49 → <strong>13, 27, 38, 49, 76, 97, 65</strong></li>
+<li>第 5 趟：最小 65 → <strong>13, 27, 38, 49, 65, 97, 76</strong></li>
+<li>第 6 趟：最小 76 → <strong>13, 27, 38, 49, 65, 76, 97</strong></li>
+</ul>
+<p><strong>比较次数固定</strong>：(n−1)+(n−2)+…+1 = n(n−1)/2，<strong>与初始状态无关</strong> → 最好/平均/最坏全是 O(n²)。移动次数少（最多 n−1 次交换，3(n−1) 次赋值）。空间 O(1)；<strong>不稳定</strong>（交换会跨越相等元素）。</p>
+<h3 id="八堆排序842细节最多">八、堆排序（8.4.2，细节最多）</h3>
+<p><strong>定义</strong>：堆是<strong>完全二叉树</strong>，用<strong>顺序（数组）存储</strong>。</p>
+<ul>
+<li><strong>大根堆</strong>：每个结点都 ≥ 其左右孩子（只看孩子，不必逐层推子树，但可推出"每个结点 ≥ 整个子树"）；</li>
+<li><strong>小根堆</strong>：每个结点都 ≤ 其左右孩子。</li>
+</ul>
+<p>数组下标（1 开始）：结点 i 的孩子是 2i、2i+1，父结点是 ⌊i/2⌋。</p>
+<h4 id="8421建堆on">8.4.2.1 建堆（O(n)）</h4>
+<p><strong>规则四句话</strong>：完全二叉树倒着来 → 从<strong>第一个非叶子结点 ⌊n/2⌋</strong> 开始 → <strong>左右孩子参与比较</strong>（先挑出较大的孩子，再与父比较）→ 换下来的结点<strong>若下面还有孩子，要继续向下调整</strong>。</p>
+<p><strong>具体例子：49, 38, 65, 97, 76, 13, 27 建大根堆</strong></p>
+<p>数组：<code>1:49  2:38  3:65  4:97  5:76  6:13  7:27</code>，n=7，从 i=⌊7/2⌋=3 开始。</p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>操作</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>i=3（65）</td>
+<td>孩子 13、27，较大者 27 &lt; 65，不动</td>
+<td>49,38,65,97,76,13,27</td>
+</tr>
+<tr>
+<td>i=2（38）</td>
+<td>孩子 97、76，较大者 97 &gt; 38，交换；38 换到 4 号，无孩子，停</td>
+<td>49,<strong>97</strong>,65,<strong>38</strong>,76,13,27</td>
+</tr>
+<tr>
+<td>i=1（49）</td>
+<td>孩子 97、65，较大者 97 &gt; 49，交换；49 到 2 号继续比</td>
+<td><strong>97</strong>,49,65,38,76,13,27</td>
+</tr>
+<tr>
+<td>继续下沉 49</td>
+<td>孩子 38、76，较大者 76 &gt; 49，交换；49 到 5 号，无孩子，停</td>
+<td><strong>97, 76, 65, 38, 49, 13, 27</strong></td>
+</tr>
+</tbody>
+</table>
+<p>最终堆：<code>97, 76, 65, 38, 49, 13, 27</code>（校验：97≥76、65；76≥38、49；65≥13、27 ✓）</p>
+<p><strong>为什么建堆是 O(n) 而不是 O(n log n)？</strong></p>
+<ul>
+<li>直觉算法是"n 个结点各下沉一次，每次 O(log n)"→ O(n log n)，但这是<strong>上界过松</strong>；</li>
+<li>关键：<strong>越往下结点越多，可下沉的高度却越小</strong>。高度为 h 的结点最多有 ⌈n/2^(h+1)⌉ 个，每个最多下沉 h 层：</li>
+</ul>
+<pre><code>T(n) = Σ(h=0..log₂n) h · n/2^(h+1)
+     = (n/2) · Σ(h=0..∞) h/2^h
+     = (n/2) · 2                ← Σ h/2^h = 2
+     = O(n)
+</code></pre>
+<ul>
+<li>结论：<strong>建堆 O(n)</strong>；只有"每次删除堆顶后的调整"才是 O(log n)，n−1 次删除共 O(n log n)。这也是"建堆 + 排序"整体 O(n log n) 的由来。</li>
+</ul>
+<h4 id="8422插入只往上比">8.4.2.2 插入（只往上比）</h4>
+<p><strong>规则</strong>：新结点放到<strong>完全二叉树的最后一个位置</strong>（数组末尾），然后<strong>只与父结点比较、只向上调整</strong>；<strong>不需要左右孩子比较，也不需要向下调整</strong>。</p>
+<p>原因：原结构本来就是堆，被换下来的父结点一定不小于其原来的孩子，故无需下沉。</p>
+<p><strong>具体例子</strong>：大根堆 <code>50, 30, 40, 10, 20, 35</code>（n=6），插入 <strong>45</strong>。</p>
+<ol>
+<li>45 放到 7 号位，父结点 3 号 = 40，45 &gt; 40 → 交换 → <code>50,30,45,10,20,35,40</code>（比较 1 次）</li>
+<li>45 到 3 号位，父结点 1 号 = 50，45 &lt; 50 → 停止（比较 2 次）</li>
+<li>结果：<code>50, 30, 45, 10, 20, 35, 40</code>，共比较 <strong>2 次</strong>，无需与兄弟 30 比较。</li>
+</ol>
+<blockquote>
+<p>真题 16 题（插入 18）答案就是 2 次：18 与 10 比（交换），18 与 25 比（不换）。老师提醒："<strong>你是比完才知道不需要往上走</strong>"，不能只算 1 次。</p>
+</blockquote>
+<h4 id="8423删除往下调">8.4.2.3 删除（往下调）</h4>
+<p><strong>规则</strong>：用<strong>最后一个结点</strong>替换被删结点 → 从删除位置<strong>向下调整</strong>（左右孩子参与比较，挑较大者，若大于自己就交换）→ 换下来后<strong>若下面还有孩子，继续向下调整</strong>。</p>
+<p><strong>具体例子</strong>：大根堆 <code>50, 30, 45, 10, 20, 35</code>，删除堆顶 50。</p>
+<ol>
+<li>末尾 35 移到 1 号位 → <code>35, 30, 45, 10, 20</code></li>
+<li>35 的孩子 30、45，较大者 45（比较 1 次）；45 &gt; 35 → 交换（比较 2 次）→ <code>45, 30, 35, 10, 20</code></li>
+<li>35 到 3 号位，此时堆只剩 5 个元素，3 号位已无孩子，调整结束。</li>
+</ol>
+<blockquote>
+<p>若换下来的结点下面还有孩子（如 17 题删 8），即使"看起来不用换"也必须再比一次才知道，这就是那道题比较次数为 3 而不是 2 的原因。</p>
+</blockquote>
+<h4 id="8424用堆排序">8.4.2.4 用堆排序</h4>
+<p><strong>思路 = 建堆 + 反复"删除堆顶"</strong>：堆顶即当前最大值，取出放到数组末尾（与末尾元素交换），堆规模减 1，再向下调整；重复 n−1 次得到升序序列。</p>
+<p><strong>接上例（堆 <code>97,76,65,38,49,13,27</code>）第一趟</strong>：</p>
+<ol>
+<li>97 与末尾 27 交换 → <code>27,76,65,38,49,13 | 97</code></li>
+<li>27 下沉：孩子 76、65，较大者 76 &gt; 27 → 交换 → <code>76,27,65,38,49,13</code></li>
+<li>27 继续下沉：孩子 38、49，较大者 49 &gt; 27 → 交换 → <code>76,49,65,38,27,13</code></li>
+<li><strong>一趟结果：76, 49, 65, 38, 27, 13, 97</strong></li>
+</ol>
+<p><strong>复杂度</strong>：建堆 O(n)，n−1 次调整每次 O(log n) → 最好/平均/最坏均为 <strong>O(n log n)</strong>；空间 <strong>O(1)</strong>；<strong>不稳定</strong>；<strong>顺序存储</strong>（完全二叉树性质依赖下标）。</p>
+<h3 id="九归并排序851">九、归并排序（8.5.1）</h3>
+<p><strong>思想（二路归并）</strong>：先让每 2 个元素有序，再让每 4 个有序，翻倍合并，直到整体有序。合并两个有序段时用<strong>双指针</strong>，谁小取谁，某段取完后把另一段剩余整体搬过来。</p>
+<p><strong>具体例子：49, 38, 65, 97, 76, 13, 27</strong></p>
+<table>
+<thead>
+<tr>
+<th>趟</th>
+<th>合并动作</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>[49,38]→[38,49]；[65,97]→[65,97]；[76,13]→[13,76]；[27] 单独</td>
+<td><strong>38, 49, 65, 97, 13, 76, 27</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td>[38,49]+[65,97]→[38,49,65,97]；[13,76]+[27]→[13,27,76]</td>
+<td><strong>38, 49, 65, 97, 13, 27, 76</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>两段合并</td>
+<td><strong>13, 27, 38, 49, 65, 76, 97</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>趟数</strong>：每趟段长翻倍，⌈log₂n⌉ = ⌈log₂7⌉ = <strong>3 趟</strong>。</p>
+<p><strong>比较次数</strong>（真题爱考）：合并 [38,49,65,97] 与 [13,27,76] 时，依次比较 13/38、27/38、76/38、76/49、76/65、76/97 共 <strong>6 次</strong>（老师课上数的就是 6 次），最后 76 取完、右段空，左段剩余 97 直接搬。</p>
+<p><strong>复杂度</strong>：最好/平均/最坏都是 <strong>O(n log n)</strong>（与初始序列无关，划分永远对半）；空间 <strong>O(n)</strong>（辅助数组）；<strong>稳定</strong>；顺序、链式均可。</p>
+<p><strong>为什么归并稳定但要多 O(n) 空间？</strong></p>
+<ul>
+<li>稳定：合并时若两段首元素<strong>相等，优先取左段</strong>，左段元素原本就在前面，相对次序得以保持；</li>
+<li>多 O(n)：合并结果不能就地覆盖（会破坏尚未处理的元素），必须开一个长度 n 的辅助数组存放本趟合并结果，再整体拷回；这是"用空间换稳定 + 稳定 O(n log n)"的典型。</li>
+</ul>
+<h3 id="十基数排序852">十、基数排序（8.5.2）</h3>
+<p><strong>思想</strong>：<strong>分配 + 收集</strong>，按位从低位到高位（LSD）做 d 趟。每一位取值 0～9，需要 <strong>r 个队列</strong>（r 为基数，十进制 r=10），用链式队列以便"整串接入"。</p>
+<p><strong>具体例子</strong>：278, 109, 63, 930, 589, 184, 505, 269, 8, 83</p>
+<p><strong>第 1 趟（按个位分配，再 0→9 收集）</strong></p>
+<table>
+<thead>
+<tr>
+<th>队列</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+<th>9</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>元素</td>
+<td>930</td>
+<td>—</td>
+<td>—</td>
+<td>63, 83</td>
+<td>184</td>
+<td>505</td>
+<td>—</td>
+<td>—</td>
+<td>278, 8</td>
+<td>109, 589, 269</td>
+</tr>
+</tbody>
+</table>
+<p>收集结果（<strong>一趟结果</strong>）：<strong>930, 63, 83, 184, 505, 278, 8, 109, 589, 269</strong>（个位已非降）</p>
+<p><strong>第 2 趟（按十位）</strong>：505, 8, 109（十位 0）→ 930（3）→ 63, 269（6）→ 278（7）→ 83, 184, 589（8）
+收集：<strong>505, 8, 109, 930, 63, 269, 278, 83, 184, 589</strong></p>
+<p><strong>第 3 趟（按百位）</strong>：8, 63, 83（0）→ 109, 184（1）→ 269, 278（2）→ 505, 589（5）→ 930（9）
+收集：<strong>8, 63, 83, 109, 184, 269, 278, 505, 589, 930</strong>（有序）</p>
+<p><strong>要点</strong>：分配必须<strong>一个一个</strong>放入队列；收集可以<strong>整串接到队尾</strong>（链式队列，O(r) 而非 O(n)）。相同位值保持原相对次序 → <strong>稳定</strong>。复杂度 <strong>O(d(n+r))</strong>：d 趟 ×（分配 n + 收集 r）；空间 O(r)（r 个队列头尾指针，不计元素本身）；顺序/链式均可。</p>
+<h3 id="十一各种内部排序总表86必背">十一、各种内部排序总表（8.6，必背）</h3>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>最好</th>
+<th>平均</th>
+<th>最坏</th>
+<th>辅助空间</th>
+<th>稳定性</th>
+<th>是否原地</th>
+<th>适用场景 / 存储</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>直接插入</td>
+<td><strong>O(n)</strong></td>
+<td>O(n²)</td>
+<td>O(n²)</td>
+<td>O(1)</td>
+<td><strong>稳定</strong></td>
+<td>是</td>
+<td>基本有序、n 小；顺序/链式</td>
+</tr>
+<tr>
+<td>折半插入</td>
+<td>O(n²)</td>
+<td>O(n²)</td>
+<td>O(n²)</td>
+<td>O(1)</td>
+<td>稳定</td>
+<td>是</td>
+<td>比较次数降到 O(n log n)，移动不变；<strong>仅顺序表</strong></td>
+</tr>
+<tr>
+<td>希尔</td>
+<td>O(n)</td>
+<td>~O(n^1.3)</td>
+<td>O(n²)</td>
+<td>O(1)</td>
+<td><strong>不稳定</strong></td>
+<td>是</td>
+<td>中等规模、增量跳跃；仅顺序表</td>
+</tr>
+<tr>
+<td>冒泡</td>
+<td><strong>O(n)</strong></td>
+<td>O(n²)</td>
+<td>O(n²)</td>
+<td>O(1)</td>
+<td><strong>稳定</strong></td>
+<td>是</td>
+<td>基本有序、n 小；顺序/链式</td>
+</tr>
+<tr>
+<td>快速</td>
+<td>O(n log n)</td>
+<td>O(n log n)</td>
+<td><strong>O(n²)</strong></td>
+<td>平均 O(log n)、最坏 O(n)</td>
+<td><strong>不稳定</strong></td>
+<td>是（不算栈）</td>
+<td>大规模、随机数据；顺序表（链式差）</td>
+</tr>
+<tr>
+<td>简单选择</td>
+<td>O(n²)</td>
+<td>O(n²)</td>
+<td>O(n²)</td>
+<td>O(1)</td>
+<td><strong>不稳定</strong></td>
+<td>是</td>
+<td>移动次数要求少、n 小；顺序/链式</td>
+</tr>
+<tr>
+<td>堆</td>
+<td>O(n log n)</td>
+<td>O(n log n)</td>
+<td>O(n log n)</td>
+<td>O(1)</td>
+<td><strong>不稳定</strong></td>
+<td>是</td>
+<td>要 O(1) 空间又要最坏 O(n log n)、Top-K；仅顺序</td>
+</tr>
+<tr>
+<td>归并</td>
+<td>O(n log n)</td>
+<td>O(n log n)</td>
+<td>O(n log n)</td>
+<td><strong>O(n)</strong></td>
+<td><strong>稳定</strong></td>
+<td>否</td>
+<td>要求稳定、可给辅助空间、外排序；顺序/链式</td>
+</tr>
+<tr>
+<td>基数</td>
+<td>O(d(n+r))</td>
+<td>O(d(n+r))</td>
+<td>O(d(n+r))</td>
+<td>O(r)</td>
+<td><strong>稳定</strong></td>
+<td>否（需队列）</td>
+<td>关键字可分解为有限位、位数少；顺序/链式</td>
+</tr>
+</tbody>
+</table>
+<p><strong>三个"为什么"（简答题式记忆点）</strong></p>
+<ol>
+<li><strong>为什么快排最坏 O(n²)</strong>：枢轴选取使划分极不平衡（如已有序 + 取首元素），递归深度 n，每层 O(n) 扫描，总 n+(n−1)+…+1 = O(n²)。</li>
+<li><strong>为什么堆排序建堆 O(n) 而非 O(n log n)</strong>：结点数随高度指数减少，高度 h 的结点约 n/2^(h+1) 个、每个下沉 ≤ h 层，Σ h/2^h = 2，总和 O(n)；只有后续 n−1 次删除调整才是 O(n log n)。</li>
+<li><strong>为什么归并稳定但要额外 O(n)</strong>：合并时相等取左段故稳定；合并结果必须写入辅助数组再拷回，无法就地完成。</li>
+</ol>
+<p><strong>一趟特征对照表（选项题高频）</strong></p>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>每一趟能确定什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>直接插入</td>
+<td>前 i+1 个元素局部有序（不保证到位）</td>
+</tr>
+<tr>
+<td>希尔</td>
+<td>间隔为 d 的每个子序列内部有序</td>
+</tr>
+<tr>
+<td>冒泡</td>
+<td>产生一个极值放到一端（有序区长度 +1）</td>
+</tr>
+<tr>
+<td>快速</td>
+<td>产生一个枢轴落到<strong>最终位置</strong>，左小右大</td>
+</tr>
+<tr>
+<td>简单选择</td>
+<td>产生当前最小值放到前端最终位置</td>
+</tr>
+<tr>
+<td>堆</td>
+<td>产生当前最大值放到末尾最终位置</td>
+</tr>
+<tr>
+<td>归并</td>
+<td>段长翻倍，每段内部有序</td>
+</tr>
+<tr>
+<td>基数</td>
+<td>按当前位（个/十/百）有序</td>
+</tr>
+</tbody>
+</table>
+<h3 id="十二外部排序87">十二、外部排序（8.7）</h3>
+<p><strong>为什么要外排序</strong>：记录太多，内存装不下（如 10TB 数据、内存只有几十 GB），不能一次读入排序。</p>
+<p><strong>8.7.1 基本流程（三段）</strong></p>
+<ol>
+<li><strong>生成初始归并段</strong>：按内存容量把文件分块读入，块内用内排序排好，写回外存；</li>
+<li><strong>多路归并</strong>：每次把 k 个归并段合并成一个更长的归并段；</li>
+<li><strong>重复归并</strong>，直到只剩一个归并段。</li>
+</ol>
+<p><strong>内存与外存以"磁盘块"为单位交换</strong>（不是字节）；归并时设 <strong>k 个输入缓冲区 + 1 个输出缓冲区</strong>（k 路归并就 k 个输入缓冲区）。输出缓冲区满了就写出，某个输入缓冲区空了就再读一个磁盘块进来。</p>
+<p><strong>老师举的例子</strong>：3 个有序段按磁盘块存放（每块 3 个记录），做<strong>三路归并</strong>——三个输入缓冲区各读 1 块，三个指针取最小者送入输出缓冲区，缓冲区满则写回磁盘，某段用完再补读一块。整个过程共 <strong>7 次读磁盘 + 7 次写磁盘</strong>（每个磁盘块读一次、写一次）。</p>
+<p><strong>8.7.2 归并趟数与 I/O 次数</strong></p>
+<ul>
+<li>设初始归并段 r 个、做 k 路归并，则<strong>归并趟数 = ⌈log_k r⌉</strong>；总 I/O 次数（以磁盘块计）≈ <strong>2n(1 + ⌈log_k r⌉)</strong>，其中 n 为总块数，系数 2 表示"读一遍 + 写一遍"。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>r（初始段数）</th>
+<th>k（路数）</th>
+<th>⌈log_k r⌉</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>100</td>
+<td>2</td>
+<td>7</td>
+<td>log₂100 ≈ 6.64</td>
+</tr>
+<tr>
+<td>1000</td>
+<td>5</td>
+<td>5</td>
+<td>log₅1000 ≈ 4.29 → 5</td>
+</tr>
+<tr>
+<td>1000</td>
+<td>10</td>
+<td>3</td>
+<td>log₁₀1000 = 3</td>
+</tr>
+<tr>
+<td>120</td>
+<td>12</td>
+<td>2</td>
+<td>log₁₂120 ≈ 1.93 → 2</td>
+</tr>
+</tbody>
+</table>
+<p>例：n = 10000 块、r = 1000、k = 5 → I/O = 2×10000×(1+5) = <strong>120000 次</strong>；改成 k = 10 → 2×10000×(1+3) = <strong>80000 次</strong>。</p>
+<p><strong>减少 I/O 的两条路</strong>：① <strong>增大 k</strong>（多路归并，趟数按对数下降）；② <strong>减少 r</strong>（用置换选择排序生成更长的初始归并段）。</p>
+<p><strong>8.7.3 败者树</strong></p>
+<p><strong>作用</strong>：从 k 个归并段的当前记录中选最小，普通方法每输出一个记录要比较 <strong>k−1</strong> 次；败者树只需 <strong>⌈log₂k⌉</strong> 次。</p>
+<p><strong>结构（k=5）</strong>：共 <strong>k 个结点</strong>——1 个<strong>冠军结点</strong>（单独在最上面，存当前最小者的段号）+ <strong>k−1 = 4 个内部结点</strong>构成完全二叉树；<strong>叶子是 k 个归并段</strong>（各带一个指针指向其当前记录），<strong>结点内存放的是"归并段编号"，不是关键字</strong>。</p>
+<p><strong>初始化与调整规则</strong></p>
+<ol>
+<li>归并段编号 0 ~ k−1，<strong>每个内部结点初值置为 k</strong>（编号取不到 k），并假想第 k 段关键字为 <strong>−∞</strong>（求最大值时改 +∞）；</li>
+<li><strong>倒着调整</strong>：i 从 k−1 递减到 0，每次从该叶子向上走到根；</li>
+<li>每次比较两个"胜者"：<strong>关键字小者胜、继续上升；大者（败者）留在当前结点</strong>；相等时也让其上升；</li>
+<li>根结点的胜者写入<strong>冠军结点</strong>，即当前最小记录所在的归并段号；</li>
+<li>冠军段输出一个记录后，读入该段下一个记录，<strong>只需从该叶子沿路径重比 ⌈log₂k⌉ 次</strong>，不必全场重比。</li>
+</ol>
+<p><strong>例（5 路，各段当前值）</strong></p>
+<table>
+<thead>
+<tr>
+<th>段号</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>当前值</td>
+<td>10</td>
+<td>9</td>
+<td>20</td>
+<td><strong>6</strong></td>
+<td>12</td>
+</tr>
+</tbody>
+</table>
+<p>建树（自 4 号向上、再 3、2、1、0 依次调整）后，冠军 = <strong>3 号（值 6）</strong>，因为 6 最小。输出 6、补入 15 后，仅沿 3 号叶子的路径重比（约 3 次 = ⌈log₂5⌉），冠军变为 <strong>1 号（值 9）</strong>。</p>
+<p><strong>比较次数对比</strong>：输出 n 个记录，普通方法约 (k−1)(n−1) 次；败者树约 n⌈log₂k⌉ 次。k 越大优势越明显（k=1000 时 999 次 → 约 10 次）。</p>
+<blockquote>
+<p>老师提醒：不要用"两两配对先比一轮"的简化画法，那种做法只在<strong>满二叉树</strong>（k 恰为 2 的幂）时结果正确，非满时比较路径会乱。</p>
+</blockquote>
+<p><strong>8.7.4 置换选择排序（生成初始归并段）</strong></p>
+<p><strong>作用</strong>：把"每块排好序"的定长归并段，变成<strong>长度不等、平均约为 2m</strong> 的更长的初始归并段（m 为工作区能容纳的记录数），从而减少 r、减少归并趟数。</p>
+<p><strong>规则</strong></p>
+<ol>
+<li>从外存读入 m 个记录填满<strong>工作区</strong>；</li>
+<li>从工作区中选"<strong>关键字 ≥ 当前段末元素</strong>"的最小者输出，并补入一个新记录；</li>
+<li>若工作区中已没有 ≥ 段末元素的记录，则本段结束，<strong>开新段</strong>（工作区中的记录留给下一段）；</li>
+<li>重复直到数据取完。</li>
+</ol>
+<p><strong>具体例子（m=3）</strong>：15, 9, 20, 4, 12, 18, 6</p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>工作区</th>
+<th>输出</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>初始</td>
+<td>15, 9, 20</td>
+<td>—</td>
+<td>读满 3 个</td>
+</tr>
+<tr>
+<td>1</td>
+<td>15, 20, <strong>4</strong></td>
+<td>9</td>
+<td>最小者 9 输出，补入 4</td>
+</tr>
+<tr>
+<td>2</td>
+<td>20, 4, <strong>12</strong></td>
+<td>15</td>
+<td>需 ≥9，最小是 15</td>
+</tr>
+<tr>
+<td>3</td>
+<td>4, 12, <strong>18</strong></td>
+<td>20</td>
+<td>需 ≥15，只有 20</td>
+</tr>
+<tr>
+<td>4</td>
+<td>4, 12, 18</td>
+<td>—</td>
+<td>没有 ≥20 的 → <strong>第 1 段结束：[9, 15, 20]</strong></td>
+</tr>
+<tr>
+<td>5</td>
+<td>12, 18, <strong>6</strong></td>
+<td>4</td>
+<td>新段开始，取最小 4</td>
+</tr>
+<tr>
+<td>6</td>
+<td>12, 18</td>
+<td>6</td>
+<td>需 ≥4，取 6</td>
+</tr>
+<tr>
+<td>7</td>
+<td>18</td>
+<td>12</td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>—</td>
+<td>18</td>
+<td><strong>第 2 段：[4, 6, 12, 18]</strong></td>
+</tr>
+</tbody>
+</table>
+<p>结论：7 个记录生成 <strong>2 个</strong>归并段，长度分别为 3 和 4。</p>
+<p><strong>2023 年真题（大题）两问的结论</strong>：</p>
+<ul>
+<li>第一个归并段的<strong>最大长度 = N</strong>（若整个文件本就有序，一段到底）；</li>
+<li>第一个归并段的<strong>最小长度 = m</strong>（前 m 个恰好是全局最大的 m 个时，输出一个后就没有更大的可接，只能结束该段）；</li>
+<li>平均长度约 <strong>2m</strong>（教材补充）。</li>
+</ul>
+<p><strong>8.7.5 最佳归并树（k 叉哈夫曼）</strong></p>
+<p><strong>核心结论</strong>：把每个归并段看成一个叶子，其<strong>权值 = 该段占用的磁盘块数</strong>；按 <strong>k 叉哈夫曼</strong>合并，可使<strong>总 I/O 次数最少</strong>，且</p>
+<blockquote>
+<p><strong>WPL = 归并过程读/写的总块数</strong>，<strong>总 I/O 次数 = 2 × WPL</strong>（读一次 + 写一次）。</p>
+</blockquote>
+<p><strong>补虚段</strong>：k 叉哈夫曼树要求"只有度 0 和度 k 的结点"，由 n₀ = (k−1)·n_k + 1 得 <strong>(n₀−1) 必须能被 (k−1) 整除</strong>。若 (n₀−1) mod (k−1) = u ≠ 0，则需补 <strong>(k−1−u)</strong> 个权值为 0 的虚段（相当于"长度为 0 的归并段"）。</p>
+<table>
+<thead>
+<tr>
+<th>情形</th>
+<th>计算</th>
+<th>需补虚段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>n₀=120，k=12</td>
+<td>119 mod 11 = 9</td>
+<td>11−9 = <strong>2</strong> 个（2023 真题）</td>
+</tr>
+<tr>
+<td>n₀=6，k=3</td>
+<td>5 mod 2 = 1</td>
+<td>2−1 = <strong>1</strong> 个</td>
+</tr>
+<tr>
+<td>n₀=7，k=3</td>
+<td>6 mod 2 = 0</td>
+<td><strong>0</strong> 个</td>
+</tr>
+</tbody>
+</table>
+<p><strong>例（k=3，权值 2,3,5,6,7,8,18）</strong>：不用补虚段。</p>
+<ul>
+<li>取最小的三个：2+3+5 = 10；</li>
+<li>剩下 {6,7,8,10,18}，取 6+7+8 = 21；</li>
+<li>剩下 {10,18,21}，合并 = 49。</li>
+<li>WPL = 非叶结点之和 = 10+21+49 = <strong>80</strong>；总 I/O = 2×80 = <strong>160 块次</strong>。</li>
+<li>校验（叶子加权）：(2+3+5)×2 + (6+7+8)×2 + 18×1 = 20+42+18 = 80 ✓</li>
+</ul>
+<p><strong>反例对比（k=3，权值 1,2,3,4,5）</strong>：按顺序先并 3,4,5=12，再并 12,1,2=15，WPL = 27；按哈夫曼先并 1,2,3=6，再并 6,4,5=15，WPL = 21。<strong>每次选最短的 k 段合并，总 I/O 最少</strong>，这就是"最佳"的含义。</p>
+<p><strong>三者关系（老师最后的总结）</strong>：置换选择 → 生成尽量少而长的初始归并段；最佳归并树 → 决定先用哪些段合并（每次取最短的 k 个），使总 I/O 最少；败者树 → 在 k 路归并的每一步快速选出最小记录。三者共同服务于"外排序总时间最短"。</p>
+<h2 id="老师强调的考点_7">老师强调的考点</h2>
+<ol>
+<li><strong>本章只考选择题</strong>（个别年份外部排序出大题），但"内容不难、细节极多"，错误率高，"要把书上那个 49,38,65,97,76,13,27,49̄ 的例子看懂，这是最关键的"。</li>
+<li><strong>稳定性、时空复杂度、适用场景三件套必须背</strong>，8.6 有汇总表，"到时候直接背那个表"。</li>
+<li><strong>快排是重点</strong>，必须掌握"双指针 + 枢轴 + 交换换向 + 相遇填坑"，并且能区分<strong>一次划分</strong>与<strong>一趟</strong>（18 题年年有人错）。</li>
+<li><strong>堆排序细节最多</strong>：建堆（⌊n/2⌋ 起倒着调、左右比、换下来继续下沉）、插入（只往上比、不左右比、不下沉）、删除（末尾替换、往下调、左右比）三个动作的差异必考。</li>
+<li><strong>比较次数是高频小题</strong>：堆的插入 16 题（2 次）、删除 17 题（3 次）、归并 20 题、简单选择 n(n−1)/2。</li>
+<li><strong>希尔排序题两种问法</strong>：给结果猜增量、给增量写结果，都要会（14 年与 18 年同类题）。</li>
+<li><strong>外部排序是"整章最难"</strong>，基础阶段可后置，但<strong>置换选择排序 2023 年出过大题</strong>，"时间宽裕的情况下大纲上的东西尽量多学"。</li>
+<li>结论句要记：<strong>初始序列基本有序时，选直接插入或冒泡，最好情况 O(n)</strong>（全表只有这两个能达到 O(n)）。</li>
+<li>堆的插入与"建堆"是两回事：<strong>"依次插入" ≠ "一次性建堆"</strong>（20 题就设了这个陷阱，误按建堆做会选中干扰项 9875641）。</li>
+</ol>
+<h2 id="快速技巧与口诀_7">快速技巧与口诀</h2>
+<ul>
+<li><strong>插入类</strong>："从第二个开始，往前找位置，大的往后挪"。</li>
+<li><strong>希尔</strong>："增量是几就分几组，写几行竖着排"——验证增量时直接按增量写成若干行，每行一组，一眼看出是否组内有序。</li>
+<li><strong>冒泡</strong>："一趟一个极值；某趟没交换，直接收工"。</li>
+<li><strong>快排</strong>："挖坑填数、左右交替、相遇填枢轴"；<strong>换向只看是否发生了交换</strong>。</li>
+<li><strong>简单选择</strong>："选最小，换到位；比较次数永远是 n(n−1)/2"。</li>
+<li><strong>堆</strong>："建堆倒着调、左右挑大个、换下继续沉；插入只上比；删除末尾替、往下沉"。</li>
+<li><strong>归并</strong>："两两合并，段长翻倍，⌈log₂n⌉ 趟"。</li>
+<li><strong>基数</strong>："先个位、再十位、后百位；分配一个个放，收集一串串接"。</li>
+<li><strong>外排</strong>："先生成段、再多路并；趟数 ⌈log_k r⌉，I/O 两倍 WPL；k 叉哈夫曼要补零，补 (k−1)−余数 个"。</li>
+<li><strong>选算法</strong>：基本有序→插入/冒泡；要稳定→插入/冒泡/归并/基数；要 O(1) 空间又要最坏 n log n→堆；数据量大且随机→快排；外部→归并。</li>
+</ul>
+<h2 id="易错点与坑_7">易错点与坑</h2>
+<ol>
+<li><strong>"一趟"与"一次划分"混淆</strong>：快排第一趟只产生 1 个到位枢轴，第二趟产生 2 个；18 题按"每趟产生几个枢轴"倒推。</li>
+<li><strong>快排比较次数与交换方向</strong>：初始必须<strong>从后往前</strong>；只有发生交换才换向，没交换不换向。</li>
+<li><strong>堆的插入去做左右孩子比较</strong>：插入只与父结点比，比兄弟是多余的，会多算次数。</li>
+<li><strong>删除后忘记继续下沉</strong>：换下来的结点若下面还有孩子，必须继续比，即使"看起来不用换"也要比一次才知道（17 题 3 次的来源）。</li>
+<li><strong>"依次插入"当成"一次建堆"</strong>：前者每来一个元素调整一次，结果通常不同。</li>
+<li><strong>建堆从 1 号还是 ⌊n/2⌋ 号开始</strong>：从<strong>最后一个非叶子结点</strong> ⌊n/2⌋ 开始倒着调到 1，从叶子开始调是无效动作。</li>
+<li><strong>希尔增量最后不是 1</strong>：最后一趟增量必须为 1，否则不能保证整体有序。</li>
+<li><strong>稳定性判断错</strong>：希尔、快排、简单选择、堆都是<strong>不稳定</strong>；直接插入、折半插入、冒泡、归并、基数是稳定。</li>
+<li><strong>简单选择的时间复杂度以为与初始序列有关</strong>：比较次数恒为 n(n−1)/2，与初始状态无关。</li>
+<li><strong>归并趟数写成 log₂n 不取整</strong>：必须<strong>向上取整</strong>；比较次数不等于"移动次数"，也不等于 n。</li>
+<li><strong>基数排序空间写成 O(n)</strong>：只需 r 个队列的头尾指针，O(r)；时间是 O(d(n+r))，别丢 r。</li>
+<li><strong>外部排序 I/O 忘记乘 2</strong>：读写各一遍，总 I/O = 2×WPL；WPL 本身只是"块数"。</li>
+<li><strong>最佳归并树补虚段算反</strong>：补的是 <strong>(k−1) − 余数</strong> 个，不是余数本身。</li>
+<li><strong>败者树结点里存关键字</strong>：存的是<strong>归并段编号</strong>；冠军结点存当前最小段的编号。</li>
+<li><strong>折半插入以为移动次数也减少了</strong>：只减少比较次数，移动次数不变，时间仍是 O(n²)。</li>
+</ol>
+<h2 id="本章例题_7">本章例题</h2>
+<p><strong>例1（希尔，课后 20 题）</strong>：给出一趟排序结果，判断增量是 3 还是 5（选项只有这两个）。
+① 把原序列按增量<strong>竖着写成若干行</strong>，一行即一组：增量 5 就写 5 行、增量 3 就写 3 行；② 逐行检查是否组内有序；③ 增量为 5 时五行全部有序，增量为 3 时第一组（第 1、4、7、10 个元素）就已乱序，排除。<strong>答案：增量 = 5</strong>（该题选 D）。</p>
+<p><strong>例2（快排，19 题）</strong>：给一个序列，问哪个元素可能是一次划分后的枢轴。
+① 枢轴必须满足"左边全小于它、右边全大于它"；② 逐项检查，只有 <strong>81</strong> 满足（左边全 &lt;81、右边全 &gt;81）；③ 其余选项左侧或右侧存在比它大/小的元素，排除。<strong>答案：81</strong>。</p>
+<p><strong>例3（快排，20 题）</strong>：选项形如 <code>(…) 81 (…)</code>，问哪个可能是快排某趟结果。
+① 括号内<strong>不必有序</strong>（同一趟内左右子区间还没排）；② 但<strong>括号之间必须整体有序</strong>（左括号内全部 &lt; 枢轴 &lt; 右括号内全部）；③ 只有满足该性质的选项正确。<strong>答案：D</strong>（括号内无序、括号间有序）。</p>
+<p><strong>例4（快排，18 题）</strong>：给四个序列，判断哪个可能是快排<strong>第二趟</strong>结束后的结果。
+① 第一趟产生 1 个枢轴，第二趟在左右各产生 1 个 → 两趟后应至少有 <strong>2~3 个</strong>到位枢轴；② 找各选项中的"到位元素"（左小右大）；③ A 中 72、28 为两个到位枢轴，若 72 是第一趟枢轴，则第二趟在左侧产生 28，成立；④ D 只有 12、32 两个，无论如何安排都无法满足"第二趟左右各一个"。<strong>答案：A</strong>（第一趟枢轴 72，第二趟 28）。</p>
+<p><strong>例5（堆插入，对应 16 题）</strong>：大根堆 <code>25, 10, 20</code>，插入 18，问比较次数。
+① 18 放到末尾（4 号位），父结点是 2 号位的 10，比较 → 18 大，交换（第 1 次）→ <code>25, 18, 20, 10</code>；② 18 升到 2 号位，父结点 25 比较 → 18 小，停（第 2 次）；③ 全程<strong>未与兄弟结点比较</strong>。<strong>答案：2 次</strong>（第 2 次"不交换"也必须计入——"你是比完才知道不需要往上走"）。</p>
+<p><strong>例6（堆删除，对应 17 题）</strong>：小根堆 <code>8, 15, 10, 16, 20, 20, 18</code>，删除根 8，问比较次数。
+① 末尾 18 替换到根 → <code>18, 15, 10, 16, 20, 20</code>；② 左右孩子 15、10 比较 → 10 更小（第 1 次）；③ 10 与 18 比较 → 10 小，交换（第 2 次）→ <code>10, 15, 18, 16, 20, 20</code>；④ 18 被换到 3 号位，与其孩子 20 比较 → 18 小，不换（第 3 次）。<strong>答案：3 次</strong>；删除后 <code>10, 15, 18, 16, 20, 20</code> 仍是小根堆。</p>
+<p><strong>例7（堆，20 题，易错题）</strong>：给 7 个整数，问"<strong>依次插入</strong>"建堆后的结果。
+① 审题：题干是"依次插入一个元素就调整一次"，等价于连续做 7 次插入，<strong>不是</strong>一次性建堆；② 插入只与父结点比、只上浮；③ 一次性建堆（从 ⌊n/2⌋ 倒着调）得到的是 <code>9, 8, 7, 5, 6, 4, 1</code>，正是选项里的<strong>干扰项 C</strong>；④ 按插入法逐次上浮得到的序列与此不同。<strong>考点在审题，不在算力</strong>。</p>
+<p><strong>例8（归并，20 题）</strong>：三个有序段，做二路归并，问比较次数。
+① 先合并前两段：双指针逐次比较，谁小取谁；② 一段取完后另一段剩余直接搬，<strong>不产生比较</strong>；③ 再把结果与第三段合并，同样计数；④ 两轮次数相加。<strong>要点：剩余元素整段搬运不计比较次数</strong>。</p>
+<p><strong>例9（外排，2023 大题）</strong>：置换选择排序，工作区 m=4，给一串记录。
+① 读满 4 个；② 每次输出"≥段末元素的最小者"并补入新记录；③ 无可用元素时结束该段、开新段；④ 第一问：能生成几个归并段及各段内容；⑤ 第二问：第一段最长 = <strong>N</strong>（整体有序时），最短 = <strong>m</strong>。</p>
+<p><strong>例10（外排，16 题）</strong>：120 个初始归并段，12 路归并，求需补的虚段数。
+① (120−1) mod (12−1) = 119 mod 11 = 9；② 补 11−9 = <strong>2</strong> 个虚段；③ 归并趟数 = ⌈log₁₂120⌉ = <strong>2</strong> 趟。</p>
+<h2 id="对应分p_7">对应分P</h2>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>主题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>85_第八章排序1(先用这版，后期再补录).txt</td>
+<td>排序基本概念、稳定性、直接插入、折半插入、希尔</td>
+</tr>
+<tr>
+<td>86_第八章排序2(先用这版，后期再补录).txt</td>
+<td>冒泡、快速、简单选择、堆（建/插/删/排序）、归并、基数、内部排序比较</td>
+</tr>
+<tr>
+<td>87_第八章排序3：外部排序.txt</td>
+<td>外排流程与缓冲区、多路归并、归并趟数、败者树、置换选择、最佳归并树</td>
+</tr>
+</tbody>
+</table>
+<h2 id="待补充_5">待补充</h2>
+<ol>
+<li><strong>87 败者树部分</strong>：字幕中树的形态描述与结点编号多处含糊（"五个节点""31024""10423"等数字无法确认对应关系），本笔记按"k 个结点 = 1 冠军 + k−1 内部结点、初值置 k、倒序向上调整、败者留原位"的规则重新组织了例子，具体树形请对照讲义图再核一遍。</li>
+<li><strong>87 置换选择排序原例</strong>：字幕给出的记录序列（51,19,43,37,92,14,63,15,99,48,56,23,60,31,17,8,90,166,100…）有明显跳读与错字，无法逐项复原老师的三段划分；本笔记改用 m=3 的自算例子（15,9,20,4,12,18,6），规则与结论一致。</li>
+<li><strong>87 三叉哈夫曼原例</strong>：叶子集合转录不全（"235""678""十十八21"），本笔记改用 2,3,5,6,7,8,18 的完整算例，WPL=80。</li>
+<li><strong>85/86 标注"先用这版，后期再补录"</strong>：若后续补录版本对快排/堆的例题数字有修订，以补录版为准。</li>
+<li><strong>1.2 课后题 6、7、8、9、10、16、18 题</strong>：老师明确留作课下练习，课堂未讲，故本笔记未收录题干。</li>
+</ol></article></main>
+<aside id="out"><div class="cap">本页大纲</div><div class="grp" data-for="总纲" data-name="总纲"><a class="lv2" href="#一数据结构在408里的位置" title="一、数据结构在 408 里的位置">一、数据结构在 408 里的位置</a><a class="lv2" href="#二八章知识地图含性价比评估" title="二、八章知识地图（含性价比评估）">二、八章知识地图</a><a class="lv2" href="#三跨章高频考点top15" title="三、跨章高频考点 Top 15">三、跨章高频考点 Top 15</a><a class="lv2" href="#四本课程未覆盖需自己补的部分" title="四、本课程未覆盖 / 需自己补的部分">四、本课程未覆盖 / 需自己补的部分</a><a class="lv2" href="#五三阶段复习与刷题顺序" title="五、三阶段复习与刷题顺序">五、三阶段复习与刷题顺序</a><a class="lv2" href="#六笔记怎么用" title="六、笔记怎么用">六、笔记怎么用</a></div>
+<div class="grp" data-for="第1章绪论11数据结构基本概念与三要素12算法与时间空间复杂度分析" data-name="第1章 绪论"><a class="lv2" href="#知识框架" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解" title="知识点详解">知识点详解</a><a class="lv3" href="#一数据结构的三要素111" title="一、数据结构的三要素（1.1.1）">一、数据结构的三要素</a><a class="lv3" href="#二算法的基本概念与效率度量121" title="二、算法的基本概念与效率度量（1.2.1）">二、算法的基本概念与效率度量</a><a class="lv3" href="#三while循环的时间复杂度122" title="三、while 循环的时间复杂度（1.2.2）">三、while 循环的时间复杂度</a><a class="lv3" href="#四双层for循环的时间复杂度123" title="四、双层 for 循环的时间复杂度（1.2.3）">四、双层 for 循环的时间复杂度</a><a class="lv3" href="#五递归函数的时间复杂度124" title="五、递归函数的时间复杂度（1.2.4）">五、递归函数的时间复杂度</a><a class="lv3" href="#六空间复杂度小结" title="六、空间复杂度小结">六、空间复杂度小结</a><a class="lv2" href="#老师强调的考点" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题" title="本章例题">本章例题</a><a class="lv2" href="#对应分p" title="对应分P">对应分P</a></div>
+<div class="grp" data-for="第2章线性表21线性表的定义和基本操作22顺序表23链表" data-name="第2章 线性表"><a class="lv2" href="#知识框架_1" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_1" title="知识点详解">知识点详解</a><a class="lv3" href="#一211线性表的定义和基本操作" title="一、2.1.1 线性表的定义和基本操作">一、2.1.1 线性表的定义和基本操作</a><a class="lv3" href="#二221顺序表的定义与实现" title="二、2.2.1 顺序表的定义与实现">二、2.2.1 顺序表的定义与实现</a><a class="lv3" href="#三231指针与结构体语法链表的语言基础" title="三、2.3.1 指针与结构体语法（链表的语言基础）">三、2.3.1 指针与结构体语法</a><a class="lv3" href="#四232单链表的结点定义必须会默写" title="四、2.3.2 单链表的结点定义（必须会默写）">四、2.3.2 单链表的结点定义</a><a class="lv3" href="#五233头指针与头结点" title="五、2.3.3 头指针与头结点">五、2.3.3 头指针与头结点</a><a class="lv3" href="#六234单链表的插入与删除指针步骤可照抄" title="六、2.3.4 单链表的插入与删除（指针步骤，可照抄）">六、2.3.4 单链表的插入与删除</a><a class="lv3" href="#七235双链表" title="七、2.3.5 双链表">七、2.3.5 双链表</a><a class="lv3" href="#八236循环单链表" title="八、2.3.6 循环单链表">八、2.3.6 循环单链表</a><a class="lv3" href="#九237循环双链表" title="九、2.3.7 循环双链表">九、2.3.7 循环双链表</a><a class="lv3" href="#十238静态链表" title="十、2.3.8 静态链表">十、2.3.8 静态链表</a><a class="lv3" href="#十一239顺序表vs链表专设对比" title="十一、2.3.9 顺序表 vs 链表（专设对比）">十一、2.3.9 顺序表 vs 链表</a><a class="lv3" href="#十二2310选取最合适的链表" title="十二、2.3.10 选取最合适的链表">十二、2.3.10 选取最合适的链表</a><a class="lv3" href="#十三算法题模板一顺序表" title="十三、算法题模板（一）：顺序表">十三、算法题模板</a><a class="lv3" href="#十四算法题模板二链表" title="十四、算法题模板（二）：链表">十四、算法题模板</a><a class="lv2" href="#老师强调的考点_1" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_1" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_1" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_1" title="本章例题">本章例题</a><a class="lv3" href="#例1课后13题选择平均o1的操作" title="例 1（课后 13 题·选择）平均 O(1) 的操作">例 1</a><a class="lv3" href="#例2课后第10题2010真题算法大题循环左移p位" title="例 2（课后第 10 题·2010 真题·算法大题）循环左移 p 位">例 2</a><a class="lv3" href="#例3课后第6题选择q与p之间插入s" title="例 3（课后第 6 题·选择）Q 与 P 之间插入 S">例 3</a><a class="lv3" href="#例443页36题选择四行代码的作用" title="例 4（43 页 36 题·选择）四行代码的作用">例 4</a><a class="lv3" href="#例5课后17题选择双链表插入的合法顺序" title="例 5（课后 17 题·选择）双链表插入的合法顺序">例 5</a><a class="lv3" href="#例635题选择双链表插入的补全" title="例 6（35 题·选择）双链表插入的补全">例 6</a><a class="lv3" href="#例72232题选择循环双链表的判空与删除" title="例 7（22、32 题·选择）循环双链表的判空与删除">例 7</a><a class="lv3" href="#例826题选择删除首元为on的循环单链表" title="例 8（26 题·选择）删除首元为 O(n) 的循环单链表">例 8</a><a class="lv3" href="#例927题选择headnextnexthead时表长" title="例 9（27 题·选择）head-&amp;gt;next-&amp;gt;next == head 时表长">例 9</a><a class="lv3" href="#例1034题选择带头结点循环单链表删首元" title="例 10（34 题·选择）带头结点循环单链表删首元">例 10</a><a class="lv3" href="#例1133题2016真题选择静态链表插入" title="例 11（33 题·2016 真题·选择）静态链表插入">例 11</a><a class="lv2" href="#对应分p_1" title="对应分P">对应分P</a><a class="lv2" href="#待补充" title="待补充">待补充</a></div>
+<div class="grp" data-for="第3章栈队列和数组31栈32队列33栈和队列的应用34数组与特殊矩阵" data-name="第3章 栈、队列和数组"><a class="lv2" href="#知识框架_2" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_2" title="知识点详解">知识点详解</a><a class="lv3" href="#一栈的基本概念与顺序链式存储311" title="一、栈的基本概念与顺序/链式存储（3.1.1）">一、栈的基本概念与顺序/链式存储</a><a class="lv3" href="#二共享栈312" title="二、共享栈（3.1.2）">二、共享栈</a><a class="lv3" href="#三栈的入栈出栈分析313" title="三、栈的入栈出栈分析（3.1.3）">三、栈的入栈出栈分析</a><a class="lv3" href="#四队列的基本概念321" title="四、队列的基本概念（3.2.1）">四、队列的基本概念</a><a class="lv3" href="#五顺序队列与循环队列322" title="五、顺序队列与循环队列（3.2.2）">五、顺序队列与循环队列</a><a class="lv3" href="#六链队与双端队列323" title="六、链队与双端队列（3.2.3）">六、链队与双端队列</a><a class="lv3" href="#七栈在括号匹配中的应用331" title="七、栈在括号匹配中的应用（3.3.1）">七、栈在括号匹配中的应用</a><a class="lv3" href="#八中缀转后缀332" title="八、中缀转后缀（3.3.2）">八、中缀转后缀</a><a class="lv3" href="#九后缀表达式求值双栈直接求中缀值333" title="九、后缀表达式求值 / 双栈直接求中缀值（3.3.3）">九、后缀表达式求值 / 双栈直接求中缀值</a><a class="lv3" href="#十栈在递归与函数调用中的应用334" title="十、栈在递归与函数调用中的应用（3.3.4）">十、栈在递归与函数调用中的应用</a><a class="lv3" href="#十一队列的应用335" title="十一、队列的应用（3.3.5）">十一、队列的应用</a><a class="lv3" href="#十二一维二维数组的地址计算341" title="十二、一维/二维数组的地址计算（3.4.1）">十二、一维/二维数组的地址计算</a><a class="lv3" href="#十三特殊矩阵的压缩存储342" title="十三、特殊矩阵的压缩存储（3.4.2）">十三、特殊矩阵的压缩存储</a><a class="lv2" href="#老师强调的考点_2" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_2" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_2" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_2" title="本章例题">本章例题</a><a class="lv2" href="#对应分p_2" title="对应分P">对应分P</a><a class="lv2" href="#待补充_1" title="待补充">待补充</a></div>
+<div class="grp" data-for="第4章串41串的定义与kmp算法" data-name="第4章 串"><a class="lv2" href="#知识框架_3" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_3" title="知识点详解">知识点详解</a><a class="lv3" href="#一串的基本概念与存储411前半" title="一、串的基本概念与存储（4.1.1 前半）">一、串的基本概念与存储</a><a class="lv3" href="#二朴素模式匹配bf" title="二、朴素模式匹配（BF）">二、朴素模式匹配</a><a class="lv3" href="#三next数组的手算核心" title="三、next 数组的手算（核心）">三、next 数组的手算</a><a class="lv3" href="#四失配后的移动规则与滑动距离" title="四、失配后的移动规则与滑动距离">四、失配后的移动规则与滑动距离</a><a class="lv3" href="#五nextval数组kmp优化" title="五、nextval 数组（KMP 优化）">五、nextval 数组</a><a class="lv3" href="#六kmp的时间复杂度onm" title="六、KMP 的时间复杂度 O(n+m)">六、KMP 的时间复杂度 O</a><a class="lv2" href="#老师强调的考点_3" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_3" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_3" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_3" title="本章例题">本章例题</a><a class="lv2" href="#对应分p_3" title="对应分P">对应分P</a></div>
+<div class="grp" data-for="第5章树与二叉树51树的基本概念52二叉树概念与存储53遍历与线索二叉树54树森林与二叉树55哈夫曼树与编码" data-name="第5章 树与二叉树"><a class="lv2" href="#知识框架_4" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_4" title="知识点详解">知识点详解</a><a class="lv3" href="#一树的基本概念与性质511" title="一、树的基本概念与性质（5.1.1）">一、树的基本概念与性质</a><a class="lv3" href="#二二叉树的定义特殊形态与五大性质521" title="二、二叉树的定义、特殊形态与五大性质（5.2.1）">二、二叉树的定义、特殊形态与五大性质</a><a class="lv3" href="#三二叉树的存储结构522523" title="三、二叉树的存储结构（5.2.2 / 5.2.3）">三、二叉树的存储结构</a><a class="lv3" href="#四二叉树的遍历531532" title="四、二叉树的遍历（5.3.1 / 5.3.2）">四、二叉树的遍历</a><a class="lv3" href="#五线索二叉树535" title="五、线索二叉树（5.3.5）">五、线索二叉树</a><a class="lv3" href="#六树的存储与树森林二叉树的转换541542" title="六、树的存储与树、森林、二叉树的转换（5.4.1 / 5.4.2）">六、树的存储与树、森林、二叉树的转换</a><a class="lv3" href="#七树与森林的遍历543" title="七、树与森林的遍历（5.4.3）">七、树与森林的遍历</a><a class="lv3" href="#八哈夫曼树551" title="八、哈夫曼树（5.5.1）">八、哈夫曼树</a><a class="lv3" href="#九哈夫曼编码552" title="九、哈夫曼编码（5.5.2）">九、哈夫曼编码</a><a class="lv2" href="#老师强调的考点_4" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_4" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_4" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_4" title="本章例题">本章例题</a><a class="lv2" href="#对应分p_4" title="对应分P">对应分P</a><a class="lv2" href="#待补充_2" title="待补充">待补充</a></div>
+<div class="grp" data-for="第6章图61基本概念62存储结构63遍历64应用" data-name="第6章 图"><a class="lv2" href="#知识框架_5" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_5" title="知识点详解">知识点详解</a><a class="lv3" href="#一611图的基本概念" title="一、6.1.1 图的基本概念">一、6.1.1 图的基本概念</a><a class="lv3" href="#二621邻接矩阵" title="二、6.2.1 邻接矩阵">二、6.2.1 邻接矩阵</a><a class="lv3" href="#三622邻接表" title="三、6.2.2 邻接表">三、6.2.2 邻接表</a><a class="lv3" href="#四623十字链表有向图" title="四、6.2.3 十字链表（有向图）">四、6.2.3 十字链表</a><a class="lv3" href="#五624邻接多重表无向图" title="五、6.2.4 邻接多重表（无向图）">五、6.2.4 邻接多重表</a><a class="lv3" href="#六四种存储结构对比必背表" title="六、四种存储结构对比（必背表）">六、四种存储结构对比</a><a class="lv3" href="#七63图的遍历" title="七、6.3 图的遍历">七、6.3 图的遍历</a><a class="lv3" href="#八641最小生成树mst" title="八、6.4.1 最小生成树（MST）">八、6.4.1 最小生成树</a><a class="lv3" href="#九642最短路径" title="九、6.4.2 最短路径">九、6.4.2 最短路径</a><a class="lv3" href="#十643有向无环图描述表达式" title="十、6.4.3 有向无环图描述表达式">十、6.4.3 有向无环图描述表达式</a><a class="lv3" href="#十一644拓扑排序" title="十一、6.4.4 拓扑排序">十一、6.4.4 拓扑排序</a><a class="lv3" href="#十二645关键路径aoe网" title="十二、6.4.5 关键路径（AOE 网）">十二、6.4.5 关键路径</a><a class="lv2" href="#老师强调的考点_5" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_5" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_5" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_5" title="本章例题">本章例题</a><a class="lv2" href="#对应分p_5" title="对应分P">对应分P</a><a class="lv2" href="#待补充_3" title="待补充">待补充</a></div>
+<div class="grp" data-for="第7章查找71基本概念72顺序折半分块查找73树形查找74b树与b树75散列表" data-name="第7章 查找"><a class="lv2" href="#知识框架_6" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_6" title="知识点详解">知识点详解</a><a class="lv3" href="#一711查找的基本概念" title="一、7.1.1 查找的基本概念">一、7.1.1 查找的基本概念</a><a class="lv3" href="#二721顺序查找" title="二、7.2.1 顺序查找">二、7.2.1 顺序查找</a><a class="lv3" href="#三722折半查找的基本流程" title="三、7.2.2 折半查找的基本流程">三、7.2.2 折半查找的基本流程</a><a class="lv3" href="#四723折半查找判定树本章第一重点" title="四、7.2.3 折半查找判定树（本章第一重点）">四、7.2.3 折半查找判定树</a><a class="lv3" href="#五724分块查找索引顺序查找" title="五、7.2.4 分块查找（索引顺序查找）">五、7.2.4 分块查找</a><a class="lv3" href="#六731732二叉排序树bst" title="六、7.3.1~7.3.2 二叉排序树（BST）">六、7.3.1~7.3.2 二叉排序树</a><a class="lv3" href="#七733737平衡二叉树avl" title="七、7.3.3~7.3.7 平衡二叉树（AVL）">七、7.3.3~7.3.7 平衡二叉树</a><a class="lv3" href="#八741743b树" title="八、7.4.1~7.4.3 B 树">八、7.4.1~7.4.3 B 树</a><a class="lv3" href="#九744b树与b树的区别" title="九、7.4.4 B+ 树与 B 树的区别">九、7.4.4 B+ 树与 B 树的区别</a><a class="lv3" href="#十75散列表hashtable" title="十、7.5 散列表（Hash Table）">十、7.5 散列表</a><a class="lv2" href="#老师强调的考点_6" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_6" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_6" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_6" title="本章例题">本章例题</a><a class="lv2" href="#对应分p_6" title="对应分P">对应分P</a><a class="lv2" href="#待补充_4" title="待补充">待补充</a></div>
+<div class="grp" data-for="第8章排序插入希尔冒泡快速选择堆归并基数外部排序" data-name="第8章 排序"><a class="lv2" href="#知识框架_7" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_7" title="知识点详解">知识点详解</a><a class="lv3" href="#一基本概念81" title="一、基本概念（8.1）">一、基本概念</a><a class="lv3" href="#二直接插入排序821" title="二、直接插入排序（8.2.1）">二、直接插入排序</a><a class="lv3" href="#三折半插入排序822" title="三、折半插入排序（8.2.2）">三、折半插入排序</a><a class="lv3" href="#四希尔排序823" title="四、希尔排序（8.2.3）">四、希尔排序</a><a class="lv3" href="#五冒泡排序831" title="五、冒泡排序（8.3.1）">五、冒泡排序</a><a class="lv3" href="#六快速排序832重点" title="六、快速排序（8.3.2，重点）">六、快速排序</a><a class="lv3" href="#七简单选择排序841" title="七、简单选择排序（8.4.1）">七、简单选择排序</a><a class="lv3" href="#八堆排序842细节最多" title="八、堆排序（8.4.2，细节最多）">八、堆排序</a><a class="lv3" href="#九归并排序851" title="九、归并排序（8.5.1）">九、归并排序</a><a class="lv3" href="#十基数排序852" title="十、基数排序（8.5.2）">十、基数排序</a><a class="lv3" href="#十一各种内部排序总表86必背" title="十一、各种内部排序总表（8.6，必背）">十一、各种内部排序总表</a><a class="lv3" href="#十二外部排序87" title="十二、外部排序（8.7）">十二、外部排序</a><a class="lv2" href="#老师强调的考点_7" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_7" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_7" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_7" title="本章例题">本章例题</a><a class="lv2" href="#对应分p_7" title="对应分P">对应分P</a><a class="lv2" href="#待补充_5" title="待补充">待补充</a></div></aside>
+<button id="top" aria-label="回到顶部">↑</button>
 <script>
-const q = document.getElementById('q');
-const links = [...document.querySelectorAll('#toc a')];
-q.addEventListener('input', () => {
-  const v = q.value.trim().toLowerCase();
-  links.forEach(a => {
-    const hit = !v || a.textContent.toLowerCase().includes(v);
-    a.classList.toggle('hide', !hit);
-  });
-  if (v) {
-    links.forEach(a => { if (!a.classList.contains('hide')) a.style.display='block'; });
-  }
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const root=document.documentElement;
+const store={
+  get(k,d){try{return localStorage.getItem(k)??d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+};
+
+const qp=new URLSearchParams(location.search);
+if(qp.get('theme')==='dark'||store.get('theme','light')==='dark'){
+  root.setAttribute('data-theme','dark');$('#tTheme').textContent='日';
+}
+$('#tTheme').onclick=()=>{
+  const dark=root.getAttribute('data-theme')==='dark';
+  if(dark){root.removeAttribute('data-theme');store.set('theme','light');$('#tTheme').textContent='夜';}
+  else{root.setAttribute('data-theme','dark');store.set('theme','dark');$('#tTheme').textContent='日';}
+};
+
+let fs=parseFloat(store.get('size','16.5'));
+const applySize=()=>{root.style.setProperty('--size',fs+'px');store.set('size',fs)};
+applySize();
+$('#tBig').onclick=()=>{fs=Math.min(20,fs+0.5);applySize()};
+$('#tSmall').onclick=()=>{fs=Math.max(14,fs-0.5);applySize()};
+
+$('#burger').onclick=()=>$('#side').classList.toggle('open');
+$$('#side a').forEach(a=>a.addEventListener('click',()=>$('#side').classList.remove('open')));
+
+const chapters=$$('#side a');
+const q=$('#q');
+q.addEventListener('input',()=>{
+  const v=q.value.trim().toLowerCase();
+  chapters.forEach(a=>a.classList.toggle('hide', !!v && !a.textContent.toLowerCase().includes(v)));
+  $$('#out a').forEach(a=>a.classList.toggle('hide', !!v && !a.textContent.toLowerCase().includes(v)));
+  if(v) $$('#out .grp').forEach(g=>g.classList.add('on'));
 });
-q.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    const first = links.find(a => !a.classList.contains('hide'));
-    if (first) { first.click(); }
-  }
+q.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){const hit=chapters.find(a=>!a.classList.contains('hide'));if(hit)hit.click();}
+  if(e.key==='Escape'){q.value='';q.dispatchEvent(new Event('input'));q.blur();}
 });
 
-const subs = links.map(a => ({a, id: decodeURIComponent(a.getAttribute('href').slice(1))}));
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(en => {
-    if (en.isIntersecting) {
-      subs.forEach(s => s.a.classList.remove('active'));
-      const cur = subs.find(s => s.id === en.target.id);
-      if (cur) {
-        cur.a.classList.add('active');
-        const r = cur.a.getBoundingClientRect(), box = document.getElementById('toc').getBoundingClientRect();
-        if (r.top < box.top + 40 || r.bottom > box.bottom - 40) cur.a.scrollIntoView({block:'center'});
+const chIds=new Set(chapters.map(a=>a.getAttribute('href').slice(1)));
+const chs=$$('#doc h1[id]').filter(h=>chIds.has(h.id));
+const crumb=$('#crumbCur');
+const groups=$$('#out .grp');
+function setChapter(id){
+  chapters.forEach(a=>a.classList.toggle('on', a.getAttribute('href')==='#'+id));
+  let name='';
+  groups.forEach(g=>{
+    const on=g.dataset.for===id;
+    g.classList.toggle('on',on);
+    if(on) name=g.dataset.name;
+  });
+  if(name&&crumb) crumb.textContent=name;
+}
+if(chs.length){
+  setChapter(chapters.length ? chapters[0].getAttribute('href').slice(1) : chs[0].id);
+  const ob1=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting) setChapter(e.target.id)});
+  },{rootMargin:'-12% 0px -78% 0px'});
+  chs.forEach(h=>ob1.observe(h));
+}
+
+const links=$$('#out a[href^="#"]');
+const heads=$$('#doc h2[id],#doc h3[id]');
+if(heads.length&&links.length){
+  const ob2=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        links.forEach(a=>a.classList.toggle('on', a.getAttribute('href')==='#'+e.target.id));
       }
-    }
-  });
-}, {rootMargin: '-10% 0px -80% 0px'});
-subs.forEach(s => { const el = document.getElementById(s.id); if (el) obs.observe(el); });
+    });
+  },{rootMargin:'-10% 0px -72% 0px'});
+  heads.forEach(h=>ob2.observe(h));
+}
 
-const bar = document.querySelector('#bar i');
-window.addEventListener('scroll', () => {
-  const h = document.documentElement.scrollHeight - innerHeight;
-  bar.style.width = (h > 0 ? (scrollY / h * 100) : 0) + '%';
-  document.getElementById('toTop').style.display = scrollY > 600 ? 'block' : 'none';
+heads.forEach(h=>{
+  const a=document.createElement('a');
+  a.className='ah'; a.href='#'+h.id; a.textContent='#';
+  a.onclick=e=>{e.preventDefault();history.replaceState(null,'','#'+h.id);
+    if(navigator.clipboard) navigator.clipboard.writeText(location.href)};
+  h.appendChild(a);
 });
-document.getElementById('toTop').onclick = () => scrollTo({top:0, behavior:'smooth'});
-document.getElementById('menu').onclick = () => document.getElementById('side').classList.toggle('open');
+
+$$('#doc table').forEach(t=>{
+  const w=document.createElement('div');
+  w.className='tbl';
+  t.parentNode.insertBefore(w,t);
+  w.appendChild(t);
+});
+
+const prog=$('#prog'), topBtn=$('#top');
+addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-innerHeight;
+  prog.style.width=(h>0?scrollY/h*100:0)+'%';
+  topBtn.style.display=scrollY>560?'block':'none';
+},{passive:true});
+topBtn.onclick=()=>scrollTo({top:0,behavior:'smooth'});
 </script>
 </body></html>

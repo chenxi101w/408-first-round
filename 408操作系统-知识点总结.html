@@ -9,120 +9,166 @@
 <meta name="twitter:card" content="summary">
 <title>408 操作系统 · 知识点总结</title><style>
 :root{
-  --bg:#f7f7f5; --panel:#ffffff; --ink:#1d1f21; --ink-2:#52565c; --ink-3:#8b9098;
-  --line:#e4e4e0; --accent:#b23a2f; --accent-soft:#fdf1ef; --code:#f4f4f1;
-  --mark:#fff2c2;
+  --bg:#ffffff; --bg-soft:#fafaf8; --bg-hover:#f2f2ee;
+  --ink:#1a1c1e; --ink2:#4a4f55; --ink3:#8a9098;
+  --line:#e8e8e4; --line-soft:#f1f1ee;
+  --accent:#b23a2f; --accent-soft:#fdf1ef;
+  --code-bg:#f7f6f3; --mark:#fff2c2;
+  --size:16.5px; --bar:56px; --left:264px; --right:232px;
+}
+html[data-theme="dark"]{
+  --bg:#16181a; --bg-soft:#1b1e20; --bg-hover:#262a2d;
+  --ink:#e9e7e3; --ink2:#b8b5b0; --ink3:#8b8984;
+  --line:#2c3033; --line-soft:#24282b;
+  --accent:#e07a6d; --accent-soft:#2b1f1d;
+  --code-bg:#1f2225; --mark:#4a3f16;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--bar) + 16px)}
 body{margin:0;background:var(--bg);color:var(--ink);
   font-family:"PingFang SC","Microsoft YaHei","Segoe UI",-apple-system,sans-serif;
-  font-size:16px;line-height:1.85;-webkit-font-smoothing:antialiased}
-#side{position:fixed;top:0;left:0;bottom:0;width:296px;background:var(--panel);
-  border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:20}
-#side .head{padding:18px 18px 12px;border-bottom:1px solid var(--line)}
-#side .head h1{font-size:15px;margin:0 0 10px;line-height:1.5;font-weight:700}
-#side .head .sub{font-size:12px;color:var(--ink-3);margin-top:6px}
-#q{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;
-  font-size:13px;outline:none;background:var(--bg);color:var(--ink)}
-#q:focus{border-color:var(--accent);background:#fff}
-#toc{flex:1;overflow-y:auto;padding:10px 8px 40px}
-#toc a{display:block;color:var(--ink-2);text-decoration:none;font-size:13.5px;
-  padding:4px 10px;border-radius:6px;line-height:1.5;border-left:2px solid transparent}
-#toc a:hover{background:var(--bg);color:var(--ink)}
-#toc a.lv1{font-weight:700;color:var(--ink);font-size:14px;margin-top:2px}
-#toc .grp{padding-bottom:6px;margin-bottom:4px;border-bottom:1px solid #f2f2ee}
-#toc .grp:last-child{border-bottom:0}
-#toc a.lv2{padding-left:22px}
-#toc a.lv3{padding-left:34px;font-size:13px;color:var(--ink-3)}
-#toc a.active{background:var(--accent-soft);color:var(--accent);border-left-color:var(--accent)}
-#toc a.hide{display:none}
-#bar{position:fixed;top:0;left:296px;right:0;height:3px;background:transparent;z-index:30}
-#bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .12s linear}
-main{margin-left:296px;padding:52px 56px 140px;max-width:1000px}
-article{background:var(--panel);padding:56px 64px 80px;border:1px solid var(--line);border-radius:14px}
-h1,h2,h3,h4{line-height:1.4;font-weight:700}
-article>h1:first-child{font-size:27px;margin:0 0 6px}
-h1{font-size:25px;margin:0 0 14px;padding-bottom:12px;border-bottom:2px solid var(--ink)}
-h1+h1{margin-top:48px}
-h2{font-size:20px;margin:34px 0 12px;padding-left:11px;border-left:4px solid var(--accent)}
-h3{font-size:17px;margin:26px 0 10px;color:#111}
-h4{font-size:15.5px;margin:20px 0 8px;color:var(--ink-2)}
-p{margin:12px 0}
-blockquote{margin:16px 0;padding:12px 18px;background:var(--accent-soft);
-  border-left:3px solid var(--accent);border-radius:0 8px 8px 0;color:var(--ink-2);font-size:14.5px}
+  font-size:var(--size);line-height:1.85;-webkit-font-smoothing:antialiased;
+  transition:background .18s,color .18s}
+a{color:var(--accent);text-decoration:none}
+
+#bar{position:fixed;top:0;left:0;right:0;height:var(--bar);z-index:60;
+  display:flex;align-items:center;gap:14px;padding:0 18px;
+  background:var(--bg);border-bottom:1px solid var(--line)}
+#prog{position:absolute;left:0;bottom:-1px;height:2px;width:0;background:var(--accent);transition:width .1s linear}
+#burger{display:none;border:1px solid var(--line);background:none;border-radius:7px;
+  width:34px;height:34px;cursor:pointer;color:var(--ink2);font-size:15px;line-height:1}
+.crumb{display:flex;align-items:center;gap:8px;font-size:13px;min-width:0}
+.crumb .sub{color:var(--ink3);white-space:nowrap}
+.crumb .sep{color:var(--ink3)}
+.crumb .cur{color:var(--ink);font-weight:700;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;max-width:44vw}
+.tools{margin-left:auto;display:flex;align-items:center;gap:8px}
+#q{width:180px;padding:7px 11px;border:1px solid var(--line);border-radius:8px;
+  background:var(--bg-soft);color:var(--ink);font-size:13px;outline:none}
+#q:focus{border-color:var(--accent);background:var(--bg)}
+.tbtn{border:1px solid var(--line);background:var(--bg-soft);color:var(--ink2);
+  border-radius:7px;height:32px;min-width:32px;padding:0 8px;cursor:pointer;font-size:13px;line-height:1}
+.tbtn:hover{background:var(--bg-hover);color:var(--ink)}
+
+#side{position:fixed;top:var(--bar);left:0;bottom:0;width:var(--left);z-index:50;
+  background:var(--bg-soft);border-right:1px solid var(--line);
+  overflow-y:auto;padding:22px 12px 60px}
+#side .cap{font-size:11.5px;letter-spacing:.08em;color:var(--ink3);margin:0 10px 10px;font-weight:700}
+#side a{display:block;font-size:13.5px;color:var(--ink2);padding:7px 10px;border-radius:7px;
+  line-height:1.5;margin-bottom:2px;border-left:2px solid transparent}
+#side a:hover{background:var(--bg-hover);color:var(--ink)}
+#side a.on{background:var(--accent-soft);color:var(--accent);font-weight:700;border-left-color:var(--accent)}
+#side a.hide{display:none}
+#side .note{margin:22px 10px 0;padding-top:14px;border-top:1px solid var(--line);
+  font-size:11.5px;color:var(--ink3);line-height:1.7}
+
+main{margin-left:var(--left);margin-right:var(--right);padding-top:var(--bar)}
+#doc{max-width:760px;margin:0 auto;padding:38px 44px 120px}
+#out{position:fixed;top:var(--bar);right:0;width:var(--right);bottom:0;z-index:40;
+  overflow-y:auto;padding:26px 18px 60px 10px}
+#out .cap{font-size:11.5px;letter-spacing:.08em;color:var(--ink3);margin:0 0 10px 12px;font-weight:700}
+#out a{display:block;font-size:12.5px;color:var(--ink3);padding:4px 12px;line-height:1.5;
+  border-left:2px solid var(--line-soft)}
+#out a.lv3{padding-left:24px;font-size:12px}
+#out a:hover{color:var(--ink)}
+#out a.on{color:var(--accent);border-left-color:var(--accent);font-weight:700}
+#out .grp{display:none}
+#out .grp.on{display:block}
+#out a.hide{display:none}
+
+h1,h2,h3,h4{line-height:1.45;font-weight:700;scroll-margin-top:calc(var(--bar) + 20px)}
+h1{font-size:1.62em;margin:0 0 8px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+h1+h1{margin-top:64px}
+h2{font-size:1.28em;margin:44px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line-soft)}
+h3{font-size:1.09em;margin:30px 0 10px;color:var(--ink)}
+h4{font-size:1em;margin:22px 0 8px;color:var(--ink2)}
+h2 .ah,h3 .ah{opacity:0;margin-left:8px;font-weight:400;color:var(--ink3);font-size:.8em;transition:opacity .15s}
+h2:hover .ah,h3:hover .ah{opacity:1}
+p{margin:13px 0}
+ul,ol{padding-left:24px;margin:12px 0}
+li{margin:6px 0}
+li>ul,li>ol{margin:6px 0}
+strong{font-weight:700;color:var(--ink)}
+code{background:var(--code-bg);padding:2px 5px;border-radius:4px;font-size:.88em;
+  font-family:"Cascadia Mono",Consolas,Menlo,monospace;color:var(--accent)}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;
+  padding:16px 18px;overflow-x:auto;margin:18px 0;line-height:1.7}
+pre code{background:none;padding:0;color:var(--ink);font-size:.82em;line-height:1.75}
+blockquote{margin:18px 0;padding:12px 18px;background:var(--accent-soft);
+  border-left:3px solid var(--accent);border-radius:0 8px 8px 0;color:var(--ink2);font-size:.94em}
 blockquote p{margin:6px 0}
-ul,ol{padding-left:26px;margin:10px 0}
-li{margin:5px 0}
-strong{color:#000;font-weight:700}
-code{background:var(--code);padding:1.5px 5px;border-radius:4px;font-size:13.5px;
-  font-family:"Cascadia Mono",Consolas,Menlo,monospace;color:#a03a2d}
-pre{background:#fbfbf9;border:1px solid var(--line);border-radius:10px;padding:16px 18px;
-  overflow-x:auto;margin:16px 0}
-pre code{background:none;padding:0;color:var(--ink);font-size:13px;line-height:1.75}
-table{border-collapse:collapse;width:100%;margin:16px 0;font-size:14px;display:block;overflow-x:auto}
-th,td{border:1px solid var(--line);padding:8px 12px;text-align:left;vertical-align:top}
-th{background:#f2f2ee;font-weight:700;white-space:nowrap}
-tr:nth-child(even) td{background:#fbfbf9}
-hr{border:0;border-top:1px dashed var(--line);margin:44px 0}
-a{color:var(--accent)}
-mark{background:var(--mark);padding:0 2px}
-#toTop{position:fixed;right:26px;bottom:26px;width:42px;height:42px;border-radius:50%;
-  border:1px solid var(--line);background:#fff;color:var(--ink-2);cursor:pointer;font-size:16px;
-  box-shadow:0 4px 14px rgba(0,0,0,.08);display:none}
-@media (max-width:1080px){
-  #side{transform:translateX(-100%);transition:transform .2s}
-  #side.open{transform:none;box-shadow:0 0 40px rgba(0,0,0,.15)}
-  main{margin-left:0;padding:40px 20px 100px}
-  article{padding:32px 22px 50px}
-  #bar{left:0}
-  #menu{display:block !important}
+table{border-collapse:collapse;width:100%;font-size:.9em}
+.tbl{overflow-x:auto;margin:18px 0}
+th,td{border:1px solid var(--line);padding:9px 13px;text-align:left;vertical-align:top}
+th{background:var(--bg-hover);font-weight:700;white-space:nowrap}
+tbody tr:nth-child(even) td{background:var(--bg-soft)}
+hr{border:0;border-top:1px solid var(--line-soft);margin:34px 0}
+mark{background:var(--mark);color:inherit;padding:0 2px}
+#top{position:fixed;right:calc(var(--right) + 18px);bottom:26px;width:38px;height:38px;
+  border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--ink2);
+  cursor:pointer;font-size:14px;display:none;z-index:45}
+#top:hover{background:var(--bg-hover)}
+
+@media (max-width:1180px){
+  main{margin-right:0}
+  #out{display:none}
+  #top{right:18px}
 }
-#menu{display:none;position:fixed;left:14px;top:12px;z-index:40;background:#fff;border:1px solid var(--line);
-  border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer}
+@media (max-width:900px){
+  :root{--bar:52px}
+  main{margin-left:0}
+  #doc{padding:26px 18px 100px;overflow-wrap:break-word}
+  #burger{display:block}
+  #side{transform:translateX(-100%);transition:transform .22s;box-shadow:0 0 40px rgba(0,0,0,.12)}
+  #side.open{transform:none}
+  #bar{gap:8px;padding:0 10px}
+  #q{width:74px;padding:6px 8px;font-size:12px}
+  .tbtn{min-width:27px;height:27px;padding:0 4px;font-size:12px}
+  .crumb{flex:1;min-width:0}
+  .crumb .sub{display:none}
+  .crumb .cur{max-width:30vw;font-size:12.5px}
+  .tools{gap:6px}
+  h1{font-size:1.38em}
+  h1+h1{margin-top:44px}
+  table{font-size:.82em}
+}
 @media print{
-  #side,#bar,#toTop,#menu{display:none}
-  main{margin:0;padding:0;max-width:none}
-  article{border:0;padding:0}
+  #bar,#side,#out,#top,#burger{display:none}
+  main{margin:0;padding:0}
+  #doc{max-width:none;padding:0}
   h1{page-break-before:always}
-  article>h1:first-child{page-break-before:avoid}
+  #doc>h1:first-child{page-break-before:avoid}
   pre,table,blockquote{page-break-inside:avoid}
+  body{font-size:11.5pt}
 }
 </style></head>
 <body>
-<button id="menu">目录</button>
-<div id="bar"><i></i></div>
-<aside id="side">
-  <div class="head">
-    <h1>408 操作系统 · 知识点总结</h1>
-    <input id="q" placeholder="搜索章节标题…（回车跳转）" autocomplete="off">
-    <div class="sub">基于 30 个分P 字幕整理 · 2026-10-17</div>
+<header id="bar">
+  <button id="burger" aria-label="目录">☰</button>
+  <div class="crumb"><span class="sub">操作系统</span><span class="sep">/</span><span class="cur" id="crumbCur">操作系统</span></div>
+  <div class="tools">
+    <input id="q" placeholder="搜索标题…" autocomplete="off" aria-label="搜索标题">
+    <button class="tbtn" id="tSmall" title="缩小字号">A−</button>
+    <button class="tbtn" id="tBig" title="放大字号">A+</button>
+    <button class="tbtn" id="tTheme" title="切换夜间模式">夜</button>
   </div>
-  <nav id="toc"><div class="grp"><a class="lv1" href="#总纲">总纲</a><a class="lv2" href="#一操作系统在408里的位置">一、操作系统在 408 里的位置</a><a class="lv2" href="#二五章知识地图">二、五章知识地图</a><a class="lv2" href="#三跨章高频考点top15">三、跨章高频考点 Top 15</a><a class="lv2" href="#四本课程未覆盖略讲的部分">四、本课程未覆盖 / 略讲的部分</a><a class="lv2" href="#五三阶段复习与刷题顺序">五、三阶段复习与刷题顺序</a><a class="lv2" href="#六笔记怎么用">六、笔记怎么用</a></div>
-<div class="grp"><a class="lv1" href="#第1章计算机系统概述11基本概念12发展历程13运行环境1416体系结构与引导">第1章 计算机系统概述（1.1 基本概念、1.2 发展历程、1.3 运行环境、1.4–1.6 体系结构与引导）</a><a class="lv2" href="#知识框架">知识框架</a><a class="lv2" href="#知识点详解">知识点详解</a><a class="lv3" href="#一11操作系统基本概念">一、1.1 操作系统基本概念</a><a class="lv3" href="#二12操作系统发展历程">二、1.2 操作系统发展历程</a><a class="lv3" href="#三13操作系统的运行环境全章核心">三、1.3 操作系统的运行环境（全章核心）</a><a class="lv3" href="#四系统调用13重点">四、系统调用（1.3 重点）</a><a class="lv3" href="#五1416体系结构引导与虚拟机课程第一轮跳过下列为教材补充">五、1.4–1.6 体系结构、引导与虚拟机（课程第一轮跳过，下列为教材补充）</a><a class="lv3" href="#六课程在311讲过此处提前收录程序的链接与装入">六、（课程在 3.1.1 讲过，此处提前收录）程序的链接与装入</a><a class="lv2" href="#老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题">本章例题</a><a class="lv2" href="#对应分p">对应分P</a><a class="lv2" href="#待补充">待补充</a></div>
-<div class="grp"><a class="lv1" href="#第2章进程与线程21进程与线程22cpu调度">第2章 进程与线程（2.1 进程与线程 + 2.2 CPU 调度）</a><a class="lv2" href="#知识框架_1">知识框架</a><a class="lv2" href="#知识点详解_1">知识点详解</a><a class="lv3" href="#一进程的概念与组成211212">一、进程的概念与组成（2.1.1、2.1.2）</a><a class="lv3" href="#二进程的状态与转换213核心">二、进程的状态与转换（2.1.3）★核心</a><a class="lv3" href="#三进程控制214">三、进程控制（2.1.4）</a><a class="lv3" href="#四进程通信215课上跳过以下为教材补充">四、进程通信（2.1.5，课上跳过，以下为教材补充）</a><a class="lv3" href="#五线程与多线程模型216核心">五、线程与多线程模型（2.1.6）★核心</a><a class="lv3" href="#六cpu调度的基本概念221">六、CPU 调度的基本概念（2.2.1）</a><a class="lv3" href="#七调度时机方式与上下文切换222223">七、调度时机、方式与上下文切换（2.2.2、2.2.3）</a><a class="lv3" href="#八调度评价指标224必背公式">八、调度评价指标（2.2.4）★必背公式</a><a class="lv3" href="#九调度算法逐个算例225">九、调度算法逐个 + 算例（2.2.5）★</a><a class="lv2" href="#老师强调的考点_1">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_1">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_1">易错点与坑</a><a class="lv2" href="#本章例题_1">本章例题</a><a class="lv3" href="#例1课后56页61题概念">例 1（课后 56 页 61 题·概念）</a><a class="lv3" href="#例263题概念">例 2（63 题·概念）</a><a class="lv3" href="#例36465题概念">例 3（64、65 题·概念）</a><a class="lv3" href="#例469题概念">例 4（69 题·概念）</a><a class="lv3" href="#例571题概念">例 5（71 题·概念）</a><a class="lv3" href="#例660题线程">例 6（60 题·线程）</a><a class="lv3" href="#例766题线程">例 7（66 题·线程）</a><a class="lv3" href="#例85973题线程共享">例 8（59、73 题·线程共享）</a><a class="lv3" href="#例967题进程">例 9（67 题·进程）</a><a class="lv3" href="#例10课后53题计算抢占式优先级">例 10（课后 53 题·计算，抢占式优先级）</a><a class="lv3" href="#例11课后43题饥饿">例 11（课后 43 题·饥饿）</a><a class="lv2" href="#待补充_1">待补充</a><a class="lv2" href="#对应分p_1">对应分P</a></div>
-<div class="grp"><a class="lv1" href="#第2章进程与线程23同步与互斥24死锁">第2章 进程与线程（2.3 同步与互斥 + 2.4 死锁）</a><a class="lv2" href="#知识框架_2">知识框架</a><a class="lv2" href="#知识点详解_2">知识点详解</a><a class="lv3" href="#一同步与互斥的基本概念231">一、同步与互斥的基本概念（2.3.1）</a><a class="lv3" href="#二临界区互斥的软件与硬件实现教材补充课上明确跳至强化">二、临界区互斥的软件与硬件实现（教材补充，课上明确跳至强化）</a><a class="lv3" href="#三信号量机制232本节最核心">三、信号量机制（2.3.2，本节最核心）</a><a class="lv3" href="#四经典同步问题233">四、经典同步问题（2.3.3）</a><a class="lv3" href="#五死锁24只考选择题">五、死锁（2.4，只考选择题）</a><a class="lv2" href="#老师强调的考点_2">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_2">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_2">易错点与坑</a><a class="lv2" href="#本章例题_2">本章例题</a><a class="lv2" href="#对应分p_2">对应分P</a><a class="lv2" href="#待补充_2">待补充</a></div>
-<div class="grp"><a class="lv1" href="#第3章内存管理31内存管理基础基本概念连续分配基本分页二级页表基本分段段页式">第3章 内存管理（3.1 内存管理基础：基本概念·连续分配·基本分页·二级页表·基本分段·段页式）</a><a class="lv2" href="#知识框架_3">知识框架</a><a class="lv2" href="#知识点详解_3">知识点详解</a><a class="lv3" href="#一内存管理的基本概念311">一、内存管理的基本概念（3.1.1）</a><a class="lv3" href="#二连续分配管理方式312">二、连续分配管理方式（3.1.2）</a><a class="lv3" href="#三基本分页存储管理313">三、基本分页存储管理（3.1.3）</a><a class="lv3" href="#四二级页表314">四、二级页表（3.1.4）</a><a class="lv3" href="#五基本分段存储管理314">五、基本分段存储管理（3.1.4）</a><a class="lv3" href="#六段页式315教材补充">六、段页式（3.1.5，教材补充）</a><a class="lv3" href="#七快表tlb教材补充">七、快表 TLB（教材补充）</a><a class="lv3" href="#八覆盖与交换教材补充">八、覆盖与交换（教材补充）</a><a class="lv2" href="#老师强调的考点_3">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_3">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_3">易错点与坑</a><a class="lv2" href="#本章例题_3">本章例题</a><a class="lv2" href="#对应分p_3">对应分P</a><a class="lv2" href="#待补充_3">待补充</a></div>
-<div class="grp"><a class="lv1" href="#第3章32虚拟内存管理321基本概念322请求分页323页框分配324页面置换抖动与工作集">第3章 3.2 虚拟内存管理（3.2.1 基本概念 · 3.2.2 请求分页 · 3.2.3 页框分配 · 3.2.4 页面置换 · 抖动与工作集）</a><a class="lv2" href="#知识框架_4">知识框架</a><a class="lv2" href="#知识点详解_4">知识点详解</a><a class="lv3" href="#一虚拟内存的基本概念321">一、虚拟内存的基本概念（3.2.1）</a><a class="lv3" href="#二请求分页管理方式322">二、请求分页管理方式（3.2.2）</a><a class="lv3" href="#三页框分配与内存分配策略323">三、页框分配与内存分配策略（3.2.3）</a><a class="lv3" href="#四页面置换算法324">四、页面置换算法（3.2.4）</a><a class="lv3" href="#五抖动颠簸与工作集">五、抖动（颠簸）与工作集</a><a class="lv3" href="#六缺页率与有效访问时间eat">六、缺页率与有效访问时间 EAT</a><a class="lv3" href="#七快表tlb与虚拟存储器教材补充p26字幕缺失">七、快表 TLB 与虚拟存储器（教材补充，P26 字幕缺失）</a><a class="lv2" href="#老师强调的考点_4">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_4">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_4">易错点与坑</a><a class="lv2" href="#本章例题_4">本章例题</a><a class="lv2" href="#对应分p_4">对应分P</a><a class="lv2" href="#待补充_4">待补充</a></div>
-<div class="grp"><a class="lv1" href="#第5章53磁盘531磁盘结构与管理532磁盘调度算法533减少延迟时间的方法">第5章 5.3 磁盘（5.3.1 磁盘结构与管理 · 5.3.2 磁盘调度算法 · 5.3.3 减少延迟时间的方法）</a><a class="lv2" href="#知识框架_5">知识框架</a><a class="lv2" href="#知识点详解_5">知识点详解</a><a class="lv3" href="#一磁盘的结构531">一、磁盘的结构（5.3.1）</a><a class="lv3" href="#二磁盘的管理531续">二、磁盘的管理（5.3.1 续）</a><a class="lv3" href="#三磁盘的存取时间532之一">三、磁盘的存取时间（5.3.2 之一）</a><a class="lv3" href="#四磁盘调度算法532之二">四、磁盘调度算法（5.3.2 之二）</a><a class="lv3" href="#五减少延迟时间的方法533">五、减少延迟时间的方法（5.3.3）</a><a class="lv3" href="#六与第4章4142的接口只引用不重复">六、与第4章 4.1 / 4.2 的接口（只引用，不重复）</a><a class="lv2" href="#老师强调的考点_5">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_5">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_5">易错点与坑</a><a class="lv2" href="#本章例题_5">本章例题</a><a class="lv2" href="#对应分p_5">对应分P</a><a class="lv2" href="#待补充_5">待补充</a></div>
-<div class="grp"><a class="lv1" href="#第4章文件管理41文件基本概念42文件操作与目录422文件物理结构43文件存储空间管理">第4章 文件管理（4.1 文件基本概念 · 4.2 文件操作与目录 · 4.2.2 文件物理结构 · 4.3 文件存储空间管理）</a><a class="lv2" href="#知识框架_6">知识框架</a><a class="lv2" href="#知识点详解_6">知识点详解</a><a class="lv3" href="#一文件与文件属性411p27">一、文件与文件属性（4.1.1，P27）</a><a class="lv3" href="#二fcb与索引节点p27贯穿p28概念高频">二、FCB 与索引节点（P27，贯穿 P28）★概念高频</a><a class="lv3" href="#三目录结构42p27">三、目录结构（4.2，P27）</a><a class="lv3" href="#四文件的操作421p28">四、文件的操作（4.2.1，P28）</a><a class="lv3" href="#五打开文件表与fd如何索引到fcbp28必背">五、打开文件表与 fd 如何索引到 FCB（P28）★必背</a><a class="lv3" href="#六文件的物理结构422p29全章核心">六、文件的物理结构（4.2.2，P29）★★★全章核心</a><a class="lv3" href="#七文件共享硬链接vs软链接p27">七、文件共享：硬链接 vs 软链接（P27）★</a><a class="lv3" href="#八文件保护p27">八、文件保护（P27）</a><a class="lv3" href="#九文件存储空间管理43p30">九、文件存储空间管理（4.3，P30）</a><a class="lv2" href="#老师强调的考点_6">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_6">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_6">易错点与坑</a><a class="lv2" href="#本章例题_6">本章例题</a><a class="lv3" href="#例1第53题混合索引求最大文件长度">例 1（第 53 题｜混合索引求最大文件长度）</a><a class="lv3" href="#例2第59题由字节地址反推读盘次数">例 2（第 59 题｜由字节地址反推读盘次数）</a><a class="lv3" href="#例3第14题位示图定位">例 3（第 14 题｜位示图定位）</a><a class="lv3" href="#例4第13题位示图占用空间">例 4（第 13 题｜位示图占用空间）</a><a class="lv3" href="#例5第62题簇作为分配单位">例 5（第 62 题｜簇作为分配单位）</a><a class="lv3" href="#例6第51题硬链接与软链接的计数">例 6（第 51 题｜硬链接与软链接的计数）</a><a class="lv3" href="#例7第6467题打开文件表与关闭">例 7（第 64 / 67 题｜打开文件表与关闭）</a><a class="lv3" href="#例8第60题acl位数">例 8（第 60 题｜ACL 位数）</a><a class="lv2" href="#对应分p_6">对应分P</a><a class="lv2" href="#待补充_6">待补充</a></div></nav>
-</aside>
-<main><article><h1 id="408操作系统知识点总结基于复旦发哥带学40830p课程">408 操作系统 · 知识点总结（基于「复旦发哥带学 408」30P 课程）</h1>
+  <div id="prog"></div>
+</header>
+<aside id="side"><div class="cap">章节目录</div><a class="ch" href="#总纲" title="总纲">总纲</a>
+<a class="ch" href="#第1章计算机系统概述11基本概念12发展历程13运行环境1416体系结构与引导" title="第1章 计算机系统概述（1.1 基本概念、1.2 发展历程、1.3 运行环境、1.4–1.6 体系结构与引导）">第1章 计算机系统概述</a>
+<a class="ch" href="#第2章进程与线程21进程与线程22cpu调度" title="第2章 进程与线程（2.1 进程与线程 + 2.2 CPU 调度）">第2章 进程与线程</a>
+<a class="ch" href="#第2章进程与线程23同步与互斥24死锁" title="第2章 进程与线程（2.3 同步与互斥 + 2.4 死锁）">第2章 进程与线程</a>
+<a class="ch" href="#第3章内存管理31内存管理基础基本概念连续分配基本分页二级页表基本分段段页式" title="第3章 内存管理（3.1 内存管理基础：基本概念·连续分配·基本分页·二级页表·基本分段·段页式）">第3章 内存管理</a>
+<a class="ch" href="#第3章32虚拟内存管理321基本概念322请求分页323页框分配324页面置换抖动与工作集" title="第3章 3.2 虚拟内存管理（3.2.1 基本概念 · 3.2.2 请求分页 · 3.2.3 页框分配 · 3.2.4 页面置换 · 抖动与工作集）">第3章 3.2 虚拟内存管理</a>
+<a class="ch" href="#第5章53磁盘531磁盘结构与管理532磁盘调度算法533减少延迟时间的方法" title="第5章 5.3 磁盘（5.3.1 磁盘结构与管理 · 5.3.2 磁盘调度算法 · 5.3.3 减少延迟时间的方法）">第5章 5.3 磁盘</a>
+<a class="ch" href="#第4章文件管理41文件基本概念42文件操作与目录422文件物理结构43文件存储空间管理" title="第4章 文件管理（4.1 文件基本概念 · 4.2 文件操作与目录 · 4.2.2 文件物理结构 · 4.3 文件存储空间管理）">第4章 文件管理</a><div class="note">6 章 · 13.8 万字</div></aside>
+<main><article id="doc"><h1 id="408操作系统知识点总结基于复旦发哥带学40830p课程">408 操作系统 · 知识点总结（基于「复旦发哥带学 408」30P 课程）</h1>
 <blockquote>
 <p><strong>来源</strong>：B 站 BV1aNVP6YEp8《2027考研408WD课本操作系统带学》
 <strong>素材</strong>：30 个分P 的 AI 字幕，约 25 万字（P1 为群公告且无字幕，已跳过），已落盘到同级目录
 <strong>说明</strong>：字幕由 AI 生成，存在同音误识，笔记按上下文还原；无法确定处标注「原文存疑」。结论以教材与官方大纲为准。</p>
 </blockquote>
-<h2 id="目录">目录</h2>
-<ul>
-<li><a href="#总纲">总纲：科目定位 · 知识地图 · 高频考点 · 复习顺序</a></li>
-<li><a href="#第1章计算机系统概述11基本概念12发展历程13运行环境1416体系结构与引导">第1章 计算机系统概述（1.1 基本概念、1.2 发展历程、1.3 运行环境、1.4–1.6 体系结构与引导）</a></li>
-<li><a href="#第2章进程与线程21进程与线程22CPU调度">第2章 进程与线程（2.1 进程与线程 + 2.2 CPU 调度）</a></li>
-<li><a href="#第2章进程与线程23同步与互斥24死锁">第2章 进程与线程（2.3 同步与互斥 + 2.4 死锁）</a></li>
-<li><a href="#第3章内存管理31内存管理基础基本概念连续分配基本分页二级页表基本分段段页式">第3章 内存管理（3.1 内存管理基础：基本概念·连续分配·基本分页·二级页表·基本分段·段页式）</a></li>
-<li><a href="#第3章32虚拟内存管理321基本概念322请求分页323页框分配324页面置换抖动与工作集">第3章 3.2 虚拟内存管理（3.2.1 基本概念 · 3.2.2 请求分页 · 3.2.3 页框分配 · 3.2.4 页面置换 · 抖动与工作集）</a></li>
-<li><a href="#第4章文件管理41文件基本概念42文件操作与目录422文件物理结构43文件存储空间管理">第4章 文件管理（4.1 文件基本概念 · 4.2 文件操作与目录 · 4.2.2 文件物理结构 · 4.3 文件存储空间管理）</a></li>
-</ul>
+
 <hr />
 <h1 id="总纲">总纲</h1>
 <hr />
@@ -7639,50 +7685,111 @@ i = ⌊b / n⌋ ， j = b mod n     （块号 → 字号位号）
 <li><strong>文件的系统结构、目录实现（打星号部分）、虚拟文件系统 VFS、文件系统挂载</strong>：P27、P30 均明确跳过，本笔记未展开。</li>
 <li><strong>第 51 题题干</strong>：字幕中该题选项原文被口语打断，未逐字还原，答案按老师口述的计数推演（F2=1、F3=1）与结论一致。</li>
 </ol></article></main>
-<button id="toTop">↑</button>
+<aside id="out"><div class="cap">本页大纲</div><div class="grp" data-for="总纲" data-name="总纲"><a class="lv2" href="#一操作系统在408里的位置" title="一、操作系统在 408 里的位置">一、操作系统在 408 里的位置</a><a class="lv2" href="#二五章知识地图" title="二、五章知识地图">二、五章知识地图</a><a class="lv2" href="#三跨章高频考点top15" title="三、跨章高频考点 Top 15">三、跨章高频考点 Top 15</a><a class="lv2" href="#四本课程未覆盖略讲的部分" title="四、本课程未覆盖 / 略讲的部分">四、本课程未覆盖 / 略讲的部分</a><a class="lv2" href="#五三阶段复习与刷题顺序" title="五、三阶段复习与刷题顺序">五、三阶段复习与刷题顺序</a><a class="lv2" href="#六笔记怎么用" title="六、笔记怎么用">六、笔记怎么用</a></div>
+<div class="grp" data-for="第1章计算机系统概述11基本概念12发展历程13运行环境1416体系结构与引导" data-name="第1章 计算机系统概述"><a class="lv2" href="#知识框架" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解" title="知识点详解">知识点详解</a><a class="lv3" href="#一11操作系统基本概念" title="一、1.1 操作系统基本概念">一、1.1 操作系统基本概念</a><a class="lv3" href="#二12操作系统发展历程" title="二、1.2 操作系统发展历程">二、1.2 操作系统发展历程</a><a class="lv3" href="#三13操作系统的运行环境全章核心" title="三、1.3 操作系统的运行环境（全章核心）">三、1.3 操作系统的运行环境</a><a class="lv3" href="#四系统调用13重点" title="四、系统调用（1.3 重点）">四、系统调用</a><a class="lv3" href="#五1416体系结构引导与虚拟机课程第一轮跳过下列为教材补充" title="五、1.4–1.6 体系结构、引导与虚拟机（课程第一轮跳过，下列为教材补充）">五、1.4–1.6 体系结构、引导与虚拟机</a><a class="lv3" href="#六课程在311讲过此处提前收录程序的链接与装入" title="六、（课程在 3.1.1 讲过，此处提前收录）程序的链接与装入">六、</a><a class="lv2" href="#老师强调的考点" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题" title="本章例题">本章例题</a><a class="lv2" href="#对应分p" title="对应分P">对应分P</a><a class="lv2" href="#待补充" title="待补充">待补充</a></div>
+<div class="grp" data-for="第2章进程与线程21进程与线程22cpu调度" data-name="第2章 进程与线程"><a class="lv2" href="#知识框架_1" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_1" title="知识点详解">知识点详解</a><a class="lv3" href="#一进程的概念与组成211212" title="一、进程的概念与组成（2.1.1、2.1.2）">一、进程的概念与组成</a><a class="lv3" href="#二进程的状态与转换213核心" title="二、进程的状态与转换（2.1.3）★核心">二、进程的状态与转换</a><a class="lv3" href="#三进程控制214" title="三、进程控制（2.1.4）">三、进程控制</a><a class="lv3" href="#四进程通信215课上跳过以下为教材补充" title="四、进程通信（2.1.5，课上跳过，以下为教材补充）">四、进程通信</a><a class="lv3" href="#五线程与多线程模型216核心" title="五、线程与多线程模型（2.1.6）★核心">五、线程与多线程模型</a><a class="lv3" href="#六cpu调度的基本概念221" title="六、CPU 调度的基本概念（2.2.1）">六、CPU 调度的基本概念</a><a class="lv3" href="#七调度时机方式与上下文切换222223" title="七、调度时机、方式与上下文切换（2.2.2、2.2.3）">七、调度时机、方式与上下文切换</a><a class="lv3" href="#八调度评价指标224必背公式" title="八、调度评价指标（2.2.4）★必背公式">八、调度评价指标</a><a class="lv3" href="#九调度算法逐个算例225" title="九、调度算法逐个 + 算例（2.2.5）★">九、调度算法逐个 + 算例</a><a class="lv2" href="#老师强调的考点_1" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_1" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_1" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_1" title="本章例题">本章例题</a><a class="lv3" href="#例1课后56页61题概念" title="例 1（课后 56 页 61 题·概念）">例 1</a><a class="lv3" href="#例263题概念" title="例 2（63 题·概念）">例 2</a><a class="lv3" href="#例36465题概念" title="例 3（64、65 题·概念）">例 3</a><a class="lv3" href="#例469题概念" title="例 4（69 题·概念）">例 4</a><a class="lv3" href="#例571题概念" title="例 5（71 题·概念）">例 5</a><a class="lv3" href="#例660题线程" title="例 6（60 题·线程）">例 6</a><a class="lv3" href="#例766题线程" title="例 7（66 题·线程）">例 7</a><a class="lv3" href="#例85973题线程共享" title="例 8（59、73 题·线程共享）">例 8</a><a class="lv3" href="#例967题进程" title="例 9（67 题·进程）">例 9</a><a class="lv3" href="#例10课后53题计算抢占式优先级" title="例 10（课后 53 题·计算，抢占式优先级）">例 10</a><a class="lv3" href="#例11课后43题饥饿" title="例 11（课后 43 题·饥饿）">例 11</a><a class="lv2" href="#待补充_1" title="待补充">待补充</a><a class="lv2" href="#对应分p_1" title="对应分P">对应分P</a></div>
+<div class="grp" data-for="第2章进程与线程23同步与互斥24死锁" data-name="第2章 进程与线程"><a class="lv2" href="#知识框架_2" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_2" title="知识点详解">知识点详解</a><a class="lv3" href="#一同步与互斥的基本概念231" title="一、同步与互斥的基本概念（2.3.1）">一、同步与互斥的基本概念</a><a class="lv3" href="#二临界区互斥的软件与硬件实现教材补充课上明确跳至强化" title="二、临界区互斥的软件与硬件实现（教材补充，课上明确跳至强化）">二、临界区互斥的软件与硬件实现</a><a class="lv3" href="#三信号量机制232本节最核心" title="三、信号量机制（2.3.2，本节最核心）">三、信号量机制</a><a class="lv3" href="#四经典同步问题233" title="四、经典同步问题（2.3.3）">四、经典同步问题</a><a class="lv3" href="#五死锁24只考选择题" title="五、死锁（2.4，只考选择题）">五、死锁</a><a class="lv2" href="#老师强调的考点_2" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_2" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_2" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_2" title="本章例题">本章例题</a><a class="lv2" href="#对应分p_2" title="对应分P">对应分P</a><a class="lv2" href="#待补充_2" title="待补充">待补充</a></div>
+<div class="grp" data-for="第3章内存管理31内存管理基础基本概念连续分配基本分页二级页表基本分段段页式" data-name="第3章 内存管理"><a class="lv2" href="#知识框架_3" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_3" title="知识点详解">知识点详解</a><a class="lv3" href="#一内存管理的基本概念311" title="一、内存管理的基本概念（3.1.1）">一、内存管理的基本概念</a><a class="lv3" href="#二连续分配管理方式312" title="二、连续分配管理方式（3.1.2）">二、连续分配管理方式</a><a class="lv3" href="#三基本分页存储管理313" title="三、基本分页存储管理（3.1.3）">三、基本分页存储管理</a><a class="lv3" href="#四二级页表314" title="四、二级页表（3.1.4）">四、二级页表</a><a class="lv3" href="#五基本分段存储管理314" title="五、基本分段存储管理（3.1.4）">五、基本分段存储管理</a><a class="lv3" href="#六段页式315教材补充" title="六、段页式（3.1.5，教材补充）">六、段页式</a><a class="lv3" href="#七快表tlb教材补充" title="七、快表 TLB（教材补充）">七、快表 TLB</a><a class="lv3" href="#八覆盖与交换教材补充" title="八、覆盖与交换（教材补充）">八、覆盖与交换</a><a class="lv2" href="#老师强调的考点_3" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_3" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_3" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_3" title="本章例题">本章例题</a><a class="lv2" href="#对应分p_3" title="对应分P">对应分P</a><a class="lv2" href="#待补充_3" title="待补充">待补充</a></div>
+<div class="grp" data-for="第3章32虚拟内存管理321基本概念322请求分页323页框分配324页面置换抖动与工作集" data-name="第3章 3.2 虚拟内存管理"><a class="lv2" href="#知识框架_4" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_4" title="知识点详解">知识点详解</a><a class="lv3" href="#一虚拟内存的基本概念321" title="一、虚拟内存的基本概念（3.2.1）">一、虚拟内存的基本概念</a><a class="lv3" href="#二请求分页管理方式322" title="二、请求分页管理方式（3.2.2）">二、请求分页管理方式</a><a class="lv3" href="#三页框分配与内存分配策略323" title="三、页框分配与内存分配策略（3.2.3）">三、页框分配与内存分配策略</a><a class="lv3" href="#四页面置换算法324" title="四、页面置换算法（3.2.4）">四、页面置换算法</a><a class="lv3" href="#五抖动颠簸与工作集" title="五、抖动（颠簸）与工作集">五、抖动</a><a class="lv3" href="#六缺页率与有效访问时间eat" title="六、缺页率与有效访问时间 EAT">六、缺页率与有效访问时间 EAT</a><a class="lv3" href="#七快表tlb与虚拟存储器教材补充p26字幕缺失" title="七、快表 TLB 与虚拟存储器（教材补充，P26 字幕缺失）">七、快表 TLB 与虚拟存储器</a><a class="lv2" href="#老师强调的考点_4" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_4" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_4" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_4" title="本章例题">本章例题</a><a class="lv2" href="#对应分p_4" title="对应分P">对应分P</a><a class="lv2" href="#待补充_4" title="待补充">待补充</a></div>
+<div class="grp" data-for="第5章53磁盘531磁盘结构与管理532磁盘调度算法533减少延迟时间的方法" data-name="第5章 5.3 磁盘"><a class="lv2" href="#知识框架_5" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_5" title="知识点详解">知识点详解</a><a class="lv3" href="#一磁盘的结构531" title="一、磁盘的结构（5.3.1）">一、磁盘的结构</a><a class="lv3" href="#二磁盘的管理531续" title="二、磁盘的管理（5.3.1 续）">二、磁盘的管理</a><a class="lv3" href="#三磁盘的存取时间532之一" title="三、磁盘的存取时间（5.3.2 之一）">三、磁盘的存取时间</a><a class="lv3" href="#四磁盘调度算法532之二" title="四、磁盘调度算法（5.3.2 之二）">四、磁盘调度算法</a><a class="lv3" href="#五减少延迟时间的方法533" title="五、减少延迟时间的方法（5.3.3）">五、减少延迟时间的方法</a><a class="lv3" href="#六与第4章4142的接口只引用不重复" title="六、与第4章 4.1 / 4.2 的接口（只引用，不重复）">六、与第4章 4.1 / 4.2 的接口</a><a class="lv2" href="#老师强调的考点_5" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_5" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_5" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_5" title="本章例题">本章例题</a><a class="lv2" href="#对应分p_5" title="对应分P">对应分P</a><a class="lv2" href="#待补充_5" title="待补充">待补充</a></div>
+<div class="grp" data-for="第4章文件管理41文件基本概念42文件操作与目录422文件物理结构43文件存储空间管理" data-name="第4章 文件管理"><a class="lv2" href="#知识框架_6" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_6" title="知识点详解">知识点详解</a><a class="lv3" href="#一文件与文件属性411p27" title="一、文件与文件属性（4.1.1，P27）">一、文件与文件属性</a><a class="lv3" href="#二fcb与索引节点p27贯穿p28概念高频" title="二、FCB 与索引节点（P27，贯穿 P28）★概念高频">二、FCB 与索引节点</a><a class="lv3" href="#三目录结构42p27" title="三、目录结构（4.2，P27）">三、目录结构</a><a class="lv3" href="#四文件的操作421p28" title="四、文件的操作（4.2.1，P28）">四、文件的操作</a><a class="lv3" href="#五打开文件表与fd如何索引到fcbp28必背" title="五、打开文件表与 fd 如何索引到 FCB（P28）★必背">五、打开文件表与 fd 如何索引到 FCB</a><a class="lv3" href="#六文件的物理结构422p29全章核心" title="六、文件的物理结构（4.2.2，P29）★★★全章核心">六、文件的物理结构</a><a class="lv3" href="#七文件共享硬链接vs软链接p27" title="七、文件共享：硬链接 vs 软链接（P27）★">七、文件共享：硬链接 vs 软链接</a><a class="lv3" href="#八文件保护p27" title="八、文件保护（P27）">八、文件保护</a><a class="lv3" href="#九文件存储空间管理43p30" title="九、文件存储空间管理（4.3，P30）">九、文件存储空间管理</a><a class="lv2" href="#老师强调的考点_6" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_6" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_6" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_6" title="本章例题">本章例题</a><a class="lv3" href="#例1第53题混合索引求最大文件长度" title="例 1（第 53 题｜混合索引求最大文件长度）">例 1</a><a class="lv3" href="#例2第59题由字节地址反推读盘次数" title="例 2（第 59 题｜由字节地址反推读盘次数）">例 2</a><a class="lv3" href="#例3第14题位示图定位" title="例 3（第 14 题｜位示图定位）">例 3</a><a class="lv3" href="#例4第13题位示图占用空间" title="例 4（第 13 题｜位示图占用空间）">例 4</a><a class="lv3" href="#例5第62题簇作为分配单位" title="例 5（第 62 题｜簇作为分配单位）">例 5</a><a class="lv3" href="#例6第51题硬链接与软链接的计数" title="例 6（第 51 题｜硬链接与软链接的计数）">例 6</a><a class="lv3" href="#例7第6467题打开文件表与关闭" title="例 7（第 64 / 67 题｜打开文件表与关闭）">例 7</a><a class="lv3" href="#例8第60题acl位数" title="例 8（第 60 题｜ACL 位数）">例 8</a><a class="lv2" href="#对应分p_6" title="对应分P">对应分P</a><a class="lv2" href="#待补充_6" title="待补充">待补充</a></div></aside>
+<button id="top" aria-label="回到顶部">↑</button>
 <script>
-const q = document.getElementById('q');
-const links = [...document.querySelectorAll('#toc a')];
-q.addEventListener('input', () => {
-  const v = q.value.trim().toLowerCase();
-  links.forEach(a => {
-    const hit = !v || a.textContent.toLowerCase().includes(v);
-    a.classList.toggle('hide', !hit);
-  });
-  if (v) {
-    links.forEach(a => { if (!a.classList.contains('hide')) a.style.display='block'; });
-  }
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const root=document.documentElement;
+const store={
+  get(k,d){try{return localStorage.getItem(k)??d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+};
+
+const qp=new URLSearchParams(location.search);
+if(qp.get('theme')==='dark'||store.get('theme','light')==='dark'){
+  root.setAttribute('data-theme','dark');$('#tTheme').textContent='日';
+}
+$('#tTheme').onclick=()=>{
+  const dark=root.getAttribute('data-theme')==='dark';
+  if(dark){root.removeAttribute('data-theme');store.set('theme','light');$('#tTheme').textContent='夜';}
+  else{root.setAttribute('data-theme','dark');store.set('theme','dark');$('#tTheme').textContent='日';}
+};
+
+let fs=parseFloat(store.get('size','16.5'));
+const applySize=()=>{root.style.setProperty('--size',fs+'px');store.set('size',fs)};
+applySize();
+$('#tBig').onclick=()=>{fs=Math.min(20,fs+0.5);applySize()};
+$('#tSmall').onclick=()=>{fs=Math.max(14,fs-0.5);applySize()};
+
+$('#burger').onclick=()=>$('#side').classList.toggle('open');
+$$('#side a').forEach(a=>a.addEventListener('click',()=>$('#side').classList.remove('open')));
+
+const chapters=$$('#side a');
+const q=$('#q');
+q.addEventListener('input',()=>{
+  const v=q.value.trim().toLowerCase();
+  chapters.forEach(a=>a.classList.toggle('hide', !!v && !a.textContent.toLowerCase().includes(v)));
+  $$('#out a').forEach(a=>a.classList.toggle('hide', !!v && !a.textContent.toLowerCase().includes(v)));
+  if(v) $$('#out .grp').forEach(g=>g.classList.add('on'));
 });
-q.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    const first = links.find(a => !a.classList.contains('hide'));
-    if (first) { first.click(); }
-  }
+q.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){const hit=chapters.find(a=>!a.classList.contains('hide'));if(hit)hit.click();}
+  if(e.key==='Escape'){q.value='';q.dispatchEvent(new Event('input'));q.blur();}
 });
 
-const subs = links.map(a => ({a, id: decodeURIComponent(a.getAttribute('href').slice(1))}));
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(en => {
-    if (en.isIntersecting) {
-      subs.forEach(s => s.a.classList.remove('active'));
-      const cur = subs.find(s => s.id === en.target.id);
-      if (cur) {
-        cur.a.classList.add('active');
-        const r = cur.a.getBoundingClientRect(), box = document.getElementById('toc').getBoundingClientRect();
-        if (r.top < box.top + 40 || r.bottom > box.bottom - 40) cur.a.scrollIntoView({block:'center'});
+const chIds=new Set(chapters.map(a=>a.getAttribute('href').slice(1)));
+const chs=$$('#doc h1[id]').filter(h=>chIds.has(h.id));
+const crumb=$('#crumbCur');
+const groups=$$('#out .grp');
+function setChapter(id){
+  chapters.forEach(a=>a.classList.toggle('on', a.getAttribute('href')==='#'+id));
+  let name='';
+  groups.forEach(g=>{
+    const on=g.dataset.for===id;
+    g.classList.toggle('on',on);
+    if(on) name=g.dataset.name;
+  });
+  if(name&&crumb) crumb.textContent=name;
+}
+if(chs.length){
+  setChapter(chapters.length ? chapters[0].getAttribute('href').slice(1) : chs[0].id);
+  const ob1=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting) setChapter(e.target.id)});
+  },{rootMargin:'-12% 0px -78% 0px'});
+  chs.forEach(h=>ob1.observe(h));
+}
+
+const links=$$('#out a[href^="#"]');
+const heads=$$('#doc h2[id],#doc h3[id]');
+if(heads.length&&links.length){
+  const ob2=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        links.forEach(a=>a.classList.toggle('on', a.getAttribute('href')==='#'+e.target.id));
       }
-    }
-  });
-}, {rootMargin: '-10% 0px -80% 0px'});
-subs.forEach(s => { const el = document.getElementById(s.id); if (el) obs.observe(el); });
+    });
+  },{rootMargin:'-10% 0px -72% 0px'});
+  heads.forEach(h=>ob2.observe(h));
+}
 
-const bar = document.querySelector('#bar i');
-window.addEventListener('scroll', () => {
-  const h = document.documentElement.scrollHeight - innerHeight;
-  bar.style.width = (h > 0 ? (scrollY / h * 100) : 0) + '%';
-  document.getElementById('toTop').style.display = scrollY > 600 ? 'block' : 'none';
+heads.forEach(h=>{
+  const a=document.createElement('a');
+  a.className='ah'; a.href='#'+h.id; a.textContent='#';
+  a.onclick=e=>{e.preventDefault();history.replaceState(null,'','#'+h.id);
+    if(navigator.clipboard) navigator.clipboard.writeText(location.href)};
+  h.appendChild(a);
 });
-document.getElementById('toTop').onclick = () => scrollTo({top:0, behavior:'smooth'});
-document.getElementById('menu').onclick = () => document.getElementById('side').classList.toggle('open');
+
+$$('#doc table').forEach(t=>{
+  const w=document.createElement('div');
+  w.className='tbl';
+  t.parentNode.insertBefore(w,t);
+  w.appendChild(t);
+});
+
+const prog=$('#prog'), topBtn=$('#top');
+addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-innerHeight;
+  prog.style.width=(h>0?scrollY/h*100:0)+'%';
+  topBtn.style.display=scrollY>560?'block':'none';
+},{passive:true});
+topBtn.onclick=()=>scrollTo({top:0,behavior:'smooth'});
 </script>
 </body></html>

@@ -7,108 +7,163 @@
 <meta property="og:description" content="八章考点笔记：数据表示、运算、存储与 Cache、指令系统、CPU 与流水线、总线与 I/O。">
 <meta property="og:site_name" content="408 第一轮知识点库">
 <meta name="twitter:card" content="summary">
-<title>408 组成原理 · 知识点总结</title><style>
+<title>408 计算机组成原理 · 知识点总结</title><style>
 :root{
-  --bg:#f7f7f5; --panel:#ffffff; --ink:#1d1f21; --ink-2:#52565c; --ink-3:#8b9098;
-  --line:#e4e4e0; --accent:#b23a2f; --accent-soft:#fdf1ef; --code:#f4f4f1;
-  --mark:#fff2c2;
+  --bg:#ffffff; --bg-soft:#fafaf8; --bg-hover:#f2f2ee;
+  --ink:#1a1c1e; --ink2:#4a4f55; --ink3:#8a9098;
+  --line:#e8e8e4; --line-soft:#f1f1ee;
+  --accent:#b23a2f; --accent-soft:#fdf1ef;
+  --code-bg:#f7f6f3; --mark:#fff2c2;
+  --size:16.5px; --bar:56px; --left:264px; --right:232px;
+}
+html[data-theme="dark"]{
+  --bg:#16181a; --bg-soft:#1b1e20; --bg-hover:#262a2d;
+  --ink:#e9e7e3; --ink2:#b8b5b0; --ink3:#8b8984;
+  --line:#2c3033; --line-soft:#24282b;
+  --accent:#e07a6d; --accent-soft:#2b1f1d;
+  --code-bg:#1f2225; --mark:#4a3f16;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--bar) + 16px)}
 body{margin:0;background:var(--bg);color:var(--ink);
   font-family:"PingFang SC","Microsoft YaHei","Segoe UI",-apple-system,sans-serif;
-  font-size:16px;line-height:1.85;-webkit-font-smoothing:antialiased}
-#side{position:fixed;top:0;left:0;bottom:0;width:296px;background:var(--panel);
-  border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:20}
-#side .head{padding:18px 18px 12px;border-bottom:1px solid var(--line)}
-#side .head h1{font-size:15px;margin:0 0 10px;line-height:1.5;font-weight:700}
-#side .head .sub{font-size:12px;color:var(--ink-3);margin-top:6px}
-#q{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;
-  font-size:13px;outline:none;background:var(--bg);color:var(--ink)}
-#q:focus{border-color:var(--accent);background:#fff}
-#toc{flex:1;overflow-y:auto;padding:10px 8px 40px}
-#toc a{display:block;color:var(--ink-2);text-decoration:none;font-size:13.5px;
-  padding:4px 10px;border-radius:6px;line-height:1.5;border-left:2px solid transparent}
-#toc a:hover{background:var(--bg);color:var(--ink)}
-#toc a.lv1{font-weight:700;color:var(--ink);font-size:14px;margin-top:2px}
-#toc .grp{padding-bottom:6px;margin-bottom:4px;border-bottom:1px solid #f2f2ee}
-#toc .grp:last-child{border-bottom:0}
-#toc a.lv2{padding-left:22px}
-#toc a.lv3{padding-left:34px;font-size:13px;color:var(--ink-3)}
-#toc a.active{background:var(--accent-soft);color:var(--accent);border-left-color:var(--accent)}
-#toc a.hide{display:none}
-#bar{position:fixed;top:0;left:296px;right:0;height:3px;background:transparent;z-index:30}
-#bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .12s linear}
-main{margin-left:296px;padding:52px 56px 140px;max-width:1000px}
-article{background:var(--panel);padding:56px 64px 80px;border:1px solid var(--line);border-radius:14px}
-h1,h2,h3,h4{line-height:1.4;font-weight:700}
-article>h1:first-child{font-size:27px;margin:0 0 6px}
-h1{font-size:25px;margin:0 0 14px;padding-bottom:12px;border-bottom:2px solid var(--ink)}
-h1+h1{margin-top:48px}
-h2{font-size:20px;margin:34px 0 12px;padding-left:11px;border-left:4px solid var(--accent)}
-h3{font-size:17px;margin:26px 0 10px;color:#111}
-h4{font-size:15.5px;margin:20px 0 8px;color:var(--ink-2)}
-p{margin:12px 0}
-blockquote{margin:16px 0;padding:12px 18px;background:var(--accent-soft);
-  border-left:3px solid var(--accent);border-radius:0 8px 8px 0;color:var(--ink-2);font-size:14.5px}
+  font-size:var(--size);line-height:1.85;-webkit-font-smoothing:antialiased;
+  transition:background .18s,color .18s}
+a{color:var(--accent);text-decoration:none}
+
+#bar{position:fixed;top:0;left:0;right:0;height:var(--bar);z-index:60;
+  display:flex;align-items:center;gap:14px;padding:0 18px;
+  background:var(--bg);border-bottom:1px solid var(--line)}
+#prog{position:absolute;left:0;bottom:-1px;height:2px;width:0;background:var(--accent);transition:width .1s linear}
+#burger{display:none;border:1px solid var(--line);background:none;border-radius:7px;
+  width:34px;height:34px;cursor:pointer;color:var(--ink2);font-size:15px;line-height:1}
+.crumb{display:flex;align-items:center;gap:8px;font-size:13px;min-width:0}
+.crumb .sub{color:var(--ink3);white-space:nowrap}
+.crumb .sep{color:var(--ink3)}
+.crumb .cur{color:var(--ink);font-weight:700;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;max-width:44vw}
+.tools{margin-left:auto;display:flex;align-items:center;gap:8px}
+#q{width:180px;padding:7px 11px;border:1px solid var(--line);border-radius:8px;
+  background:var(--bg-soft);color:var(--ink);font-size:13px;outline:none}
+#q:focus{border-color:var(--accent);background:var(--bg)}
+.tbtn{border:1px solid var(--line);background:var(--bg-soft);color:var(--ink2);
+  border-radius:7px;height:32px;min-width:32px;padding:0 8px;cursor:pointer;font-size:13px;line-height:1}
+.tbtn:hover{background:var(--bg-hover);color:var(--ink)}
+
+#side{position:fixed;top:var(--bar);left:0;bottom:0;width:var(--left);z-index:50;
+  background:var(--bg-soft);border-right:1px solid var(--line);
+  overflow-y:auto;padding:22px 12px 60px}
+#side .cap{font-size:11.5px;letter-spacing:.08em;color:var(--ink3);margin:0 10px 10px;font-weight:700}
+#side a{display:block;font-size:13.5px;color:var(--ink2);padding:7px 10px;border-radius:7px;
+  line-height:1.5;margin-bottom:2px;border-left:2px solid transparent}
+#side a:hover{background:var(--bg-hover);color:var(--ink)}
+#side a.on{background:var(--accent-soft);color:var(--accent);font-weight:700;border-left-color:var(--accent)}
+#side a.hide{display:none}
+#side .note{margin:22px 10px 0;padding-top:14px;border-top:1px solid var(--line);
+  font-size:11.5px;color:var(--ink3);line-height:1.7}
+
+main{margin-left:var(--left);margin-right:var(--right);padding-top:var(--bar)}
+#doc{max-width:760px;margin:0 auto;padding:38px 44px 120px}
+#out{position:fixed;top:var(--bar);right:0;width:var(--right);bottom:0;z-index:40;
+  overflow-y:auto;padding:26px 18px 60px 10px}
+#out .cap{font-size:11.5px;letter-spacing:.08em;color:var(--ink3);margin:0 0 10px 12px;font-weight:700}
+#out a{display:block;font-size:12.5px;color:var(--ink3);padding:4px 12px;line-height:1.5;
+  border-left:2px solid var(--line-soft)}
+#out a.lv3{padding-left:24px;font-size:12px}
+#out a:hover{color:var(--ink)}
+#out a.on{color:var(--accent);border-left-color:var(--accent);font-weight:700}
+#out .grp{display:none}
+#out .grp.on{display:block}
+#out a.hide{display:none}
+
+h1,h2,h3,h4{line-height:1.45;font-weight:700;scroll-margin-top:calc(var(--bar) + 20px)}
+h1{font-size:1.62em;margin:0 0 8px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+h1+h1{margin-top:64px}
+h2{font-size:1.28em;margin:44px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line-soft)}
+h3{font-size:1.09em;margin:30px 0 10px;color:var(--ink)}
+h4{font-size:1em;margin:22px 0 8px;color:var(--ink2)}
+h2 .ah,h3 .ah{opacity:0;margin-left:8px;font-weight:400;color:var(--ink3);font-size:.8em;transition:opacity .15s}
+h2:hover .ah,h3:hover .ah{opacity:1}
+p{margin:13px 0}
+ul,ol{padding-left:24px;margin:12px 0}
+li{margin:6px 0}
+li>ul,li>ol{margin:6px 0}
+strong{font-weight:700;color:var(--ink)}
+code{background:var(--code-bg);padding:2px 5px;border-radius:4px;font-size:.88em;
+  font-family:"Cascadia Mono",Consolas,Menlo,monospace;color:var(--accent)}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;
+  padding:16px 18px;overflow-x:auto;margin:18px 0;line-height:1.7}
+pre code{background:none;padding:0;color:var(--ink);font-size:.82em;line-height:1.75}
+blockquote{margin:18px 0;padding:12px 18px;background:var(--accent-soft);
+  border-left:3px solid var(--accent);border-radius:0 8px 8px 0;color:var(--ink2);font-size:.94em}
 blockquote p{margin:6px 0}
-ul,ol{padding-left:26px;margin:10px 0}
-li{margin:5px 0}
-strong{color:#000;font-weight:700}
-code{background:var(--code);padding:1.5px 5px;border-radius:4px;font-size:13.5px;
-  font-family:"Cascadia Mono",Consolas,Menlo,monospace;color:#a03a2d}
-pre{background:#fbfbf9;border:1px solid var(--line);border-radius:10px;padding:16px 18px;
-  overflow-x:auto;margin:16px 0}
-pre code{background:none;padding:0;color:var(--ink);font-size:13px;line-height:1.75}
-table{border-collapse:collapse;width:100%;margin:16px 0;font-size:14px;display:block;overflow-x:auto}
-th,td{border:1px solid var(--line);padding:8px 12px;text-align:left;vertical-align:top}
-th{background:#f2f2ee;font-weight:700;white-space:nowrap}
-tr:nth-child(even) td{background:#fbfbf9}
-hr{border:0;border-top:1px dashed var(--line);margin:44px 0}
-a{color:var(--accent)}
-mark{background:var(--mark);padding:0 2px}
-#toTop{position:fixed;right:26px;bottom:26px;width:42px;height:42px;border-radius:50%;
-  border:1px solid var(--line);background:#fff;color:var(--ink-2);cursor:pointer;font-size:16px;
-  box-shadow:0 4px 14px rgba(0,0,0,.08);display:none}
-@media (max-width:1080px){
-  #side{transform:translateX(-100%);transition:transform .2s}
-  #side.open{transform:none;box-shadow:0 0 40px rgba(0,0,0,.15)}
-  main{margin-left:0;padding:40px 20px 100px}
-  article{padding:32px 22px 50px}
-  #bar{left:0}
-  #menu{display:block !important}
+table{border-collapse:collapse;width:100%;font-size:.9em}
+.tbl{overflow-x:auto;margin:18px 0}
+th,td{border:1px solid var(--line);padding:9px 13px;text-align:left;vertical-align:top}
+th{background:var(--bg-hover);font-weight:700;white-space:nowrap}
+tbody tr:nth-child(even) td{background:var(--bg-soft)}
+hr{border:0;border-top:1px solid var(--line-soft);margin:34px 0}
+mark{background:var(--mark);color:inherit;padding:0 2px}
+#top{position:fixed;right:calc(var(--right) + 18px);bottom:26px;width:38px;height:38px;
+  border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--ink2);
+  cursor:pointer;font-size:14px;display:none;z-index:45}
+#top:hover{background:var(--bg-hover)}
+
+@media (max-width:1180px){
+  main{margin-right:0}
+  #out{display:none}
+  #top{right:18px}
 }
-#menu{display:none;position:fixed;left:14px;top:12px;z-index:40;background:#fff;border:1px solid var(--line);
-  border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer}
+@media (max-width:900px){
+  :root{--bar:52px}
+  main{margin-left:0}
+  #doc{padding:26px 18px 100px;overflow-wrap:break-word}
+  #burger{display:block}
+  #side{transform:translateX(-100%);transition:transform .22s;box-shadow:0 0 40px rgba(0,0,0,.12)}
+  #side.open{transform:none}
+  #bar{gap:8px;padding:0 10px}
+  #q{width:74px;padding:6px 8px;font-size:12px}
+  .tbtn{min-width:27px;height:27px;padding:0 4px;font-size:12px}
+  .crumb{flex:1;min-width:0}
+  .crumb .sub{display:none}
+  .crumb .cur{max-width:30vw;font-size:12.5px}
+  .tools{gap:6px}
+  h1{font-size:1.38em}
+  h1+h1{margin-top:44px}
+  table{font-size:.82em}
+}
 @media print{
-  #side,#bar,#toTop,#menu{display:none}
-  main{margin:0;padding:0;max-width:none}
-  article{border:0;padding:0}
+  #bar,#side,#out,#top,#burger{display:none}
+  main{margin:0;padding:0}
+  #doc{max-width:none;padding:0}
   h1{page-break-before:always}
-  article>h1:first-child{page-break-before:avoid}
+  #doc>h1:first-child{page-break-before:avoid}
   pre,table,blockquote{page-break-inside:avoid}
+  body{font-size:11.5pt}
 }
 </style></head>
 <body>
-<button id="menu">目录</button>
-<div id="bar"><i></i></div>
-<aside id="side">
-  <div class="head">
-    <h1>408 组成原理 · 知识点总结</h1>
-    <input id="q" placeholder="搜索章节标题…（回车跳转）" autocomplete="off">
-    <div class="sub">基于 57 个分P 字幕整理 · 2026-10-17</div>
+<header id="bar">
+  <button id="burger" aria-label="目录">☰</button>
+  <div class="crumb"><span class="sub">组成原理</span><span class="sep">/</span><span class="cur" id="crumbCur">组成原理</span></div>
+  <div class="tools">
+    <input id="q" placeholder="搜索标题…" autocomplete="off" aria-label="搜索标题">
+    <button class="tbtn" id="tSmall" title="缩小字号">A−</button>
+    <button class="tbtn" id="tBig" title="放大字号">A+</button>
+    <button class="tbtn" id="tTheme" title="切换夜间模式">夜</button>
   </div>
-  <nav id="toc"><div class="grp"><a class="lv1" href="#总纲">总纲</a><a class="lv2" href="#一组成原理在408里的位置">一、组成原理在 408 里的位置</a><a class="lv2" href="#二七章知识地图含性价比评估">二、七章知识地图（含性价比评估）</a><a class="lv2" href="#三跨章高频考点top15按真题出现频率排序">三、跨章高频考点 Top 15（按真题出现频率排序）</a><a class="lv2" href="#四本课程未覆盖略讲的部分需自己补">四、本课程未覆盖 / 略讲的部分（需自己补）</a><a class="lv2" href="#五三阶段复习与刷题顺序">五、三阶段复习与刷题顺序</a><a class="lv2" href="#六笔记怎么用">六、笔记怎么用</a></div>
-<div class="grp"><a class="lv1" href="#第1章计算机系统概述">第1章 计算机系统概述</a><a class="lv2" href="#知识框架">知识框架</a><a class="lv2" href="#知识点详解">知识点详解</a><a class="lv3" href="#0课程文档与用法非考点">0. 课程文档与用法（非考点）</a><a class="lv3" href="#121计算机系统层次结构">1.2.1 计算机系统层次结构</a><a class="lv3" href="#131计算机的性能指标四星计算题高频">1.3.1 计算机的性能指标（四星，计算题高频）</a><a class="lv2" href="#老师强调的考点">老师强调的考点</a><a class="lv2" href="#易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题">本章例题</a><a class="lv2" href="#对应分p">对应分P</a></div>
-<div class="grp"><a class="lv1" href="#第2章数据的表示和运算21数据的表示">第2章 数据的表示和运算 —— 2.1 数据的表示</a><a class="lv2" href="#知识框架_1">知识框架</a><a class="lv2" href="#知识点详解_1">知识点详解</a><a class="lv3" href="#一进位计数制与标识">一、进位计数制与标识</a><a class="lv3" href="#二按权展开任意进制十进制">二、按权展开（任意进制 → 十进制）</a><a class="lv3" href="#三十进制二进制除基取余整数">三、十进制 → 二进制：除基取余（整数）</a><a class="lv3" href="#四十进制二进制拼凑法">四、十进制 → 二进制：拼凑法</a><a class="lv3" href="#五二十六二八">五、二 ↔ 十六 / 二 ↔ 八</a><a class="lv3" href="#六小数乘2取整">六、小数：乘 2 取整</a><a class="lv3" href="#七机器数与真值">七、机器数与真值</a><a class="lv3" href="#八定点小数与定点整数">八、定点小数与定点整数</a><a class="lv3" href="#九原码">九、原码</a><a class="lv3" href="#十补码考评最高">十、补码（考评最高）</a><a class="lv3" href="#十一反码">十一、反码</a><a class="lv3" href="#十二补码与真值互转的快速求法最高频技巧">十二、补码与真值互转的快速求法（最高频技巧）</a><a class="lv3" href="#十三补码求真值的五种方法以8位补码11010110d6h为例">十三、补码求真值的五种方法（以 8 位补码 1101 0110 = D6H 为例）</a><a class="lv3" href="#十四移码">十四、移码</a><a class="lv3" href="#十五补码的数轴圆环与比较大小">十五、补码的数轴（圆环）与比较大小</a><a class="lv3" href="#十六无符号数与有符号数">十六、无符号数与有符号数</a><a class="lv2" href="#老师强调的考点_1">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_1">易错点与坑</a><a class="lv2" href="#本章例题_1">本章例题</a><a class="lv2" href="#对应分p_1">对应分P</a></div>
-<div class="grp"><a class="lv1" href="#第2章22运算方法与运算电路23浮点数">第2章 2.2 运算方法与运算电路 + 2.3 浮点数</a><a class="lv2" href="#知识框架_2">知识框架</a><a class="lv2" href="#知识点详解_2">知识点详解</a><a class="lv3" href="#一基本运算部件221">一、基本运算部件（2.2.1）</a><a class="lv3" href="#二移位运算222">二、移位运算（2.2.2）</a><a class="lv3" href="#三补码加减运算223">三、补码加减运算（2.2.3）</a><a class="lv3" href="#四溢出判断核心">四、溢出判断（核心）</a><a class="lv3" href="#五标志位225">五、标志位（2.2.5）</a><a class="lv3" href="#六加减运算电路226图29必记">六、加减运算电路（2.2.6，图 2.9 必记）</a><a class="lv3" href="#七ieee754浮点数表示231">七、IEEE754 浮点数表示（2.3.1）</a><a class="lv3" href="#八浮点数表示范围232">八、浮点数表示范围（2.3.2）</a><a class="lv3" href="#九特殊阶码233四种情况纯背">九、特殊阶码（2.3.3，四种情况纯背）</a><a class="lv3" href="#十大小端存储234">十、大小端存储（2.3.4）</a><a class="lv3" href="#十一边界对齐235">十一、边界对齐（2.3.5）</a><a class="lv2" href="#老师强调的考点_2">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_1">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_2">易错点与坑</a><a class="lv2" href="#本章例题_2">本章例题</a><a class="lv3" href="#例1移位课后30题">例 1（移位，课后 30 题）</a><a class="lv3" href="#例2移位课后17题">例 2（移位，课后 17 题）</a><a class="lv3" href="#例3移位课后15题">例 3（移位，课后 15 题）</a><a class="lv3" href="#例4移位综合课后27题">例 4（移位综合，课后 27 题）</a><a class="lv3" href="#例5补码加法课后25题">例 5（补码加法，课后 25 题）</a><a class="lv3" href="#例6补码减法课后29题">例 6（补码减法，课后 29 题）</a><a class="lv3" href="#例7乘法判溢出课后26题">例 7（乘法判溢出，课后 26 题）</a><a class="lv3" href="#例8加减判溢出课后28题">例 8（加减判溢出，课后 28 题）</a><a class="lv3" href="#例9标志位课后31题">例 9（标志位，课后 31 题）</a><a class="lv3" href="#例10标志位课后32题">例 10（标志位，课后 32 题）</a><a class="lv3" href="#例11加法器输入端课后18题">例 11（加法器输入端，课后 18 题）</a><a class="lv3" href="#例12加法器与of课后19题">例 12（加法器与 OF，课后 19 题）</a><a class="lv3" href="#例13ieee754编码教材例25课后28题">例 13（IEEE754 编码，教材例 2.5 / 课后 28 题）</a><a class="lv3" href="#例14ieee754解码教材例26课后31题">例 14（IEEE754 解码，教材例 2.6 / 课后 31 题）</a><a class="lv3" href="#例15能否精确表示课后39题">例 15（能否精确表示，课后 39 题）</a><a class="lv3" href="#例16ieee754编码课后40题">例 16（IEEE754 编码，课后 40 题）</a><a class="lv3" href="#例17最大数课后29题">例 17（最大数，课后 29 题）</a><a class="lv3" href="#例18最小规格化正数课后35题">例 18（最小规格化正数，课后 35 题）</a><a class="lv3" href="#例19特殊阶码课后42题">例 19（特殊阶码，课后 42 题）</a><a class="lv3" href="#例20大小端课后34题">例 20（大小端，课后 34 题）</a><a class="lv3" href="#例21小端机器指令课后36题">例 21（小端 + 机器指令，课后 36 题）</a><a class="lv3" href="#例22边界对齐课后30题">例 22（边界对齐，课后 30 题）</a><a class="lv2" href="#对应分p_2">对应分P</a></div>
-<div class="grp"><a class="lv1" href="#第3章存储系统31概述33主存扩展">第3章 存储系统：3.1 概述 ~ 3.3 主存扩展</a><a class="lv2" href="#知识框架_3">知识框架</a><a class="lv2" href="#知识点详解_3">知识点详解</a><a class="lv3" href="#一311存储器概述">一、3.1.1 存储器概述</a><a class="lv3" href="#二321sram与dram">二、3.2.1 SRAM 与 DRAM</a><a class="lv3" href="#三322习题提炼引脚与刷新的算法">三、3.2.2 习题提炼：引脚与刷新的算法</a><a class="lv3" href="#四323非易失性存储器">四、3.2.3 非易失性存储器</a><a class="lv3" href="#五324多模块存储器">五、3.2.4 多模块存储器</a><a class="lv3" href="#六331主存容量扩展">六、3.3.1 主存容量扩展</a><a class="lv3" href="#七332主存储器与cpu的连接">七、3.3.2 主存储器与 CPU 的连接</a><a class="lv2" href="#老师强调的考点_3">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_2">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_3">易错点与坑</a><a class="lv2" href="#本章例题_3">本章例题</a><a class="lv3" href="#例1322引脚计算组">例1（3.2.2 引脚计算组）</a><a class="lv3" href="#例2课后34题四体交叉冲突">例2（课后 34 题，四体交叉冲突）</a><a class="lv3" href="#例3课后35题同时启动的周期数">例3（课后 35 题，同时启动的周期数）</a><a class="lv3" href="#例4课后37题内存条综合">例4（课后 37 题，内存条综合）</a><a class="lv3" href="#例5扩展片数64kb含rom">例5（扩展片数，64KB 含 ROM）</a><a class="lv3" href="#例6课后13题按字节编址地址范围">例6（课后 13 题，按字节编址 + 地址范围）</a><a class="lv3" href="#例7课后14题按字编址">例7（课后 14 题，按字编址）</a><a class="lv3" href="#例8课后12题mar位数">例8（课后 12 题，MAR 位数）</a><a class="lv3" href="#例9课后11题片内首末地址">例9（课后 11 题，片内首末地址）</a><a class="lv3" href="#例10课后9题片选地址反推">例10（课后 9 题，片选地址反推）</a><a class="lv3" href="#例11课后6题a0为高位">例11（课后 6 题，A0 为高位）</a><a class="lv2" href="#对应分p_3">对应分P</a></div>
-<div class="grp"><a class="lv1" href="#第3章35高速缓冲存储器cache">第3章 3.5 高速缓冲存储器（Cache）</a><a class="lv2" href="#知识框架_4">知识框架</a><a class="lv2" href="#知识点详解_4">知识点详解</a><a class="lv3" href="#一351程序访问的局部性原理">一、3.5.1 程序访问的局部性原理</a><a class="lv3" href="#二352内存分块与地址特点">二、3.5.2 内存分块与地址特点</a><a class="lv3" href="#三353命中率与平均访问时间">三、3.5.3 命中率与平均访问时间</a><a class="lv3" href="#四354直接映射及其原理">四、3.5.4 直接映射及其原理</a><a class="lv3" href="#五全相联映射与组相联映射仅依据41p42p43p">五、全相联映射与组相联映射（仅依据 41P/42P/43P）</a><a class="lv3" href="#六356映射方式习题方法">六、3.5.6 映射方式习题方法</a><a class="lv3" href="#七357比较器的个数与位数">七、3.5.7 比较器的个数与位数</a><a class="lv3" href="#八358脏位与替换算法位">八、3.5.8 脏位与替换算法位</a><a class="lv3" href="#九359每行容量与总容量">九、3.5.9 每行容量与总容量</a><a class="lv3" href="#十3510cache的应用">十、3.5.10 Cache 的应用</a><a class="lv3" href="#十一3511汇总老师给的全节串讲">十一、3.5.11 汇总（老师给的全节串讲）</a><a class="lv2" href="#老师强调的考点_4">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_3">快速技巧与口诀</a><a class="lv3" href="#三种映射对比表">三种映射对比表</a><a class="lv3" href="#总容量">总容量</a><a class="lv3" href="#平均访问时间与命中率">平均访问时间与命中率</a><a class="lv3" href="#命中率题的通用套路">命中率题的通用套路</a><a class="lv2" href="#易错点与坑_4">易错点与坑</a><a class="lv2" href="#本章例题_4">本章例题</a><a class="lv3" href="#例1例31局部性判断">例1（例3.1，局部性判断）</a><a class="lv3" href="#例2例33第2问①直接映射求行号">例2（例3.3 第2问①，直接映射求行号）</a><a class="lv3" href="#例3例33第3问简述访存过程">例3（例3.3 第3问，简述访存过程）</a><a class="lv3" href="#例4课后32缺失率">例4（课后32，缺失率）</a><a class="lv3" href="#例5课后3反求命中率">例5（课后3，反求命中率）</a><a class="lv3" href="#例6课后292路组相联求组号">例6（课后29，2 路组相联求组号）</a><a class="lv3" href="#例7课后224路组相联">例7（课后22，4 路组相联）</a><a class="lv3" href="#例8课后15求标记字段">例8（课后15，求标记字段）</a><a class="lv3" href="#例9课后16直接映射求行号">例9（课后16，直接映射求行号）</a><a class="lv3" href="#例10课后20冲突判断">例10（课后20，冲突判断）</a><a class="lv3" href="#例11课后35比较器个数与位数">例11（课后35，比较器个数与位数）</a><a class="lv3" href="#例12课后27比较次数与每次位数">例12（课后27，比较次数与每次位数）</a><a class="lv3" href="#例13课后10lru缺失率">例13（课后10，LRU 缺失率）</a><a class="lv2" href="#对应分p_4">对应分P</a><a class="lv2" href="#待补充">待补充</a></div>
-<div class="grp"><a class="lv1" href="#第4章指令系统41指令系统42寻址方式44cisc与risc">第4章 指令系统（4.1 指令系统 / 4.2 寻址方式 / 4.4 CISC 与 RISC）</a><a class="lv2" href="#知识框架_5">知识框架</a><a class="lv2" href="#知识点详解_5">知识点详解</a><a class="lv3" href="#一41指令系统">一、4.1 指令系统</a><a class="lv3" href="#二42寻址方式">二、4.2 寻址方式</a><a class="lv3" href="#三44cisc与risc">三、4.4 CISC 与 RISC</a><a class="lv2" href="#老师强调的考点_5">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_4">快速技巧与口诀</a><a class="lv3" href="#一十种寻址方式对比表核心背诵表">一、十种寻址方式对比表（核心背诵表）</a><a class="lv3" href="#二扩展操作码的位数分配原则与通用递推">二、扩展操作码的位数分配原则与通用递推</a><a class="lv3" href="#三口诀">三、口诀</a><a class="lv2" href="#易错点与坑_5">易错点与坑</a><a class="lv2" href="#本章例题_5">本章例题</a><a class="lv3" href="#例1课后15扩展操作码分配">例1（课后15）扩展操作码分配</a><a class="lv3" href="#例2老师自编2位操作码2位地址码">例2（老师自编）2 位操作码 + 2 位地址码</a><a class="lv3" href="#例3课后30变址寻址访问double数组">例3（课后30）变址寻址访问 double 数组</a><a class="lv3" href="#例4课后29先变址后间址">例4（课后29）先变址后间址</a><a class="lv3" href="#例5课后2732位指令的字段划分与补码范围">例5（课后27）32 位指令的字段划分与补码范围</a><a class="lv3" href="#例6课后3216位定长48条指令">例6（课后32）16 位定长、48 条指令</a><a class="lv3" href="#例7课后31基址寻址大端符号扩展">例7（课后31）基址寻址 + 大端 + 符号扩展</a><a class="lv3" href="#例8标志位比较无符号数ab的条件">例8（标志位比较）无符号数 A &amp;gt; B 的条件</a><a class="lv2" href="#对应分p_5">对应分P</a></div>
-<div class="grp"><a class="lv1" href="#第5章中央处理器51cpu功能与结构52指令执行过程53数据通路56流水线">第5章 中央处理器（5.1 CPU 功能与结构 / 5.2 指令执行过程 / 5.3 数据通路 / 5.6 流水线）</a><a class="lv2" href="#知识框架_6">知识框架</a><a class="lv2" href="#知识点详解_6">知识点详解</a><a class="lv3" href="#一51cpu的功能和基本结构">一、5.1 CPU 的功能和基本结构</a><a class="lv3" href="#二52指令执行过程">二、5.2 指令执行过程</a><a class="lv3" href="#三53数据通路">三、5.3 数据通路</a><a class="lv3" href="#四56流水线">四、5.6 流水线</a><a class="lv2" href="#老师强调的考点_6">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_5">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_6">易错点与坑</a><a class="lv2" href="#本章例题_6">本章例题</a><a class="lv3" href="#例151课后23真题pc的位数">例1（5.1 课后 23，真题）PC 的位数</a><a class="lv3" href="#例253教材例单总线下的add与load">例2（5.3 教材例）单总线下的 add 与 load</a><a class="lv3" href="#例353课后709年真题addr1r0的微操作">例3（5.3 课后 7，09 年真题）ADD (R1), R0 的微操作</a><a class="lv3" href="#例456课后24数据冒险的判断与时空图">例4（5.6 课后 24）数据冒险的判断与时空图</a><a class="lv3" href="#例556课后30转发控制冒险综合">例5（5.6 课后 30）转发 + 控制冒险综合</a><a class="lv3" href="#例656课后292023cpi与概念辨析">例6（5.6 课后 29、20、23）CPI 与概念辨析</a><a class="lv2" href="#对应分p_6">对应分P</a></div>
-<div class="grp"><a class="lv1" href="#第67章总线与输入输出系统61总线72io接口73io方式">第6-7章 总线与输入/输出系统（6.1 总线 / 7.2 I/O 接口 / 7.3 I/O 方式）</a><a class="lv2" href="#知识框架_7">知识框架</a><a class="lv2" href="#知识点详解_7">知识点详解</a><a class="lv3" href="#一61总线">一、6.1 总线</a><a class="lv3" href="#二72io接口">二、7.2 I/O 接口</a><a class="lv3" href="#三73io方式">三、7.3 I/O 方式</a><a class="lv2" href="#老师强调的考点_7">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_6">快速技巧与口诀</a><a class="lv3" href="#三种io方式对比">三种 I/O 方式对比</a><a class="lv3" href="#三个必背流程">三个必背流程</a><a class="lv3" href="#公式与口诀">公式与口诀</a><a class="lv2" href="#易错点与坑_7">易错点与坑</a><a class="lv2" href="#本章例题_7">本章例题</a><a class="lv3" href="#一总线带宽计算">一、总线带宽计算</a><a class="lv3" href="#二中断与异常概念题">二、中断与异常概念题</a><a class="lv3" href="#三dma概念题">三、DMA 概念题</a><a class="lv3" href="#四io开销计算">四、I/O 开销计算</a><a class="lv2" href="#对应分p_7">对应分P</a></div></nav>
-</aside>
-<main><article><h1 id="408计算机组成原理知识点总结基于复旦发哥带学40858p课程">408 计算机组成原理 · 知识点总结（基于「复旦发哥带学 408」58P 课程）</h1>
+  <div id="prog"></div>
+</header>
+<aside id="side"><div class="cap">章节目录</div><a class="ch" href="#总纲" title="总纲">总纲</a>
+<a class="ch" href="#第1章计算机系统概述" title="第1章 计算机系统概述">第1章 计算机系统概述</a>
+<a class="ch" href="#第2章数据的表示和运算21数据的表示" title="第2章 数据的表示和运算 —— 2.1 数据的表示">第2章 数据的表示和运算</a>
+<a class="ch" href="#第2章22运算方法与运算电路23浮点数" title="第2章 2.2 运算方法与运算电路 + 2.3 浮点数">第2章 2.2 运算方法与运算电路 + …</a>
+<a class="ch" href="#第3章存储系统31概述33主存扩展" title="第3章 存储系统：3.1 概述 ~ 3.3 主存扩展">第3章 存储系统：3.1 概述 ~ 3.…</a>
+<a class="ch" href="#第3章35高速缓冲存储器cache" title="第3章 3.5 高速缓冲存储器（Cache）">第3章 3.5 高速缓冲存储器</a>
+<a class="ch" href="#第4章指令系统41指令系统42寻址方式44cisc与risc" title="第4章 指令系统（4.1 指令系统 / 4.2 寻址方式 / 4.4 CISC 与 RISC）">第4章 指令系统</a>
+<a class="ch" href="#第5章中央处理器51cpu功能与结构52指令执行过程53数据通路56流水线" title="第5章 中央处理器（5.1 CPU 功能与结构 / 5.2 指令执行过程 / 5.3 数据通路 / 5.6 流水线）">第5章 中央处理器</a>
+<a class="ch" href="#第67章总线与输入输出系统61总线72io接口73io方式" title="第6-7章 总线与输入/输出系统（6.1 总线 / 7.2 I/O 接口 / 7.3 I/O 方式）">第6-7章 总线与输入/输出系统</a><div class="note">8 章 · 12.0 万字</div></aside>
+<main><article id="doc"><h1 id="408计算机组成原理知识点总结基于复旦发哥带学40858p课程">408 计算机组成原理 · 知识点总结（基于「复旦发哥带学 408」58P 课程）</h1>
 <blockquote>
 <p><strong>来源</strong>：B 站 BV1bsoaB1EN7《2027考研408WD课本组成原理带学》
 <strong>素材</strong>：57 个分P 的 AI 字幕，约 39 万字，已全部落盘到同级目录（<code>.srt</code> + <code>.txt</code>）
@@ -116,18 +171,7 @@ mark{background:var(--mark);padding:0 2px}
 <strong>未采用</strong>：P1「27考研408学习交流群」（20 秒，字幕为无关内容）、P40「3.5.5 全相联映射和组相联映射」（字幕为无关内容），二者已移入 <code>_异常/</code>。
 依据分P标题判断，仅陈述事实，不含推测。</p>
 </blockquote>
-<h2 id="目录">目录</h2>
-<ul>
-<li><a href="#总纲">总纲：科目定位 · 知识地图 · 高频考点 · 复习顺序</a></li>
-<li><a href="#第1章计算机系统概述">第1章 计算机系统概述</a></li>
-<li><a href="#第2章数据的表示和运算21数据的表示">第2章 数据的表示和运算 —— 2.1 数据的表示</a></li>
-<li><a href="#第2章22运算方法与运算电路23浮点数">第2章 2.2 运算方法与运算电路 + 2.3 浮点数</a></li>
-<li><a href="#第3章存储系统31概述33主存扩展">第3章 存储系统：3.1 概述 ~ 3.3 主存扩展</a></li>
-<li><a href="#第3章35高速缓冲存储器Cache">第3章 3.5 高速缓冲存储器（Cache）</a></li>
-<li><a href="#第4章指令系统41指令系统42寻址方式44CISC与RISC">第4章 指令系统（4.1 指令系统 / 4.2 寻址方式 / 4.4 CISC 与 RISC）</a></li>
-<li><a href="#第5章中央处理器51CPU功能与结构52指令执行过程53数据通路56流水线">第5章 中央处理器（5.1 CPU 功能与结构 / 5.2 指令执行过程 / 5.3 数据通路 / 5.6 流水线）</a></li>
-<li><a href="#第67章总线与输入输出系统61总线72IO接口73IO方式">第6-7章 总线与输入/输出系统（6.1 总线 / 7.2 I/O 接口 / 7.3 I/O 方式）</a></li>
-</ul>
+
 <hr />
 <h1 id="总纲">总纲</h1>
 <hr />
@@ -4820,50 +4864,112 @@ B = W \times f
 </tr>
 </tbody>
 </table></article></main>
-<button id="toTop">↑</button>
+<aside id="out"><div class="cap">本页大纲</div><div class="grp" data-for="总纲" data-name="总纲"><a class="lv2" href="#一组成原理在408里的位置" title="一、组成原理在 408 里的位置">一、组成原理在 408 里的位置</a><a class="lv2" href="#二七章知识地图含性价比评估" title="二、七章知识地图（含性价比评估）">二、七章知识地图</a><a class="lv2" href="#三跨章高频考点top15按真题出现频率排序" title="三、跨章高频考点 Top 15（按真题出现频率排序）">三、跨章高频考点 Top 15</a><a class="lv2" href="#四本课程未覆盖略讲的部分需自己补" title="四、本课程未覆盖 / 略讲的部分（需自己补）">四、本课程未覆盖 / 略讲的部分</a><a class="lv2" href="#五三阶段复习与刷题顺序" title="五、三阶段复习与刷题顺序">五、三阶段复习与刷题顺序</a><a class="lv2" href="#六笔记怎么用" title="六、笔记怎么用">六、笔记怎么用</a></div>
+<div class="grp" data-for="第1章计算机系统概述" data-name="第1章 计算机系统概述"><a class="lv2" href="#知识框架" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解" title="知识点详解">知识点详解</a><a class="lv3" href="#0课程文档与用法非考点" title="0. 课程文档与用法（非考点）">0. 课程文档与用法</a><a class="lv3" href="#121计算机系统层次结构" title="1.2.1 计算机系统层次结构">1.2.1 计算机系统层次结构</a><a class="lv3" href="#131计算机的性能指标四星计算题高频" title="1.3.1 计算机的性能指标（四星，计算题高频）">1.3.1 计算机的性能指标</a><a class="lv2" href="#老师强调的考点" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#易错点与坑" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题" title="本章例题">本章例题</a><a class="lv2" href="#对应分p" title="对应分P">对应分P</a></div>
+<div class="grp" data-for="第2章数据的表示和运算21数据的表示" data-name="第2章 数据的表示和运算"><a class="lv2" href="#知识框架_1" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_1" title="知识点详解">知识点详解</a><a class="lv3" href="#一进位计数制与标识" title="一、进位计数制与标识">一、进位计数制与标识</a><a class="lv3" href="#二按权展开任意进制十进制" title="二、按权展开（任意进制 → 十进制）">二、按权展开</a><a class="lv3" href="#三十进制二进制除基取余整数" title="三、十进制 → 二进制：除基取余（整数）">三、十进制 → 二进制：除基取余</a><a class="lv3" href="#四十进制二进制拼凑法" title="四、十进制 → 二进制：拼凑法">四、十进制 → 二进制：拼凑法</a><a class="lv3" href="#五二十六二八" title="五、二 ↔ 十六 / 二 ↔ 八">五、二 ↔ 十六 / 二 ↔ 八</a><a class="lv3" href="#六小数乘2取整" title="六、小数：乘 2 取整">六、小数：乘 2 取整</a><a class="lv3" href="#七机器数与真值" title="七、机器数与真值">七、机器数与真值</a><a class="lv3" href="#八定点小数与定点整数" title="八、定点小数与定点整数">八、定点小数与定点整数</a><a class="lv3" href="#九原码" title="九、原码">九、原码</a><a class="lv3" href="#十补码考评最高" title="十、补码（考评最高）">十、补码</a><a class="lv3" href="#十一反码" title="十一、反码">十一、反码</a><a class="lv3" href="#十二补码与真值互转的快速求法最高频技巧" title="十二、补码与真值互转的快速求法（最高频技巧）">十二、补码与真值互转的快速求法</a><a class="lv3" href="#十三补码求真值的五种方法以8位补码11010110d6h为例" title="十三、补码求真值的五种方法（以 8 位补码 1101 0110 = D6H 为例）">十三、补码求真值的五种方法</a><a class="lv3" href="#十四移码" title="十四、移码">十四、移码</a><a class="lv3" href="#十五补码的数轴圆环与比较大小" title="十五、补码的数轴（圆环）与比较大小">十五、补码的数轴</a><a class="lv3" href="#十六无符号数与有符号数" title="十六、无符号数与有符号数">十六、无符号数与有符号数</a><a class="lv2" href="#老师强调的考点_1" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_1" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_1" title="本章例题">本章例题</a><a class="lv2" href="#对应分p_1" title="对应分P">对应分P</a></div>
+<div class="grp" data-for="第2章22运算方法与运算电路23浮点数" data-name="第2章 2.2 运算方法与运算电路 + 2.3 浮点…"><a class="lv2" href="#知识框架_2" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_2" title="知识点详解">知识点详解</a><a class="lv3" href="#一基本运算部件221" title="一、基本运算部件（2.2.1）">一、基本运算部件</a><a class="lv3" href="#二移位运算222" title="二、移位运算（2.2.2）">二、移位运算</a><a class="lv3" href="#三补码加减运算223" title="三、补码加减运算（2.2.3）">三、补码加减运算</a><a class="lv3" href="#四溢出判断核心" title="四、溢出判断（核心）">四、溢出判断</a><a class="lv3" href="#五标志位225" title="五、标志位（2.2.5）">五、标志位</a><a class="lv3" href="#六加减运算电路226图29必记" title="六、加减运算电路（2.2.6，图 2.9 必记）">六、加减运算电路</a><a class="lv3" href="#七ieee754浮点数表示231" title="七、IEEE754 浮点数表示（2.3.1）">七、IEEE754 浮点数表示</a><a class="lv3" href="#八浮点数表示范围232" title="八、浮点数表示范围（2.3.2）">八、浮点数表示范围</a><a class="lv3" href="#九特殊阶码233四种情况纯背" title="九、特殊阶码（2.3.3，四种情况纯背）">九、特殊阶码</a><a class="lv3" href="#十大小端存储234" title="十、大小端存储（2.3.4）">十、大小端存储</a><a class="lv3" href="#十一边界对齐235" title="十一、边界对齐（2.3.5）">十一、边界对齐</a><a class="lv2" href="#老师强调的考点_2" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_1" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_2" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_2" title="本章例题">本章例题</a><a class="lv3" href="#例1移位课后30题" title="例 1（移位，课后 30 题）">例 1</a><a class="lv3" href="#例2移位课后17题" title="例 2（移位，课后 17 题）">例 2</a><a class="lv3" href="#例3移位课后15题" title="例 3（移位，课后 15 题）">例 3</a><a class="lv3" href="#例4移位综合课后27题" title="例 4（移位综合，课后 27 题）">例 4</a><a class="lv3" href="#例5补码加法课后25题" title="例 5（补码加法，课后 25 题）">例 5</a><a class="lv3" href="#例6补码减法课后29题" title="例 6（补码减法，课后 29 题）">例 6</a><a class="lv3" href="#例7乘法判溢出课后26题" title="例 7（乘法判溢出，课后 26 题）">例 7</a><a class="lv3" href="#例8加减判溢出课后28题" title="例 8（加减判溢出，课后 28 题）">例 8</a><a class="lv3" href="#例9标志位课后31题" title="例 9（标志位，课后 31 题）">例 9</a><a class="lv3" href="#例10标志位课后32题" title="例 10（标志位，课后 32 题）">例 10</a><a class="lv3" href="#例11加法器输入端课后18题" title="例 11（加法器输入端，课后 18 题）">例 11</a><a class="lv3" href="#例12加法器与of课后19题" title="例 12（加法器与 OF，课后 19 题）">例 12</a><a class="lv3" href="#例13ieee754编码教材例25课后28题" title="例 13（IEEE754 编码，教材例 2.5 / 课后 28 题）">例 13</a><a class="lv3" href="#例14ieee754解码教材例26课后31题" title="例 14（IEEE754 解码，教材例 2.6 / 课后 31 题）">例 14</a><a class="lv3" href="#例15能否精确表示课后39题" title="例 15（能否精确表示，课后 39 题）">例 15</a><a class="lv3" href="#例16ieee754编码课后40题" title="例 16（IEEE754 编码，课后 40 题）">例 16</a><a class="lv3" href="#例17最大数课后29题" title="例 17（最大数，课后 29 题）">例 17</a><a class="lv3" href="#例18最小规格化正数课后35题" title="例 18（最小规格化正数，课后 35 题）">例 18</a><a class="lv3" href="#例19特殊阶码课后42题" title="例 19（特殊阶码，课后 42 题）">例 19</a><a class="lv3" href="#例20大小端课后34题" title="例 20（大小端，课后 34 题）">例 20</a><a class="lv3" href="#例21小端机器指令课后36题" title="例 21（小端 + 机器指令，课后 36 题）">例 21</a><a class="lv3" href="#例22边界对齐课后30题" title="例 22（边界对齐，课后 30 题）">例 22</a><a class="lv2" href="#对应分p_2" title="对应分P">对应分P</a></div>
+<div class="grp" data-for="第3章存储系统31概述33主存扩展" data-name="第3章 存储系统：3.1 概述 ~ 3.3 主存扩展"><a class="lv2" href="#知识框架_3" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_3" title="知识点详解">知识点详解</a><a class="lv3" href="#一311存储器概述" title="一、3.1.1 存储器概述">一、3.1.1 存储器概述</a><a class="lv3" href="#二321sram与dram" title="二、3.2.1 SRAM 与 DRAM">二、3.2.1 SRAM 与 DRAM</a><a class="lv3" href="#三322习题提炼引脚与刷新的算法" title="三、3.2.2 习题提炼：引脚与刷新的算法">三、3.2.2 习题提炼：引脚与刷新的算法</a><a class="lv3" href="#四323非易失性存储器" title="四、3.2.3 非易失性存储器">四、3.2.3 非易失性存储器</a><a class="lv3" href="#五324多模块存储器" title="五、3.2.4 多模块存储器">五、3.2.4 多模块存储器</a><a class="lv3" href="#六331主存容量扩展" title="六、3.3.1 主存容量扩展">六、3.3.1 主存容量扩展</a><a class="lv3" href="#七332主存储器与cpu的连接" title="七、3.3.2 主存储器与 CPU 的连接">七、3.3.2 主存储器与 CPU 的连接</a><a class="lv2" href="#老师强调的考点_3" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_2" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_3" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_3" title="本章例题">本章例题</a><a class="lv3" href="#例1322引脚计算组" title="例1（3.2.2 引脚计算组）">例1</a><a class="lv3" href="#例2课后34题四体交叉冲突" title="例2（课后 34 题，四体交叉冲突）">例2</a><a class="lv3" href="#例3课后35题同时启动的周期数" title="例3（课后 35 题，同时启动的周期数）">例3</a><a class="lv3" href="#例4课后37题内存条综合" title="例4（课后 37 题，内存条综合）">例4</a><a class="lv3" href="#例5扩展片数64kb含rom" title="例5（扩展片数，64KB 含 ROM）">例5</a><a class="lv3" href="#例6课后13题按字节编址地址范围" title="例6（课后 13 题，按字节编址 + 地址范围）">例6</a><a class="lv3" href="#例7课后14题按字编址" title="例7（课后 14 题，按字编址）">例7</a><a class="lv3" href="#例8课后12题mar位数" title="例8（课后 12 题，MAR 位数）">例8</a><a class="lv3" href="#例9课后11题片内首末地址" title="例9（课后 11 题，片内首末地址）">例9</a><a class="lv3" href="#例10课后9题片选地址反推" title="例10（课后 9 题，片选地址反推）">例10</a><a class="lv3" href="#例11课后6题a0为高位" title="例11（课后 6 题，A0 为高位）">例11</a><a class="lv2" href="#对应分p_3" title="对应分P">对应分P</a></div>
+<div class="grp" data-for="第3章35高速缓冲存储器cache" data-name="第3章 3.5 高速缓冲存储器"><a class="lv2" href="#知识框架_4" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_4" title="知识点详解">知识点详解</a><a class="lv3" href="#一351程序访问的局部性原理" title="一、3.5.1 程序访问的局部性原理">一、3.5.1 程序访问的局部性原理</a><a class="lv3" href="#二352内存分块与地址特点" title="二、3.5.2 内存分块与地址特点">二、3.5.2 内存分块与地址特点</a><a class="lv3" href="#三353命中率与平均访问时间" title="三、3.5.3 命中率与平均访问时间">三、3.5.3 命中率与平均访问时间</a><a class="lv3" href="#四354直接映射及其原理" title="四、3.5.4 直接映射及其原理">四、3.5.4 直接映射及其原理</a><a class="lv3" href="#五全相联映射与组相联映射仅依据41p42p43p" title="五、全相联映射与组相联映射（仅依据 41P/42P/43P）">五、全相联映射与组相联映射</a><a class="lv3" href="#六356映射方式习题方法" title="六、3.5.6 映射方式习题方法">六、3.5.6 映射方式习题方法</a><a class="lv3" href="#七357比较器的个数与位数" title="七、3.5.7 比较器的个数与位数">七、3.5.7 比较器的个数与位数</a><a class="lv3" href="#八358脏位与替换算法位" title="八、3.5.8 脏位与替换算法位">八、3.5.8 脏位与替换算法位</a><a class="lv3" href="#九359每行容量与总容量" title="九、3.5.9 每行容量与总容量">九、3.5.9 每行容量与总容量</a><a class="lv3" href="#十3510cache的应用" title="十、3.5.10 Cache 的应用">十、3.5.10 Cache 的应用</a><a class="lv3" href="#十一3511汇总老师给的全节串讲" title="十一、3.5.11 汇总（老师给的全节串讲）">十一、3.5.11 汇总</a><a class="lv2" href="#老师强调的考点_4" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_3" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv3" href="#三种映射对比表" title="三种映射对比表">三种映射对比表</a><a class="lv3" href="#总容量" title="总容量">总容量</a><a class="lv3" href="#平均访问时间与命中率" title="平均访问时间与命中率">平均访问时间与命中率</a><a class="lv3" href="#命中率题的通用套路" title="命中率题的通用套路">命中率题的通用套路</a><a class="lv2" href="#易错点与坑_4" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_4" title="本章例题">本章例题</a><a class="lv3" href="#例1例31局部性判断" title="例1（例3.1，局部性判断）">例1</a><a class="lv3" href="#例2例33第2问①直接映射求行号" title="例2（例3.3 第2问①，直接映射求行号）">例2</a><a class="lv3" href="#例3例33第3问简述访存过程" title="例3（例3.3 第3问，简述访存过程）">例3</a><a class="lv3" href="#例4课后32缺失率" title="例4（课后32，缺失率）">例4</a><a class="lv3" href="#例5课后3反求命中率" title="例5（课后3，反求命中率）">例5</a><a class="lv3" href="#例6课后292路组相联求组号" title="例6（课后29，2 路组相联求组号）">例6</a><a class="lv3" href="#例7课后224路组相联" title="例7（课后22，4 路组相联）">例7</a><a class="lv3" href="#例8课后15求标记字段" title="例8（课后15，求标记字段）">例8</a><a class="lv3" href="#例9课后16直接映射求行号" title="例9（课后16，直接映射求行号）">例9</a><a class="lv3" href="#例10课后20冲突判断" title="例10（课后20，冲突判断）">例10</a><a class="lv3" href="#例11课后35比较器个数与位数" title="例11（课后35，比较器个数与位数）">例11</a><a class="lv3" href="#例12课后27比较次数与每次位数" title="例12（课后27，比较次数与每次位数）">例12</a><a class="lv3" href="#例13课后10lru缺失率" title="例13（课后10，LRU 缺失率）">例13</a><a class="lv2" href="#对应分p_4" title="对应分P">对应分P</a><a class="lv2" href="#待补充" title="待补充">待补充</a></div>
+<div class="grp" data-for="第4章指令系统41指令系统42寻址方式44cisc与risc" data-name="第4章 指令系统"><a class="lv2" href="#知识框架_5" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_5" title="知识点详解">知识点详解</a><a class="lv3" href="#一41指令系统" title="一、4.1 指令系统">一、4.1 指令系统</a><a class="lv3" href="#二42寻址方式" title="二、4.2 寻址方式">二、4.2 寻址方式</a><a class="lv3" href="#三44cisc与risc" title="三、4.4 CISC 与 RISC">三、4.4 CISC 与 RISC</a><a class="lv2" href="#老师强调的考点_5" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_4" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv3" href="#一十种寻址方式对比表核心背诵表" title="一、十种寻址方式对比表（核心背诵表）">一、十种寻址方式对比表</a><a class="lv3" href="#二扩展操作码的位数分配原则与通用递推" title="二、扩展操作码的位数分配原则与通用递推">二、扩展操作码的位数分配原则与通用递推</a><a class="lv3" href="#三口诀" title="三、口诀">三、口诀</a><a class="lv2" href="#易错点与坑_5" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_5" title="本章例题">本章例题</a><a class="lv3" href="#例1课后15扩展操作码分配" title="例1（课后15）扩展操作码分配">例1</a><a class="lv3" href="#例2老师自编2位操作码2位地址码" title="例2（老师自编）2 位操作码 + 2 位地址码">例2</a><a class="lv3" href="#例3课后30变址寻址访问double数组" title="例3（课后30）变址寻址访问 double 数组">例3</a><a class="lv3" href="#例4课后29先变址后间址" title="例4（课后29）先变址后间址">例4</a><a class="lv3" href="#例5课后2732位指令的字段划分与补码范围" title="例5（课后27）32 位指令的字段划分与补码范围">例5</a><a class="lv3" href="#例6课后3216位定长48条指令" title="例6（课后32）16 位定长、48 条指令">例6</a><a class="lv3" href="#例7课后31基址寻址大端符号扩展" title="例7（课后31）基址寻址 + 大端 + 符号扩展">例7</a><a class="lv3" href="#例8标志位比较无符号数ab的条件" title="例8（标志位比较）无符号数 A &amp;gt; B 的条件">例8</a><a class="lv2" href="#对应分p_5" title="对应分P">对应分P</a></div>
+<div class="grp" data-for="第5章中央处理器51cpu功能与结构52指令执行过程53数据通路56流水线" data-name="第5章 中央处理器"><a class="lv2" href="#知识框架_6" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_6" title="知识点详解">知识点详解</a><a class="lv3" href="#一51cpu的功能和基本结构" title="一、5.1 CPU 的功能和基本结构">一、5.1 CPU 的功能和基本结构</a><a class="lv3" href="#二52指令执行过程" title="二、5.2 指令执行过程">二、5.2 指令执行过程</a><a class="lv3" href="#三53数据通路" title="三、5.3 数据通路">三、5.3 数据通路</a><a class="lv3" href="#四56流水线" title="四、5.6 流水线">四、5.6 流水线</a><a class="lv2" href="#老师强调的考点_6" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_5" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv2" href="#易错点与坑_6" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_6" title="本章例题">本章例题</a><a class="lv3" href="#例151课后23真题pc的位数" title="例1（5.1 课后 23，真题）PC 的位数">例1</a><a class="lv3" href="#例253教材例单总线下的add与load" title="例2（5.3 教材例）单总线下的 add 与 load">例2</a><a class="lv3" href="#例353课后709年真题addr1r0的微操作" title="例3（5.3 课后 7，09 年真题）ADD (R1), R0 的微操作">例3</a><a class="lv3" href="#例456课后24数据冒险的判断与时空图" title="例4（5.6 课后 24）数据冒险的判断与时空图">例4</a><a class="lv3" href="#例556课后30转发控制冒险综合" title="例5（5.6 课后 30）转发 + 控制冒险综合">例5</a><a class="lv3" href="#例656课后292023cpi与概念辨析" title="例6（5.6 课后 29、20、23）CPI 与概念辨析">例6</a><a class="lv2" href="#对应分p_6" title="对应分P">对应分P</a></div>
+<div class="grp" data-for="第67章总线与输入输出系统61总线72io接口73io方式" data-name="第6-7章 总线与输入/输出系统"><a class="lv2" href="#知识框架_7" title="知识框架">知识框架</a><a class="lv2" href="#知识点详解_7" title="知识点详解">知识点详解</a><a class="lv3" href="#一61总线" title="一、6.1 总线">一、6.1 总线</a><a class="lv3" href="#二72io接口" title="二、7.2 I/O 接口">二、7.2 I/O 接口</a><a class="lv3" href="#三73io方式" title="三、7.3 I/O 方式">三、7.3 I/O 方式</a><a class="lv2" href="#老师强调的考点_7" title="老师强调的考点">老师强调的考点</a><a class="lv2" href="#快速技巧与口诀_6" title="快速技巧与口诀">快速技巧与口诀</a><a class="lv3" href="#三种io方式对比" title="三种 I/O 方式对比">三种 I/O 方式对比</a><a class="lv3" href="#三个必背流程" title="三个必背流程">三个必背流程</a><a class="lv3" href="#公式与口诀" title="公式与口诀">公式与口诀</a><a class="lv2" href="#易错点与坑_7" title="易错点与坑">易错点与坑</a><a class="lv2" href="#本章例题_7" title="本章例题">本章例题</a><a class="lv3" href="#一总线带宽计算" title="一、总线带宽计算">一、总线带宽计算</a><a class="lv3" href="#二中断与异常概念题" title="二、中断与异常概念题">二、中断与异常概念题</a><a class="lv3" href="#三dma概念题" title="三、DMA 概念题">三、DMA 概念题</a><a class="lv3" href="#四io开销计算" title="四、I/O 开销计算">四、I/O 开销计算</a><a class="lv2" href="#对应分p_7" title="对应分P">对应分P</a></div></aside>
+<button id="top" aria-label="回到顶部">↑</button>
 <script>
-const q = document.getElementById('q');
-const links = [...document.querySelectorAll('#toc a')];
-q.addEventListener('input', () => {
-  const v = q.value.trim().toLowerCase();
-  links.forEach(a => {
-    const hit = !v || a.textContent.toLowerCase().includes(v);
-    a.classList.toggle('hide', !hit);
-  });
-  if (v) {
-    links.forEach(a => { if (!a.classList.contains('hide')) a.style.display='block'; });
-  }
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const root=document.documentElement;
+const store={
+  get(k,d){try{return localStorage.getItem(k)??d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+};
+
+const qp=new URLSearchParams(location.search);
+if(qp.get('theme')==='dark'||store.get('theme','light')==='dark'){
+  root.setAttribute('data-theme','dark');$('#tTheme').textContent='日';
+}
+$('#tTheme').onclick=()=>{
+  const dark=root.getAttribute('data-theme')==='dark';
+  if(dark){root.removeAttribute('data-theme');store.set('theme','light');$('#tTheme').textContent='夜';}
+  else{root.setAttribute('data-theme','dark');store.set('theme','dark');$('#tTheme').textContent='日';}
+};
+
+let fs=parseFloat(store.get('size','16.5'));
+const applySize=()=>{root.style.setProperty('--size',fs+'px');store.set('size',fs)};
+applySize();
+$('#tBig').onclick=()=>{fs=Math.min(20,fs+0.5);applySize()};
+$('#tSmall').onclick=()=>{fs=Math.max(14,fs-0.5);applySize()};
+
+$('#burger').onclick=()=>$('#side').classList.toggle('open');
+$$('#side a').forEach(a=>a.addEventListener('click',()=>$('#side').classList.remove('open')));
+
+const chapters=$$('#side a');
+const q=$('#q');
+q.addEventListener('input',()=>{
+  const v=q.value.trim().toLowerCase();
+  chapters.forEach(a=>a.classList.toggle('hide', !!v && !a.textContent.toLowerCase().includes(v)));
+  $$('#out a').forEach(a=>a.classList.toggle('hide', !!v && !a.textContent.toLowerCase().includes(v)));
+  if(v) $$('#out .grp').forEach(g=>g.classList.add('on'));
 });
-q.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    const first = links.find(a => !a.classList.contains('hide'));
-    if (first) { first.click(); }
-  }
+q.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){const hit=chapters.find(a=>!a.classList.contains('hide'));if(hit)hit.click();}
+  if(e.key==='Escape'){q.value='';q.dispatchEvent(new Event('input'));q.blur();}
 });
 
-const subs = links.map(a => ({a, id: decodeURIComponent(a.getAttribute('href').slice(1))}));
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(en => {
-    if (en.isIntersecting) {
-      subs.forEach(s => s.a.classList.remove('active'));
-      const cur = subs.find(s => s.id === en.target.id);
-      if (cur) {
-        cur.a.classList.add('active');
-        const r = cur.a.getBoundingClientRect(), box = document.getElementById('toc').getBoundingClientRect();
-        if (r.top < box.top + 40 || r.bottom > box.bottom - 40) cur.a.scrollIntoView({block:'center'});
+const chIds=new Set(chapters.map(a=>a.getAttribute('href').slice(1)));
+const chs=$$('#doc h1[id]').filter(h=>chIds.has(h.id));
+const crumb=$('#crumbCur');
+const groups=$$('#out .grp');
+function setChapter(id){
+  chapters.forEach(a=>a.classList.toggle('on', a.getAttribute('href')==='#'+id));
+  let name='';
+  groups.forEach(g=>{
+    const on=g.dataset.for===id;
+    g.classList.toggle('on',on);
+    if(on) name=g.dataset.name;
+  });
+  if(name&&crumb) crumb.textContent=name;
+}
+if(chs.length){
+  setChapter(chapters.length ? chapters[0].getAttribute('href').slice(1) : chs[0].id);
+  const ob1=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting) setChapter(e.target.id)});
+  },{rootMargin:'-12% 0px -78% 0px'});
+  chs.forEach(h=>ob1.observe(h));
+}
+
+const links=$$('#out a[href^="#"]');
+const heads=$$('#doc h2[id],#doc h3[id]');
+if(heads.length&&links.length){
+  const ob2=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        links.forEach(a=>a.classList.toggle('on', a.getAttribute('href')==='#'+e.target.id));
       }
-    }
-  });
-}, {rootMargin: '-10% 0px -80% 0px'});
-subs.forEach(s => { const el = document.getElementById(s.id); if (el) obs.observe(el); });
+    });
+  },{rootMargin:'-10% 0px -72% 0px'});
+  heads.forEach(h=>ob2.observe(h));
+}
 
-const bar = document.querySelector('#bar i');
-window.addEventListener('scroll', () => {
-  const h = document.documentElement.scrollHeight - innerHeight;
-  bar.style.width = (h > 0 ? (scrollY / h * 100) : 0) + '%';
-  document.getElementById('toTop').style.display = scrollY > 600 ? 'block' : 'none';
+heads.forEach(h=>{
+  const a=document.createElement('a');
+  a.className='ah'; a.href='#'+h.id; a.textContent='#';
+  a.onclick=e=>{e.preventDefault();history.replaceState(null,'','#'+h.id);
+    if(navigator.clipboard) navigator.clipboard.writeText(location.href)};
+  h.appendChild(a);
 });
-document.getElementById('toTop').onclick = () => scrollTo({top:0, behavior:'smooth'});
-document.getElementById('menu').onclick = () => document.getElementById('side').classList.toggle('open');
+
+$$('#doc table').forEach(t=>{
+  const w=document.createElement('div');
+  w.className='tbl';
+  t.parentNode.insertBefore(w,t);
+  w.appendChild(t);
+});
+
+const prog=$('#prog'), topBtn=$('#top');
+addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-innerHeight;
+  prog.style.width=(h>0?scrollY/h*100:0)+'%';
+  topBtn.style.display=scrollY>560?'block':'none';
+},{passive:true});
+topBtn.onclick=()=>scrollTo({top:0,behavior:'smooth'});
 </script>
 </body></html>
