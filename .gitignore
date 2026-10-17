@@ -1,0 +1,8 @@
+# 临时/系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 本地草稿
+_*
+*.tmp
